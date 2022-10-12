@@ -1,25 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import data from './services/datafunctions';
+import { ClientStatus } from './types/statusenum';
+import SignInScreen from './screens/signin/signinscreen';
+import { useSelector } from 'react-redux';
+import { RootState } from './store/store';
+import HomeScreen from './screens/homescreen/homescreen';
 
 function App() {
+  const isSignedin = useSelector((state:RootState)=>state.authentication.isSignedIn)
+
+  //data[ClientStatus.online].auftraggeber.getWithParams([{key:"id",operator:"<=",value:4}])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    isSignedin?
+      <HomeScreen />
+      :
+      <SignInScreen />
   );
 }
 
