@@ -1,7 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import NavBar from '../components/navbar/navbar'
-import TextInput from '../components/textinput/textinput'
-import SignInScreen from '../screens/signin/signinscreen'
 import SignUpScreen from '../screens/signup/signupscreen'
 import { Error, ErrorType } from '../types/errortype'
 

@@ -1,7 +1,5 @@
 import React from 'react';
 import './App.css';
-import data from './services/datafunctions';
-import { ClientStatus } from './types/statusenum';
 import SignInScreen from './screens/signin/signinscreen';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
