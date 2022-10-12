@@ -33,14 +33,16 @@
     height:100%;
     background-color: rgba(94, 94, 94, 0.432);
 }
-
+.icon{
+    font-size:20px;
+}
 
 .input{
     background-color: rgb(232, 232, 232);
     border:none;
     border-radius: 7px;
     text-decoration: none;
-    font-size:x-large;
+    font-size:large;
     padding-right:1rem;
     
 }
@@ -50,7 +52,7 @@
     outline: none;
 }
 .Big{
-    height:clamp(40px,2.5rem,60px);
+    height:clamp(52px,2.5rem,60px);
     width: 100%;
 }
 .Small{

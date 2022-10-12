@@ -11,6 +11,7 @@ type params = {
     dropdownRef?:React.Ref<any>,
     regexValidator?:string,
     style?: string,
+    type?:'text'|'password'
     pattern?: string,
     onFocusPointOut?: boolean,
     placeholder?:string,
@@ -20,7 +21,7 @@ type params = {
     size?:'Big' | 'Small'
 }
 
-function TextInput(props:params) {
+const TextInput = React.forwardRef<HTMLInputElement,params>((props:params,ref)=> {
   
   const [value, setValue] = useState("")
 
@@ -29,16 +30,17 @@ function TextInput(props:params) {
   }
   
 
-  let classNames = props.size && props.size === 'Small'?'Small':'Big';
-  classNames += props.icon?' input input-icon':' input input-wo-icon';
+  let classNames = props.size && props.size === styles.Small?styles.Small:styles.Big;
+  classNames += props.icon?' '+styles.input+' '+styles["input-icon"]:' '+styles.input+' '+styles["input-wo-icon"];
 
   return (
     <>
-      {(props.onFocusPointOut)?<><div className={props.focus?'coverup':'coverup-gone'} onClick={(event)=>{if(props.onBlur&&props.setFocus){props.onBlur();props.setFocus(false)}}}></div></>:<></>}
-      <div className='container'>
-          {props.icon?<div className="icon">{props.icon}</div>:<></>}
+      {(props.onFocusPointOut)?<><div className={props.focus?styles.coverup:styles["coverup-gone"]} onClick={(event)=>{if(props.onBlur&&props.setFocus){props.onBlur();props.setFocus(false)}}}></div></>:<></>}
+      <div className={styles.container}>
+          {props.icon?<div className={styles.icon}>{props.icon}</div>:<></>}
           <input 
-              type="text"
+              ref={ref}
+              type={props.type?props.type:"text"}
               value={value}
               className={classNames}
               onClick={(event)=>{if(props.onClick)props.onClick(event)}}
@@ -79,6 +81,6 @@ function TextInput(props:params) {
       </div>
     </>
   )
-}
+})
 
 export default TextInput

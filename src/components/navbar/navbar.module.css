@@ -1,0 +1,15 @@
+.container{
+    height:100vh;
+    width: clamp(300px,25vw,500px);
+    background-color: #01161E;
+    color:#EFF6E0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.links{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

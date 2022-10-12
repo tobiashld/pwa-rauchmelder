@@ -1,0 +1,12 @@
+.container{
+    text-align: start;
+    padding:8px;
+    margin:2px;
+    font-size: large;
+    width:80%;
+    border-radius: 8px;
+}
+.container:hover{
+    background-color: #124559;
+    cursor: pointer;
+}

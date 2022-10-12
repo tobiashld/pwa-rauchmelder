@@ -1,4 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import NavBar from '../components/navbar/navbar'
+import TextInput from '../components/textinput/textinput'
+import SignInScreen from '../screens/signin/signinscreen'
+import SignUpScreen from '../screens/signup/signupscreen'
 import { Error, ErrorType } from '../types/errortype'
 
 interface InitialState{
@@ -8,7 +12,8 @@ interface InitialState{
         signedInAt:Date | null,
     },
     isOffline:boolean,
-    colorScheme:'light'|'dark'
+    colorScheme:'light'|'dark',
+    navbarElemente:{name:string,component:()=>JSX.Element}[]
 }
 
 const initialState : InitialState = {
@@ -18,14 +23,35 @@ const initialState : InitialState = {
     signedInAt:null
   },
   isOffline:false,
-  colorScheme:'light'
-  
+  colorScheme:'light',
+  navbarElemente:[
+    {
+        name:"Prüfungen",
+        component:SignUpScreen
+    },
+    {
+        name:"Rauchmelder",
+        component:SignUpScreen
+    },
+    {
+        name:"Wohnungen",
+        component:SignUpScreen
+    },
+    {
+        name:"Objekte",
+        component:SignUpScreen
+    },
+    {
+        name:"Auftraggeber",
+        component:SignUpScreen
+    },
+  ]
 }
 export const slice = createSlice({
   name: 'error',
   initialState: initialState,
   reducers: {
-    login(state){
+    login(state,action:PayloadAction<{username:string,password:string}>){
         return ({
             ...state,
             authentication:{
