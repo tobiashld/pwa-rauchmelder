@@ -9,7 +9,7 @@ function HomeScreen() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [navBarActive,setNavBarActive] = useState(true)
   const [activeComponent,setActiveComponent] = useState<JSX.Element>(OverviewComponent())
-  const {width,height} = useWindowDimensions();
+  const {width} = useWindowDimensions();
   const handleChangeComponent = (item:JSX.Element)=>{
     if(width < 600)setNavBarActive(false);
     setActiveComponent(item)
