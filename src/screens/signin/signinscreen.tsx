@@ -4,7 +4,7 @@ import styles from './signinscreen.module.css'
 import { FiUser } from 'react-icons/fi'
 import { RiLockPasswordLine } from 'react-icons/ri'
 import { useAppDispatch } from '../../store/store';
-import { login } from '../../store/slice';
+import { addError, clearError, login } from '../../store/slice';
 
 function SignInScreen() {
   const usernameRef = React.createRef<HTMLInputElement>();
@@ -18,6 +18,27 @@ function SignInScreen() {
     }
     dispatch(login({username:usernameRef.current.value,password:passwordRef.current.value}))
     
+  }
+  const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if(validateInput()){
+        dispatch(login({username:usernameRef.current!.value,password:passwordRef.current!.value}))
+      }else{
+        dispatch(addError({
+          type:"error",
+          handleClose:(id)=>dispatch(clearError({id:id})),
+          message:"Entweder das Passwort oder der Benutzername sind Falsch",
+          title:"Login Failed!"
+        }))
+      }
+      
+    }
+  }
+  const validateInput = ()=>{
+    if(!usernameRef.current || !passwordRef.current || usernameRef.current.value === "" || passwordRef.current.value === ""){
+      return false;
+    }
+    return true
   }
 
   return (
@@ -42,6 +63,7 @@ function SignInScreen() {
                 <TextInput 
                   ref={usernameRef}
                   placeholder='Benutzername'
+                  onKeyDown={handleKeyDown}
                   icon={<FiUser />}
                   
                 />
@@ -51,11 +73,12 @@ function SignInScreen() {
                   placeholder='Passwort'
                   type='password'
                   icon={<RiLockPasswordLine />}
+                  onKeyDown={handleKeyDown}
                   ref={passwordRef}
                 />
               </div>
               <div className={styles.loginbuttoncontainer}>
-                <button onClick={handleLoginbutton} className={styles.loginButton}>Login</button>
+                <button tabIndex={0} onClick={handleLoginbutton} className={styles.loginButton}>Login</button>
               </div>
           </div>
         </div>

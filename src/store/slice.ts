@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { updateShorthandPropertyAssignment } from 'typescript'
-import SignUpScreen from '../screens/signup/signupscreen'
+import AuftraggeberComponent from '../components/screencomponents/auftraggeber/auftraggeber'
+import ObjekteComponent from '../components/screencomponents/objekte/objekte'
+import OverviewComponent from '../components/screencomponents/overview/overview'
+import PruefungenComponent from '../components/screencomponents/pruefungen/pruefungen'
+import RauchmelderComponent from '../components/screencomponents/rauchmelder/rauchmelder'
+import WohnungenComponent from '../components/screencomponents/wohnungen/wohnungen'
 import data from '../services/datafunctions'
-import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
 
@@ -29,24 +32,28 @@ const initialState : InitialState = {
   colorScheme:'light',
   navbarElemente:[
     {
+        name:"Home",
+        component:OverviewComponent
+    },
+    {
         name:"Prüfungen",
-        component:SignUpScreen
+        component:PruefungenComponent
     },
     {
         name:"Rauchmelder",
-        component:SignUpScreen
+        component:RauchmelderComponent
     },
     {
         name:"Wohnungen",
-        component:SignUpScreen
+        component:WohnungenComponent
     },
     {
         name:"Objekte",
-        component:SignUpScreen
+        component:ObjekteComponent
     },
     {
         name:"Auftraggeber",
-        component:SignUpScreen
+        component:AuftraggeberComponent
     },
   ]
 }
@@ -117,7 +124,7 @@ export const slice = createSlice({
             
         })
     },
-    clearError(state,action) {
+    clearError(state,action:PayloadAction<{id:number}>) {
         let helpArray = [...state.errorListe]
         helpArray.splice(action.payload.id,1)
         return ({

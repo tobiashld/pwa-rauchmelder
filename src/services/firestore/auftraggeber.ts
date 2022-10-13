@@ -16,7 +16,6 @@ async function getAuftraggeberWithParam(key:string,value:any){
     const q = query(auftraggeberCol,where(key,"==",value))
     const auftraggeberSnapshot = await getDocs(q)
     const auftraggeberListe = auftraggeberSnapshot.docs.map(doc=>doc.data());
-    console.log(auftraggeberListe)
     return auftraggeberListe
 }
 async function getAuftraggeberWithParams(params:[{key:string,operator:WhereFilterOp,value:any}]){
@@ -24,7 +23,6 @@ async function getAuftraggeberWithParams(params:[{key:string,operator:WhereFilte
     const q = query(auftraggeberCol,...(params.map(item=>where(item.key,item.operator,item.value))))
     const auftraggeberSnapshot = await getDocs(q)
     const auftraggeberListe = auftraggeberSnapshot.docs.map(doc=>doc.data());
-    console.log(auftraggeberListe)
     return auftraggeberListe
 }
 
