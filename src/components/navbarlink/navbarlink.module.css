@@ -5,8 +5,16 @@
     font-size: large;
     width:80%;
     border-radius: 8px;
+    display: flex;
+    flex-direction: row;
 }
 .container:hover{
     background-color: #124559;
     cursor: pointer;
+}
+.flexi{
+    flex:1;
+}
+.icon{
+    padding-right:10px;
 }

@@ -1,14 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { updateShorthandPropertyAssignment } from 'typescript'
 import SignUpScreen from '../screens/signup/signupscreen'
+import data from '../services/datafunctions'
+import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
+import { ClientStatus } from '../types/statusenum'
 
 interface InitialState{
     errorListe:Error[],
     authentication:{
         isSignedIn:boolean,
+        username:string | undefined,
         signedInAt:Date | null,
     },
-    isOffline:boolean,
+    isOffline:ClientStatus,
     colorScheme:'light'|'dark',
     navbarElemente:{name:string,component:()=>JSX.Element}[]
 }
@@ -17,9 +22,10 @@ const initialState : InitialState = {
   errorListe: [],
   authentication:{
     isSignedIn:false,
+    username:undefined,
     signedInAt:null
   },
-  isOffline:false,
+  isOffline:ClientStatus.online,
   colorScheme:'light',
   navbarElemente:[
     {
@@ -49,15 +55,21 @@ export const slice = createSlice({
   initialState: initialState,
   reducers: {
     login(state,action:PayloadAction<{username:string,password:string}>){
+
+        data[ClientStatus.online].user.getWithParam("full_name",action.payload.username).then(matches=>{
+            
+        })
+
         return ({
             ...state,
             authentication:{
                 isSignedIn:true,
+                username:action.payload.username,
                 signedInAt:new Date()
             }
         })
     },
-    setOfflineMode(state,action:PayloadAction<{isOffline:boolean}>){
+    setOfflineMode(state,action:PayloadAction<{isOffline:ClientStatus}>){
         return ({
             ...state,
             isOffline:action.payload.isOffline
@@ -68,6 +80,7 @@ export const slice = createSlice({
             ...state,
             authentication:{
                 isSignedIn:false,
+                username:undefined,
                 signedInAt:null
             }
         })
