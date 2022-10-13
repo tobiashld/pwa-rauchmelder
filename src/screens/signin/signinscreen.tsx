@@ -13,7 +13,7 @@ function SignInScreen() {
 
   const handleLoginbutton = (event:any)=>{
 
-    if(!usernameRef.current || !passwordRef.current){
+    if(!usernameRef.current || !passwordRef.current || !validateInput()){
       return;
     }
     dispatch(login({username:usernameRef.current.value,password:passwordRef.current.value}))

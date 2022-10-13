@@ -14,7 +14,6 @@ interface InitialState{
     authentication:{
         isSignedIn:boolean,
         username:string | undefined,
-        signedInAt:Date | null,
     },
     isOffline:ClientStatus,
     colorScheme:'light'|'dark',
@@ -26,7 +25,6 @@ const initialState : InitialState = {
   authentication:{
     isSignedIn:false,
     username:undefined,
-    signedInAt:null
   },
   isOffline:ClientStatus.online,
   colorScheme:'light',
@@ -72,7 +70,6 @@ export const slice = createSlice({
             authentication:{
                 isSignedIn:true,
                 username:action.payload.username,
-                signedInAt:new Date()
             }
         })
     },
@@ -88,7 +85,6 @@ export const slice = createSlice({
             authentication:{
                 isSignedIn:false,
                 username:undefined,
-                signedInAt:null
             }
         })
     },

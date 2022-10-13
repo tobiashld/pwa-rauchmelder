@@ -13,6 +13,7 @@ function NavBar(props:{isShown:boolean,changeComponent:(component:()=>JSX.Elemen
     const navBarElemente = useSelector((state:RootState)=>state.navbarElemente)
     const username = useSelector((state:RootState)=>state.authentication.username)
     const dispatch = useAppDispatch()
+
   return (
     <div className={styles.container}>
         
