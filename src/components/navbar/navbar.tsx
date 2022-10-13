@@ -5,7 +5,7 @@ import NavBarLink from '../navbarlink/navbarlink'
 import styles from './navbar.module.css'
 
 
-function NavBar(props:{changeComponent:(component:()=>JSX.Element)=>void}) {
+function NavBar(props:{isShown:boolean,changeComponent:(component:()=>JSX.Element)=>void}) {
     const navBarElemente = useSelector((state:RootState)=>state.navbarElemente)
   return (
     <div className={styles.container}>
