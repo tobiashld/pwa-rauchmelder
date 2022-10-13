@@ -28,7 +28,7 @@ async function getWohnungWithParams(params:[{key:string,operator:WhereFilterOp,v
 
 async function addWohnung(wohnung:Wohnung){
     const snapshot = await addDoc(collection(db,'Wohnung'),wohnung)
-    
+    snapshot.withConverter(WohnungConverter)
 
 }
 

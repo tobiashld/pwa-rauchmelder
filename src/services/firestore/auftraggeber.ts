@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, getDocs,query, where, WhereFilterOp } from "firebase/firestore"
+import { addDoc, collection, getDocs,query, where, WhereFilterOp } from "firebase/firestore"
 import db from "../../config/firebase.config"
 import { Auftraggeber, AuftraggeberConverter } from "../../types/allgemein"
 
@@ -28,7 +28,7 @@ async function getAuftraggeberWithParams(params:[{key:string,operator:WhereFilte
 
 async function addAuftraggeber(auftraggeber:Auftraggeber){
     const snapshot = await addDoc(collection(db,'auftraggeber'),auftraggeber)
-    
+    snapshot.withConverter(AuftraggeberConverter)
 
 }
 

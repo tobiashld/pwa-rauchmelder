@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, getDocs,query, where, WhereFilterOp } from "firebase/firestore"
+import { addDoc, collection, getDocs,query, where, WhereFilterOp } from "firebase/firestore"
 import db from "../../config/firebase.config"
 import { Objekt, ObjektConverter } from "../../types/allgemein"
 
@@ -28,7 +28,7 @@ async function getObjekteWithParams(params:[{key:string,operator:WhereFilterOp,v
 
 async function addObjekt(objekt:Objekt){
     const snapshot = await addDoc(collection(db,'Objekt'),objekt)
-    
+    snapshot.withConverter(ObjektConverter)
 
 }
 
