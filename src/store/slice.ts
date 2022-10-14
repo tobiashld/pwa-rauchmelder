@@ -6,8 +6,10 @@ import PruefungenComponent from '../components/screencomponents/pruefungen/pruef
 import RauchmelderComponent from '../components/screencomponents/rauchmelder/rauchmelder'
 import WohnungenComponent from '../components/screencomponents/wohnungen/wohnungen'
 import data from '../services/datafunctions'
+import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
+import {Md5} from 'ts-md5'
 
 interface InitialState{
     errorListe:Error[],
@@ -59,19 +61,39 @@ export const slice = createSlice({
   name: 'error',
   initialState: initialState,
   reducers: {
-    login(state,action:PayloadAction<{username:string,password:string}>){
-
-        data[ClientStatus.online].user.getWithParam("full_name",action.payload.username).then(matches=>{
-            
-        })
-
-        return ({
-            ...state,
-            authentication:{
-                isSignedIn:true,
-                username:action.payload.username,
-            }
-        })
+    login(state,action:PayloadAction<{username:string,password:string,user:User|undefined}>){
+        if(!action.payload.user){
+            return  ({
+                ...state,
+                authentication:{
+                    isSignedIn:false,
+                    username:undefined,
+                }
+            })
+        }
+        console.log(action.payload.user.full_name)
+        console.log(Md5.hashStr(action.payload.password))
+        if(
+            action.payload.user.full_name === action.payload.username &&
+            Md5.hashStr(action.payload.password) === action.payload.password
+            ){
+                return ({
+                    ...state,
+                    authentication:{
+                        isSignedIn:true,
+                        username:action.payload.username,
+                    }
+                })
+        }else{
+            return ({
+                ...state,
+                authentication:{
+                    isSignedIn:false,
+                    username:undefined
+                }
+            })
+        }
+        
     },
     setOfflineMode(state,action:PayloadAction<{isOffline:ClientStatus}>){
         return ({

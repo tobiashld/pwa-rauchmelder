@@ -3,9 +3,10 @@ import NavBar from '../../components/navbar/navbar'
 import TopNavBar from '../../components/navbar/topnavbar'
 import OverviewComponent from '../../components/screencomponents/overview/overview'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
+import { ClientStatus } from '../../types/statusenum'
 import styles from './homescreen.module.css'
 
-function HomeScreen() {
+function HomeScreen(props:{clientstatus:ClientStatus}) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [navBarActive,setNavBarActive] = useState(true)
   const [activeComponent,setActiveComponent] = useState<JSX.Element>(OverviewComponent())

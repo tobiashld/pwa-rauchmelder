@@ -5,6 +5,8 @@ import { FiUser } from 'react-icons/fi'
 import { RiLockPasswordLine } from 'react-icons/ri'
 import { useAppDispatch } from '../../store/store';
 import { addError, clearError, login } from '../../store/slice';
+import data from '../../services/datafunctions';
+import { ClientStatus } from '../../types/statusenum';
 
 function SignInScreen() {
   const usernameRef = React.createRef<HTMLInputElement>();
@@ -16,13 +18,16 @@ function SignInScreen() {
     if(!usernameRef.current || !passwordRef.current || !validateInput()){
       return;
     }
-    dispatch(login({username:usernameRef.current.value,password:passwordRef.current.value}))
+    data[ClientStatus.online].user.getWithParam("full_name",usernameRef.current.value).then(user=>{
+      dispatch(login({username:usernameRef.current!.value,password:passwordRef.current!.value,user:user[0]}))
+    })
+    
     
   }
   const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if(validateInput()){
-        dispatch(login({username:usernameRef.current!.value,password:passwordRef.current!.value}))
+        handleLoginbutton(null)
       }else{
         dispatch(addError({
           type:"error",

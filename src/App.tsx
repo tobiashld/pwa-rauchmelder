@@ -4,7 +4,8 @@ import SignInScreen from './screens/signin/signinscreen';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import HomeScreen from './screens/homescreen/homescreen';
-
+import { Offline, Online } from 'react-detect-offline'
+import { ClientStatus } from './types/statusenum';
 function App() {
   const isSignedin = useSelector((state:RootState)=>state.authentication.isSignedIn)
 
@@ -32,7 +33,14 @@ function App() {
   
   return (
     isSignedin?
-      <HomeScreen />
+      <>
+        <Online>
+          <HomeScreen clientstatus={ClientStatus.online}/>
+        </Online>
+        <Offline>
+          <HomeScreen clientstatus={ClientStatus.offline}/>
+        </Offline>
+      </>
       :
       <SignInScreen />
   );
