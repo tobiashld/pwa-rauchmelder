@@ -41,6 +41,11 @@ const data = {
             getWithParam:auftraggeber.getAuftraggeberWithParam,
             getWithParams:auftraggeber.getAuftraggeberWithParams
         },
+        wohnungen:{
+            get:wohnungen.getWohnung,
+            getWithParam:wohnungen.getWohnungWithParam,
+            getWithParams:wohnungen.getWohnungWithParams
+        },
         objekte:{
             get:objekte.getObjekte,
             getWithParam:objekte.getObjekteWithParam,
