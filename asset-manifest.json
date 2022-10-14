@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/pwa-rauchmelder/static/css/main.58e47e23.css",
-    "main.js": "/pwa-rauchmelder/static/js/main.79776146.js",
+    "main.css": "/pwa-rauchmelder/static/css/main.04a74fd8.css",
+    "main.js": "/pwa-rauchmelder/static/js/main.d21dfa69.js",
     "service-worker.js": "/pwa-rauchmelder/service-worker.js",
     "index.html": "/pwa-rauchmelder/index.html",
-    "main.58e47e23.css.map": "/pwa-rauchmelder/static/css/main.58e47e23.css.map",
-    "main.79776146.js.map": "/pwa-rauchmelder/static/js/main.79776146.js.map"
+    "main.04a74fd8.css.map": "/pwa-rauchmelder/static/css/main.04a74fd8.css.map",
+    "main.d21dfa69.js.map": "/pwa-rauchmelder/static/js/main.d21dfa69.js.map"
   },
   "entrypoints": [
-    "static/css/main.58e47e23.css",
-    "static/js/main.79776146.js"
+    "static/css/main.04a74fd8.css",
+    "static/js/main.d21dfa69.js"
   ]
 }
