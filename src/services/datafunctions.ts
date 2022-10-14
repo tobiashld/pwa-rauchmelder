@@ -26,6 +26,11 @@ const data = {
         pruefungen:{
             
         },
+        rauchmelder:{
+            get:rauchmelder.getRauchmelder,
+            getWithParam:rauchmelder.getRauchmelderWithParam,
+            getWithParams:rauchmelder.getRauchmelderWithParams,
+        },
         user:{
             get:user.getUsers,
             getWithParam:user.getUsersWithParam,

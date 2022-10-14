@@ -5,7 +5,7 @@ import { Rauchmelder, RauchmelderConverter } from "../../types/allgemein"
 
 
 async function getRauchmelder(){
-    const rauchmelderCol = collection(db,'Rauchmelder').withConverter(RauchmelderConverter)
+    const rauchmelderCol = collection(db,'rauchmelder').withConverter(RauchmelderConverter)
     const rauchmelderSnapshot = await getDocs(rauchmelderCol)
     const rauchmelderListe = rauchmelderSnapshot.docs.map(doc=>doc.data())
     return rauchmelderListe;

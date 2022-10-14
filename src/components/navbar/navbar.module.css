@@ -4,6 +4,7 @@
     background-color: #01161E;
     color:#EFF6E0;
     display: flex;
+    z-index: 5;
     position: relative;
     flex-direction: column;
     justify-content: center;
@@ -82,4 +83,8 @@
     .burgermenu::before{
         background-color: #EFF6E0;
     }
+    .topnavbarcontainer{
+        background-color: #01161E;
+    }
+
 }

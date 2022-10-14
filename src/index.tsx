@@ -5,6 +5,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { Offline, Online } from 'react-detect-offline';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,7 +13,12 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+      <Online>
+        <App status="online"/>
+      </Online>
+      <Offline>
+        <App status="offline"/>
+      </Offline>
     </React.StrictMode>
   </Provider>
 );

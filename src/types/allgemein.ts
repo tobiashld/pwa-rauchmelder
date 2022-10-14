@@ -8,6 +8,9 @@ export class Auftraggeber{
     readonly name:string,
     readonly telefon:string
     ){}
+    toString(){
+      return this.name + " " + this.adresse
+    }
 }
 export const AuftraggeberConverter = {
     toFirestore(auftraggeber: Auftraggeber): DocumentData {
@@ -18,7 +21,7 @@ export const AuftraggeberConverter = {
         options: SnapshotOptions
       ): Auftraggeber {
         const data = snapshot.data(options)!;
-        return new Auftraggeber(data.id,data.adresse,data.email,data.name,data.telefon);
+        return new Auftraggeber(data.id,new Adresse(data.adresse.hausnummer,data.adresse.ort,data.adresse.plz,data.adresse.straße),data.email,data.name,data.telefon);
       }
 }
 export class User{
@@ -58,7 +61,12 @@ export const ObjektConverter = {
         options: SnapshotOptions
       ): Objekt {
         const data = snapshot.data(options)!;
-        return new Objekt(data.id,data.adresse,data.auftraggeber,data.beschreibung,data.objektname);
+        return new Objekt(
+          data.id,
+          new Adresse(data.adresse.hausnummer,data.adresse.ort,data.adresse.plz,data.adresse.straße),
+          new Auftraggeber(data.auftraggeber.id,new Adresse(data.auftraggeber.adresse.hausnummer,data.auftraggeber.adresse.ort,data.auftraggeber.adresse.plz,data.auftraggeber.adresse.straße),data.auftraggeber.email,data.auftraggeber.name,data.auftraggeber.telefon),
+          data.beschreibung,
+          data.objektname);
       }
 }
 export class Rauchmelder{
@@ -121,7 +129,7 @@ export const RauchmelderConverter = {
         options: SnapshotOptions
       ): Rauchmelder {
         const data = snapshot.data(options)!;
-        return new Rauchmelder(data.id,data.auftraggeber,data.objekt,data.produktionsdatum,data.raum,data.seriennr,data.wohnung);
+        return new Rauchmelder(data.id,new Auftraggeber(data.auftraggeber.id,new Adresse(data.auftraggeber.adresse.hausnummer,data.auftraggeber.adresse.ort,data.auftraggeber.adresse.plz,data.auftraggeber.adresse.straße,),data.auftraggeber.email,data.auftraggeber.name,data.auftraggeber.telefon,),data.objekt,data.produktionsdatum,data.raum,data.seriennr,data.wohnung);
       }
 }
 export class Wohnung{
@@ -171,9 +179,20 @@ export const PruefungConverter = {
       }
 }
 
-export type Adresse = {
-    hausnummer:number,
-    ort:string,
-    plz:string,
-    straße:string
+export class Adresse {
+    hausnummer:number;
+    ort:string;
+    plz:string;
+    straße:string;
+    constructor(hausnummer:number,ort:string,plz:string,straße:string){
+      this.hausnummer = hausnummer;
+      this.ort = ort;
+      this.plz = plz;
+      this.straße = straße;
+    }
+  
+    
+    toString(){
+      return this.straße + " " + this.hausnummer + ", " + this.plz + " " + this.ort;
+    }
 }

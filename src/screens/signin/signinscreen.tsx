@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../store/store';
 import { addError, clearError, login } from '../../store/slice';
 import data from '../../services/datafunctions';
 import { ClientStatus } from '../../types/statusenum';
+import {Md5} from 'ts-md5'
 
 function SignInScreen() {
   const usernameRef = React.createRef<HTMLInputElement>();
@@ -16,10 +17,28 @@ function SignInScreen() {
   const handleLoginbutton = (event:any)=>{
 
     if(!usernameRef.current || !passwordRef.current || !validateInput()){
+      dispatch(addError({
+        type:"warning",
+        title:"Login Failed",
+        message:"Benutzernamen und Passwort eingeben!",
+      }))
+      setTimeout(()=>dispatch(clearError()),3000)
       return;
     }
     data[ClientStatus.online].user.getWithParam("full_name",usernameRef.current.value).then(user=>{
-      dispatch(login({username:usernameRef.current!.value,password:passwordRef.current!.value,user:user[0]}))
+      if(0 < user.length && user.length < 2 && validPassword(user[0].full_name,user[0].password)){
+        console.log("right password")
+        dispatch(login({isSuccessfull:true,username:user[0].full_name}))
+      }else{
+        dispatch(login({isSuccessfull:false}))
+        dispatch(addError({
+          type:"warning",
+          title:"Login Failed",
+          message:"Benutzername oder Passwort ist falsch.",
+        }))
+        setTimeout(()=>dispatch(clearError()),3000)
+      }
+      
     })
     
     
@@ -31,10 +50,10 @@ function SignInScreen() {
       }else{
         dispatch(addError({
           type:"error",
-          handleClose:(id)=>dispatch(clearError({id:id})),
           message:"Entweder das Passwort oder der Benutzername sind Falsch",
           title:"Login Failed!"
         }))
+
       }
       
     }
@@ -44,6 +63,18 @@ function SignInScreen() {
       return false;
     }
     return true
+  }
+
+  const validPassword = (origUsername:string,origPassword:string)=>{
+
+    if(
+      origUsername === usernameRef.current?.value &&
+      Md5.hashStr(passwordRef.current!.value) === origPassword
+      ){
+        return true
+      }else{
+        return false
+      }
   }
 
   return (

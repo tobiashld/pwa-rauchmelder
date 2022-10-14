@@ -6,11 +6,34 @@ import NavBarLink from '../navbarlink/navbarlink'
 import { FaRegUser } from 'react-icons/fa'
 import { BiLogOut } from 'react-icons/bi'
 import styles from './navbar.module.css'
-import ProfileComponent from '../screencomponents/profile/profile'
 
-
-function NavBar(props:{isShown:boolean,changeComponent:(component:()=>JSX.Element)=>void}) {
-    const navBarElemente = useSelector((state:RootState)=>state.navbarElemente)
+const navbarElemente = [
+    {
+        name:"Home",
+        route:"/"
+    },
+    {
+        name:"Prüfungen",
+        route:"/pruefungen"
+    },
+    {
+        name:"Rauchmelder",
+        route:"/rauchmelder"
+    },
+    {
+        name:"Wohnungen",
+        route:"/wohnungen"
+    },
+    {
+        name:"Objekte",
+        route:"/objekte"
+    },
+    {
+        name:"Auftraggeber",
+        route:"/auftraggeber"
+    },
+  ]
+function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
     const username = useSelector((state:RootState)=>state.authentication.username)
     const dispatch = useAppDispatch()
 
@@ -18,14 +41,14 @@ function NavBar(props:{isShown:boolean,changeComponent:(component:()=>JSX.Elemen
     <div className={styles.container}>
         
         <div className={styles.links}>
-            {navBarElemente.map((item,index)=>{
+            {navbarElemente.map((item,index)=>{
                 return (
-                    <NavBarLink key={index} name={item.name} onClick={()=>props.changeComponent(item.component)} />
+                    <NavBarLink key={index} name={item.name} onClick={()=>props.changeComponent(item.route)} />
                 )
             })}
         </div>
         <div className={styles.auth}>
-            <NavBarLink name={username?username:""} icon={<FaRegUser />} flexi={true} onClick={()=>props.changeComponent(ProfileComponent)} />
+            <NavBarLink name={username?username:""} icon={<FaRegUser />} flexi={true} onClick={()=>props.changeComponent("/profile")} />
             <NavBarLink name="Logout" flexi={true} icon={<BiLogOut />} onClick={()=>dispatch(logout())} />
         </div>
     </div>

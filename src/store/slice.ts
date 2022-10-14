@@ -1,15 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import AuftraggeberComponent from '../components/screencomponents/auftraggeber/auftraggeber'
-import ObjekteComponent from '../components/screencomponents/objekte/objekte'
-import OverviewComponent from '../components/screencomponents/overview/overview'
-import PruefungenComponent from '../components/screencomponents/pruefungen/pruefungen'
-import RauchmelderComponent from '../components/screencomponents/rauchmelder/rauchmelder'
-import WohnungenComponent from '../components/screencomponents/wohnungen/wohnungen'
-import data from '../services/datafunctions'
-import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
-import {Md5} from 'ts-md5'
 
 interface InitialState{
     errorListe:Error[],
@@ -19,7 +10,6 @@ interface InitialState{
     },
     isOffline:ClientStatus,
     colorScheme:'light'|'dark',
-    navbarElemente:{name:string,component:()=>JSX.Element}[]
 }
 
 const initialState : InitialState = {
@@ -30,39 +20,21 @@ const initialState : InitialState = {
   },
   isOffline:ClientStatus.online,
   colorScheme:'light',
-  navbarElemente:[
-    {
-        name:"Home",
-        component:OverviewComponent
-    },
-    {
-        name:"Prüfungen",
-        component:PruefungenComponent
-    },
-    {
-        name:"Rauchmelder",
-        component:RauchmelderComponent
-    },
-    {
-        name:"Wohnungen",
-        component:WohnungenComponent
-    },
-    {
-        name:"Objekte",
-        component:ObjekteComponent
-    },
-    {
-        name:"Auftraggeber",
-        component:AuftraggeberComponent
-    },
-  ]
 }
 export const slice = createSlice({
   name: 'error',
   initialState: initialState,
   reducers: {
-    login(state,action:PayloadAction<{username:string,password:string,user:User|undefined}>){
-        if(!action.payload.user){
+    login(state,action:PayloadAction<{isSuccessfull:boolean,username?:string | undefined}>){
+        if(action.payload.isSuccessfull && action.payload.username){
+            return ({
+                ...state,
+                authentication:{
+                    isSignedIn:true,
+                    username:action.payload.username,
+                }
+            })
+        }else{
             return  ({
                 ...state,
                 authentication:{
@@ -71,28 +43,9 @@ export const slice = createSlice({
                 }
             })
         }
-        console.log(action.payload.user.full_name)
-        console.log(Md5.hashStr(action.payload.password))
-        if(
-            action.payload.user.full_name === action.payload.username &&
-            Md5.hashStr(action.payload.password) === action.payload.password
-            ){
-                return ({
-                    ...state,
-                    authentication:{
-                        isSignedIn:true,
-                        username:action.payload.username,
-                    }
-                })
-        }else{
-            return ({
-                ...state,
-                authentication:{
-                    isSignedIn:false,
-                    username:undefined
-                }
-            })
-        }
+        
+                
+        
         
     },
     setOfflineMode(state,action:PayloadAction<{isOffline:ClientStatus}>){
@@ -123,7 +76,6 @@ export const slice = createSlice({
         type:ErrorType,
         title:string,
         message:string,
-        handleClose:(id:number)=>void
     }>) {
         let helpArray : any = [...state.errorListe]
         let id = state.errorListe.length+1
@@ -132,23 +84,29 @@ export const slice = createSlice({
             type:action.payload.type,
             title:action.payload.title,
             message:action.payload.message,
-            handleClose:()=>action.payload.handleClose(id)
         })
         
-        setTimeout(action.payload.handleClose,5000)
+        
         return ({
             ...state,
             errorListe:helpArray,
             
         })
     },
-    clearError(state,action:PayloadAction<{id:number}>) {
+    clearError(state,action:PayloadAction) {
         let helpArray = [...state.errorListe]
-        helpArray.splice(action.payload.id,1)
-        return ({
-            ...state,
-            errorListe:helpArray
-        })
+        if(helpArray.length <=1){
+            return ({
+                ...state,
+                errorListe:[]
+            })
+        }else{
+            return ({
+                ...state,
+                errorListe:helpArray.slice(1,undefined)
+            })
+        }
+        
     },
   },
 })

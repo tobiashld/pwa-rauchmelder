@@ -4,11 +4,12 @@ import SignInScreen from './screens/signin/signinscreen';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import HomeScreen from './screens/homescreen/homescreen';
-import { Offline, Online } from 'react-detect-offline'
 import { ClientStatus } from './types/statusenum';
-function App() {
+import ErrorComponent from './components/errorcomponent/errorcomponent';
+import { BrowserRouter } from 'react-router-dom';
+function App(props:{status:'online'|'offline'}) {
   const isSignedin = useSelector((state:RootState)=>state.authentication.isSignedIn)
-
+  const errorListe = useSelector((state:RootState)=>state.errorListe)
   //data[ClientStatus.online].auftraggeber.getWithParams([{key:"id",operator:"<=",value:4}])
   useEffect(()=>{
     // dataFunctions[ClientStatus.online].objekte.getWithParam("id",24).then(objekte=>{
@@ -32,17 +33,24 @@ function App() {
   
   
   return (
-    isSignedin?
+    <>
+    {
+      isSignedin?
       <>
-        <Online>
+        <BrowserRouter>
+          {props.status === 'online'?
           <HomeScreen clientstatus={ClientStatus.online}/>
-        </Online>
-        <Offline>
+          :
           <HomeScreen clientstatus={ClientStatus.offline}/>
-        </Offline>
+          }
+        </BrowserRouter>
+        
       </>
       :
       <SignInScreen />
+    }
+      <ErrorComponent errorListe={errorListe} />
+    </>
   );
 }
 
