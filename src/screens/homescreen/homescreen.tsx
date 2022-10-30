@@ -16,23 +16,32 @@ import RauchmelderComponent from '../../components/screencomponents/rauchmelder/
 import WohnungenComponent from '../../components/screencomponents/wohnungen/wohnungen'
 import AuftraggeberComponent from '../../components/screencomponents/auftraggeber/auftraggeber'
 import PruefungenComponent from '../../components/screencomponents/pruefungen/pruefungen'
+import { useAppDispatch } from '../../store/store'
+import { setOfflineMode } from '../../store/slice'
 
 function HomeScreen(props:{clientstatus:ClientStatus}) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [navBarActive,setNavBarActive] = useState(true)
   const {width} = useWindowDimensions();
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const handleChangeComponent = (route:string)=>{
     if(width < 600)setNavBarActive(false);
     navigate(route)
+  }
+  const toOffline = (status:ClientStatus)=>{
+    dispatch(setOfflineMode({isOffline:status}))
+    if(status === ClientStatus.offline){
+      
+    }
   }
 
   return (
     
       <div className={styles.anwendung}>
-        {navBarActive?<NavBar isShown={navBarActive} changeComponent={(route=>handleChangeComponent(route))}/>:<></>}
+        <NavBar isShown={navBarActive} changeComponent={(route=>handleChangeComponent(route))}/>
         <div className={styles.activeElement}>
-          <TopNavBar onMenuChange={()=>setNavBarActive(!navBarActive)}/>
+          <TopNavBar onMenuChange={()=>setNavBarActive(!navBarActive)} onClientStatusChange={(status:ClientStatus)=>toOffline(status)}/>
           <Routes>
             <Route path="/" element={<OverviewComponent />}/>
             <Route path="/profile" element={<ProfileComponent />} />

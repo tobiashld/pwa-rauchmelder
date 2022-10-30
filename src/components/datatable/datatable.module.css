@@ -1,43 +1,98 @@
 .gesamtContainer{
     overflow:hidden;
-    width: calc(100% - 40px);
-    height:calc(100vh - 90px);
+    width: calc(100% - 60px);
+    height:calc(100% - 60px);
     display: flex;
     flex-direction: column;
-    margin:10px;
+    margin:20px;
     padding:10px;
     border-radius: 10px;
-    background-color: aliceblue;
+    background-color: white;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
 }
 .headline{
-    font-size:xx-large;
+    font-size:3em;
     font-weight: 500;
+    margin-bottom:10px;
+}
+.actualTable{
+    border-radius:10px;
+    margin:10px;
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.2);
 }
 .columns{
     display:flex;
+    height:40px;
     flex-direction: row;
-    justify-content: space-evenly;
+    background-color: rgba(171, 177, 186, 0.894);
+    padding-top:5px;
+    padding-bottom:5px;
 }
-.dataRow{
-    overflow-y:scroll;
-}
-.datarowelement{
-    margin:5px;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    display:flex;
-    flex-direction: row;
 
-}
-.datarowelement:hover{
-    background-color: rgba(211, 211, 211, 0.276);
-    cursor: pointer;
-}
-.datarowelement>*{
-    flex:1;
+.columnsegment,
+.rowsegment{
+    color:gray;
+    flex:3;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding:5px;
+}
+.columnsegment{
+    color:rgb(59, 59, 59);
+}
+.id{
+    width:70px;
+
+    flex:1;
+}
+.sortSection{
+    margin:10px;
+    display:flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    gap:10px;
+}
+.sortbutton{
+    display:flex;
+    align-items: center;
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+    border-radius: 15px;
+    background-color: rgb(226, 226, 226);
+    width: fit-content;
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.sortbutton:hover{
+    cursor: pointer;
+    background-color: rgba(171, 171, 171, 0.894);
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.activesort{
+    background-color: rgba(171, 171, 171, 0.894);
+}
+
+.dataRow{
+    height:93%;
+    overflow-y:auto;
+}
+.datarowelement{
+    background-color: rgb(226, 226, 226);
+    display:flex;
+    flex-direction: row;
+    min-height:40px;
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.datarowelement:hover{
+    background-color: rgba(198, 198, 198, 0.894);
+    cursor: pointer;
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.datarowelement>*{
+   
 }
 @media only screen and (max-width:600px){
     .gesamtContainer{
@@ -46,7 +101,7 @@
         height:calc(100vh - 50px);
         display: flex;
         flex-direction: column;
-        background-color: aliceblue;
+        background-color: white;
         margin:0;
         padding:0;
     }

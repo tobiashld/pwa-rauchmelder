@@ -7,6 +7,7 @@
     border-radius: 8px;
     display: flex;
     flex-direction: row;
+    transition:  cubic-bezier(0.075, 0.82, 0.165, 1) background 0.5s
 }
 .container:hover{
     background-color: #124559;

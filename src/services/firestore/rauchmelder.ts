@@ -1,34 +1,36 @@
-import { addDoc, collection, getDocs,query, where, WhereFilterOp } from "firebase/firestore"
+
 import db from "../../config/firebase.config"
-import { Rauchmelder, RauchmelderConverter } from "../../types/allgemein"
+import { Rauchmelder,  } from "../../types/allgemein"
 
+const dynamicurl="http://localhost:3000"
 
+async function getRauchmelder(params?:{[key:string]:any},cb?:(data:any)=>void){
+    const http = new XMLHttpRequest();
+    const url = dynamicurl + "/rauchmelder" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
+    console.log(url)
+    http.open("GET",url);
+    http.send();
+    
+    http.onreadystatechange=(e:Event)=>{
+      if(http.readyState === 4 && http.status === 200){
+        console.log(http.responseText)
+        let obj = JSON.parse(http.responseText)
 
-async function getRauchmelder(){
-    const rauchmelderCol = collection(db,'rauchmelder').withConverter(RauchmelderConverter)
-    const rauchmelderSnapshot = await getDocs(rauchmelderCol)
-    const rauchmelderListe = rauchmelderSnapshot.docs.map(doc=>doc.data())
-    return rauchmelderListe;
+        if(obj && obj.data){
+            if(cb)cb(obj.data)
+        }        
+      }
+    }
 }
 async function getRauchmelderWithParam(key:string,value:any){
-    
-    const rauchmelderCol = collection(db,'rauchmelder').withConverter(RauchmelderConverter)
-    const q = query(rauchmelderCol,where(key,"==",value))
-    const rauchmelderSnapshot = await getDocs(q)
-    const rauchmelderListe = rauchmelderSnapshot.docs.map(doc=>doc.data());
-    return rauchmelderListe
+   
 }
-async function getRauchmelderWithParams(params:[{key:string,operator:WhereFilterOp,value:any}]){
-    const rauchmelderCol = collection(db,'rauchmelder').withConverter(RauchmelderConverter)
-    const q = query(rauchmelderCol,...(params.map(item=>where(item.key,item.operator,item.value))))
-    const rauchmelderSnapshot = await getDocs(q)
-    const rauchmelderListe = rauchmelderSnapshot.docs.map(doc=>doc.data());
-    return rauchmelderListe
+async function getRauchmelderWithParams(params:[{key:string,value:any}]){
+    
 }
 
 async function addRauchmelder(rauchmelder:Rauchmelder){
-    const snapshot = await addDoc(collection(db,'rauchmelder'),rauchmelder)
-    snapshot.withConverter(RauchmelderConverter)
+    
 
 }
 

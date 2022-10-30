@@ -6,6 +6,7 @@ import objekte from "./firestore/objekte"
 import wohnungen from "./firestore/wohnungen"
 import { db } from "./myappdatabase"
 import rauchmelder from "./firestore/rauchmelder"
+import pruefungen from "./firestore/pruefungen"
 
 const data = {
     [ClientStatus.offline]:{
@@ -24,7 +25,9 @@ const data = {
     },
     [ClientStatus.online]:{
         pruefungen:{
-            
+            get:pruefungen.getPruefungen,
+            getWithParam:pruefungen.getPruefungenWithParam,
+            getWithParams:pruefungen.getPruefungenWithParams,
         },
         rauchmelder:{
             get:rauchmelder.getRauchmelder,
@@ -52,14 +55,14 @@ const data = {
             getWithParams:objekte.getObjekteWithParams
         },
         prepareOffline:async (objekt:Objekt)=>{
-            db.table("wohnungen").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
-            db.table("objekte").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
-            db.table("rauchmelder").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
-            const wohnungenListeToCache = await wohnungen.getWohnungWithParam("objekt.id",objekt.id)
-            wohnungenListeToCache.every(wohnung=>db.table("wohnungen").add(wohnung,wohnung.id))
-            const rauchmelderListeToCache = await rauchmelder.getRauchmelderWithParam("objekt.id",objekt.id)
-            rauchmelderListeToCache.every(rauchmelder=>db.table("rauchmelder").add(rauchmelder,rauchmelder.id))
-            db.table("objekte").add(objekt)
+            // db.table("wohnungen").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
+            // db.table("objekte").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
+            // db.table("rauchmelder").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
+            // const wohnungenListeToCache = await wohnungen.getWohnungWithParam("objekt.id",objekt.id)
+            // wohnungenListeToCache.every(wohnung=>db.table("wohnungen").add(wohnung,wohnung.id))
+            // const rauchmelderListeToCache = await rauchmelder.getRauchmelderWithParam("objekt.id",objekt.id)
+            // rauchmelderListeToCache.every(rauchmelder=>db.table("rauchmelder").add(rauchmelder,rauchmelder.id))
+            // db.table("objekte").add(objekt)
         },
         syncPruefungen:async()=>{
             const gecachteRauchmelder : GeprRauchmelder[] = (await db.table("gepruefteRauchmelder").toArray()).map((rauch:GeprRauchmelder)=>rauch)

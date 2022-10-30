@@ -38,18 +38,20 @@ function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
     const dispatch = useAppDispatch()
 
   return (
-    <div className={styles.container}>
-        
-        <div className={styles.links}>
-            {navbarElemente.map((item,index)=>{
-                return (
-                    <NavBarLink key={index} name={item.name} onClick={()=>props.changeComponent(item.route)} />
-                )
-            })}
-        </div>
-        <div className={styles.auth}>
-            <NavBarLink name={username?username:""} icon={<FaRegUser />} flexi={true} onClick={()=>props.changeComponent("/profile")} />
-            <NavBarLink name="Logout" flexi={true} icon={<BiLogOut />} onClick={()=>dispatch(logout())} />
+    <div className={styles.widthcontroller+(props.isShown?` ${styles.fullwidth}`:"")}>
+        <div className={styles.container+(props.isShown?` ${styles.navactive}`:"")}>
+            
+            <div className={styles.links}>
+                {navbarElemente.map((item,index)=>{
+                    return (
+                        <NavBarLink key={index} name={item.name} onClick={()=>props.changeComponent(item.route)} />
+                    )
+                })}
+            </div>
+            <div className={styles.auth}>
+                <NavBarLink name={username?username:""} icon={<FaRegUser />} flexi={true} onClick={()=>props.changeComponent("/profile")} />
+                <NavBarLink name="Logout" flexi={true} icon={<BiLogOut />} onClick={()=>dispatch(logout())} />
+            </div>
         </div>
     </div>
   )

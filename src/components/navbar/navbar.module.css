@@ -5,10 +5,24 @@
     color:#EFF6E0;
     display: flex;
     z-index: 5;
-    position: relative;
+    position: fixed;
     flex-direction: column;
     justify-content: center;
+    transform:translateX(-100%);
     box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+    transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1),width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.widthcontroller{
+    width:0;
+    transition:width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.fullwidth{
+    width: clamp(300px,25vw,500px);
+    transition:width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.navactive{
+    transform:translateX(0);
+    transition:transform 1s cubic-bezier(0.165,0.84,0.44,1);
 }
 .links{
     width: 100%;
@@ -24,6 +38,28 @@
     display: flex;
     align-items: center;
     padding-left: 20px;
+    gap:10px;
+}
+.offlineSlider{
+    position:absolute;
+    right:10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.backbutton{
+    padding:2px;
+    height:40px;
+    font-size:x-large;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+.backbutton:hover{
+    cursor: pointer;
+    background-color: lightgray;
 }
 
 .burgermenu,
@@ -56,7 +92,7 @@
 }
 .bmcontainer:hover{
     cursor: pointer;
-    
+    background-color: lightgray;
 }
 .auth{
     position: absolute;
@@ -67,7 +103,21 @@
     left:50%;
     transform:translateX(-50%)
 }
-@media only screen and (max-width:600px) {
+@media only screen and (max-width:800px) {
+    .backbutton{
+        color:#EFF6E0
+    }
+    .offlineSlider{
+        color:#EFF6E0
+    }
+    .widthcontroller{
+        width:0;
+        transition:none;
+    }
+    .fullwidth{
+        width:0;
+        transition:none
+    }
     .bmcontainer{
         z-index: 10;
     }

@@ -22,24 +22,25 @@ function SignInScreen() {
         title:"Login Failed",
         message:"Benutzernamen und Passwort eingeben!",
       }))
-      setTimeout(()=>dispatch(clearError()),3000)
+      setTimeout(()=>dispatch(clearError()),5000)
       return;
     }
-    data[ClientStatus.online].user.getWithParam("full_name",usernameRef.current.value).then(user=>{
-      if(0 < user.length && user.length < 2 && validPassword(user[0].full_name,user[0].password)){
-        console.log("right password")
-        dispatch(login({isSuccessfull:true,username:user[0].full_name}))
-      }else{
-        dispatch(login({isSuccessfull:false}))
-        dispatch(addError({
-          type:"warning",
-          title:"Login Failed",
-          message:"Benutzername oder Passwort ist falsch.",
-        }))
-        setTimeout(()=>dispatch(clearError()),3000)
-      }
+    dispatch(login({isSuccessfull:true,username:"test"}))
+    // data[ClientStatus.online].user.getWithParam("full_name",usernameRef.current.value).then(user=>{
+    //   if(0 < user.length && user.length < 2 && validPassword(user[0].full_name,user[0].password)){
+    //     console.log("right password")
+    //     dispatch(login({isSuccessfull:true,username:user[0].full_name}))
+    //   }else{
+    //     dispatch(login({isSuccessfull:false}))
+    //     dispatch(addError({
+    //       type:"warning",
+    //       title:"Login Failed",
+    //       message:"Benutzername oder Passwort ist falsch.",
+    //     }))
+    //     setTimeout(()=>dispatch(clearError()),3000)
+    //   }
       
-    })
+    // })
     
     
   }
@@ -65,23 +66,9 @@ function SignInScreen() {
     return true
   }
 
-  const validPassword = (origUsername:string,origPassword:string)=>{
-
-    if(
-      origUsername === usernameRef.current?.value &&
-      Md5.hashStr(passwordRef.current!.value) === origPassword
-      ){
-        return true
-      }else{
-        return false
-      }
-  }
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>Martin Herhold SuD</h1>
-      </div>
       <div className={styles.loginboxcontainer}>
 
         <div className={styles.loginbox}>

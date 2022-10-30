@@ -1,34 +1,37 @@
-import { addDoc, collection, getDocs,query, where, WhereFilterOp } from "firebase/firestore"
+
 import db from "../../config/firebase.config"
-import { Wohnung, WohnungConverter } from "../../types/allgemein"
+import { Wohnung,  } from "../../types/allgemein"
 
+const dynamicurl="http://localhost:3000"
 
+async function getWohnung(params?:{[key:string]:any},cb?:(data:any)=>void){
+    const http = new XMLHttpRequest();
+    const url = dynamicurl + "/wohnungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
+    console.log(url)
+    http.open("GET",url);
+    http.send();
+    
+    http.onreadystatechange=(e:Event)=>{
+      if(http.readyState === 4 && http.status === 200){
+        console.log(http.responseText)
+        let obj = JSON.parse(http.responseText)
 
-async function getWohnung(){
-    const wohnungCol = collection(db,'wohnungen').withConverter(WohnungConverter)
-    const wohnungSnapshot = await getDocs(wohnungCol)
-    const wohnungListe = wohnungSnapshot.docs.map(doc=>doc.data())
-    return wohnungListe;
+        if(obj && obj.data){
+            if(cb)cb(obj.data)
+        }        
+      }
+    }
 }
 async function getWohnungWithParam(key:string,value:any){
     
-    const wohnungCol = collection(db,'wohnungen').withConverter(WohnungConverter)
-    const q = query(wohnungCol,where(key,"==",value))
-    const wohnungSnapshot = await getDocs(q)
-    const wohnungListe = wohnungSnapshot.docs.map(doc=>doc.data());
-    return wohnungListe
+    
 }
-async function getWohnungWithParams(params:[{key:string,operator:WhereFilterOp,value:any}]){
-    const wohnungCol = collection(db,'wohnungen').withConverter(WohnungConverter)
-    const q = query(wohnungCol,...(params.map(item=>where(item.key,item.operator,item.value))))
-    const wohnungSnapshot = await getDocs(q)
-    const wohnungListe = wohnungSnapshot.docs.map(doc=>doc.data());
-    return wohnungListe
+async function getWohnungWithParams(params:[{key:string,value:any}]){
+    
 }
 
 async function addWohnung(wohnung:Wohnung){
-    const snapshot = await addDoc(collection(db,'Wohnung'),wohnung)
-    snapshot.withConverter(WohnungConverter)
+    
 
 }
 
