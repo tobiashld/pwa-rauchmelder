@@ -7,10 +7,15 @@ import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
 import Loadingspinner from '../../loadingspinner/loadingspinner'
+import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
 
+type RauchmelderChangeKeys = 'objekt'|'produktionsdatum'|'raum'|'seriennr'|'mieter'
+
 function RauchmelderComponent() {
-  const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>()
+  const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
+  const [changedRauchmelder,setChangedRauchmelder] = useState<Rauchmelder[]>([])
+  const [isSavable,setIsSavable] = useState(false)
   const navigate = useNavigate()
   useEffect(()=>{
     data[ClientStatus.online].rauchmelder.get(undefined,(data:any[])=>{
@@ -18,17 +23,67 @@ function RauchmelderComponent() {
     })
     
   },[])
-  if(!alleRauchmelder){
-    return (
-      <div>
-        <Loadingspinner size='Big'/>
-      </div>
-    )
+
+  useEffect(()=>{
+    if(changedRauchmelder.length > 0){
+      setIsSavable(true)
+    }else{
+      setIsSavable(false)
+    }
+  },[changedRauchmelder])
+
+  const handleSave = ()=>{
+
   }
   return (
     <>
       <div className={styles.table}>
-        <DataTable rows={alleRauchmelder} columns={['id','objekt','produktionsdatum','raum','seriennr','mieter']} headline="Rauchmelder" handleEdit={(id)=>navigate("/edit/rauchmelder/"+id)}
+        <DataTable 
+          rows={alleRauchmelder} 
+          columns={['id','objekt','produktionsdatum','raum','seriennr','mieter']} 
+          headline="Rauchmelder" 
+          editedElementIds={changedRauchmelder.map(rauchmelder=>rauchmelder.id)}
+          handleEdit={(id,key,value)=>{
+            if(id === -1){
+              
+            }else{
+              let currRauchmelder = alleRauchmelder.slice().find((rauchmelder)=>rauchmelder.id === id)
+              let newRauchmelder = currRauchmelder?new Rauchmelder(currRauchmelder.id,currRauchmelder.objekt,currRauchmelder.produktionsdatum,currRauchmelder.raum,currRauchmelder.seriennr,currRauchmelder.letztePruefungsID,currRauchmelder.mieter):undefined
+              if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
+                let alreadyChanged = changedRauchmelder.slice().find((rauchmelder)=>rauchmelder.id===id)
+                if(alreadyChanged){
+                  let addChangedRauchmelder = changedRauchmelder.slice().map((kurzRauchmelder:Rauchmelder)=>{
+                    if(kurzRauchmelder.id === id){
+                      kurzRauchmelder[key as RauchmelderChangeKeys] = value
+                      return kurzRauchmelder
+                    }else{
+                      return kurzRauchmelder
+                    }
+                  })
+                  setChangedRauchmelder(addChangedRauchmelder)
+                }else{
+                  let addChangedObjek = changedRauchmelder.slice()
+                  addChangedObjek.push(newRauchmelder)
+                  setChangedRauchmelder(addChangedObjek)
+                }
+                
+              }else if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() === value.toString() || value.toString() === "")){
+                let removeNotChangedObjek = changedRauchmelder.slice().filter((rauchmelder)=>rauchmelder.id!==id)
+                setChangedRauchmelder(removeNotChangedObjek)
+              }else{
+                //error
+              }
+            }
+          }}
+          handleDelete={(id)=>{
+            data[ClientStatus.online].rauchmelder.delete(id)
+            setTimeout(()=>{
+              data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
+                setAlleRauchmelder(data.map((item)=>toRauchmelderConverter(item)))
+              })
+              setChangedRauchmelder([])
+            },300)
+          }}
           sort={[
             {
               name:"id",
@@ -74,7 +129,10 @@ function RauchmelderComponent() {
             },
           ]}
         />
-        <AddButton routeParam='rauchmelder'/>
+        <div className={styles.interactions}>
+          <AddButton routeParam='auftraggeber' />
+          <SaveButton onClick={handleSave} isShown={isSavable}/>
+        </div>
       </div>
     </>
   )

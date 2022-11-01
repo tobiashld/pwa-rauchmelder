@@ -13,12 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <React.StrictMode>
-      <Online>
         <App status="online"/>
-      </Online>
-      <Offline>
-        <App status="offline"/>
-      </Offline>
     </React.StrictMode>
   </Provider>
 );

@@ -4,16 +4,14 @@ import { Pruefung } from "../../types/allgemein"
 
 const dynamicurl="http://localhost:3000"
 
-async function getPruefungen(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     const http = new XMLHttpRequest();
     const url = dynamicurl + "/pruefungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    console.log(url)
     http.open("GET",url);
     http.send();
     
     http.onreadystatechange=(e:Event)=>{
       if(http.readyState === 4 && http.status === 200){
-        console.log(http.responseText)
         let obj = JSON.parse(http.responseText)
 
         if(obj && obj.data){
@@ -22,25 +20,66 @@ async function getPruefungen(params?:{[key:string]:any},cb?:(data:any)=>void){
       }
     }
 }
-async function getPruefungenWithParam(key:string,value:any){
-    
+async function add(pruefung:Pruefung,cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/auftraggeber"
+  http.open("POST",url);
+  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
+  http.send(JSON.stringify(pruefung.prepForSave()));
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4 && http.status === 200){
+      let obj = JSON.parse(http.responseText)
+
+      if(obj && obj.data){
+          if(cb)cb(obj.data)
+      }        
+    }
+  }
 }
-async function getPruefungenWithParams(params:[{key:string,operator:any,value:any}],filter?:any){
-   
+async function change(pruefung:Pruefung,cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/pruefungen/"+pruefung.id
+  http.open("PUT",url);
+  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
+  http.send(JSON.stringify(pruefung.prepForSave()));
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4 && http.status === 200){
+      let obj = JSON.parse(http.responseText)
+
+      if(obj && obj.data){
+          if(cb)cb(obj.data)
+      }        
+    }
+  }
+}
+async function deleteP(id:number,cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/pruefungen/"+id
+  http.open("DELETE",url);
+  http.send();
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4 && http.status === 200){
+      let obj = JSON.parse(http.responseText)
+
+      if(obj && obj.data){
+          if(cb)cb(obj.data)
+      }        
+    }
+  }
 }
 
-async function addPruefung(pruefungen:Pruefung){
-    
-}
 
 
 
 
 const functions = {
-    getPruefungen,
-    getPruefungenWithParam,
-    getPruefungenWithParams,
-    addPruefung
+    get,
+    add,
+    change,
+    deleteP
 }
 
 export default functions

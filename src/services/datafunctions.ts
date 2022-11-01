@@ -25,34 +25,40 @@ const data = {
     },
     [ClientStatus.online]:{
         pruefungen:{
-            get:pruefungen.getPruefungen,
-            getWithParam:pruefungen.getPruefungenWithParam,
-            getWithParams:pruefungen.getPruefungenWithParams,
+            get:pruefungen.get,
+            create:pruefungen.add,
+            change:pruefungen.change,
+            delete:pruefungen.deleteP
         },
         rauchmelder:{
-            get:rauchmelder.getRauchmelder,
-            getWithParam:rauchmelder.getRauchmelderWithParam,
-            getWithParams:rauchmelder.getRauchmelderWithParams,
+            get:rauchmelder.get,
+            create:rauchmelder.add,
+            change:rauchmelder.change,
+            delete:rauchmelder.deleteR
         },
         user:{
-            get:user.getUsers,
-            getWithParam:user.getUsersWithParam,
-            getWithParams:user.getUsersWithParams,
+            get:user.get,
+            create:user.add,
+            change:user.change,
+            delete:user.deleteU
         },
         auftraggeber:{
-            get:auftraggeber.getAuftraggeber,
-            getWithParam:auftraggeber.getAuftraggeberWithParam,
-            getWithParams:auftraggeber.getAuftraggeberWithParams
+            get:auftraggeber.get,
+            create:auftraggeber.add,
+            change:auftraggeber.change,
+            delete:auftraggeber.deleteA
         },
         wohnungen:{
-            get:wohnungen.getWohnung,
-            getWithParam:wohnungen.getWohnungWithParam,
-            getWithParams:wohnungen.getWohnungWithParams
+            get:wohnungen.get,
+            create:wohnungen.add,
+            change:wohnungen.change,
+            delete:wohnungen.deleteW
         },
         objekte:{
-            get:objekte.getObjekte,
-            getWithParam:objekte.getObjekteWithParam,
-            getWithParams:objekte.getObjekteWithParams
+            get:objekte.get,
+            create:objekte.add,
+            change:objekte.change,
+            delete:objekte.deleteO
         },
         prepareOffline:async (objekt:Objekt)=>{
             // db.table("wohnungen").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))

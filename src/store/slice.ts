@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
 
@@ -6,7 +7,7 @@ interface InitialState{
     errorListe:Error[],
     authentication:{
         isSignedIn:boolean,
-        username:string | undefined,
+        user:User | undefined,
     },
     isOffline:ClientStatus,
     colorScheme:'light'|'dark',
@@ -16,7 +17,7 @@ const initialState : InitialState = {
   errorListe: [],
   authentication:{
     isSignedIn:false,
-    username:undefined,
+    user:undefined,
   },
   isOffline:ClientStatus.online,
   colorScheme:'light',
@@ -27,11 +28,12 @@ export const slice = createSlice({
   reducers: {
     login(state,action:PayloadAction<{isSuccessfull:boolean,username?:string | undefined}>){
         if(action.payload.isSuccessfull && action.payload.username){
+            //backendaction
             return ({
                 ...state,
                 authentication:{
                     isSignedIn:true,
-                    username:action.payload.username,
+                    user:new User(1,"admin"),
                 }
             })
         }else{
@@ -39,7 +41,7 @@ export const slice = createSlice({
                 ...state,
                 authentication:{
                     isSignedIn:false,
-                    username:undefined,
+                    user:new User(1,"admin"),
                 }
             })
         }
@@ -59,7 +61,7 @@ export const slice = createSlice({
             ...state,
             authentication:{
                 isSignedIn:false,
-                username:undefined,
+                user:undefined,
             }
         })
     },
@@ -73,14 +75,14 @@ export const slice = createSlice({
         })
     },
     addError(state, action:PayloadAction<{
+        id:number,
         type:ErrorType,
         title:string,
         message:string,
     }>) {
         let helpArray : any = [...state.errorListe]
-        let id = state.errorListe.length+1
         helpArray.push({
-            id:id,
+            id:action.payload.id,
             type:action.payload.type,
             title:action.payload.title,
             message:action.payload.message,
@@ -90,10 +92,9 @@ export const slice = createSlice({
         return ({
             ...state,
             errorListe:helpArray,
-            
         })
     },
-    clearError(state,action:PayloadAction) {
+    clearError(state,action:PayloadAction<{id:number}>) {
         let helpArray = [...state.errorListe]
         if(helpArray.length <=1){
             return ({
@@ -101,9 +102,10 @@ export const slice = createSlice({
                 errorListe:[]
             })
         }else{
+            helpArray = helpArray.filter(item=>item.id!==action.payload.id)
             return ({
                 ...state,
-                errorListe:helpArray.slice(1,undefined)
+                errorListe:helpArray
             })
         }
         

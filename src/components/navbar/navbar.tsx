@@ -34,7 +34,7 @@ const navbarElemente = [
     },
   ]
 function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
-    const username = useSelector((state:RootState)=>state.authentication.username)
+    const username = useSelector((state:RootState)=>state.authentication.user?state.authentication.user.username:undefined)
     const dispatch = useAppDispatch()
 
   return (

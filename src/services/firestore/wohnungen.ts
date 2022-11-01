@@ -1,19 +1,15 @@
-
-import db from "../../config/firebase.config"
 import { Wohnung,  } from "../../types/allgemein"
 
 const dynamicurl="http://localhost:3000"
 
-async function getWohnung(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     const http = new XMLHttpRequest();
     const url = dynamicurl + "/wohnungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    console.log(url)
     http.open("GET",url);
     http.send();
     
     http.onreadystatechange=(e:Event)=>{
       if(http.readyState === 4 && http.status === 200){
-        console.log(http.responseText)
         let obj = JSON.parse(http.responseText)
 
         if(obj && obj.data){
@@ -22,27 +18,64 @@ async function getWohnung(params?:{[key:string]:any},cb?:(data:any)=>void){
       }
     }
 }
-async function getWohnungWithParam(key:string,value:any){
-    
-    
+
+async function add(wohnung:Wohnung,cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/wohnungen"
+  http.open("POST",url);
+  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
+  http.send(JSON.stringify(wohnung.prepForSave()));
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4 && http.status === 200){
+      let obj = JSON.parse(http.responseText)
+
+      if(obj && obj.data){
+          if(cb)cb(obj.data)
+      }        
+    }
+  }
 }
-async function getWohnungWithParams(params:[{key:string,value:any}]){
-    
+async function change(wohnung:Wohnung,cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/wohnungen/"+wohnung.id
+  http.open("PUT",url);
+  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
+  http.send(JSON.stringify(wohnung.prepForSave()));
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4 && http.status === 200){
+      let obj = JSON.parse(http.responseText)
+
+      if(obj && obj.data){
+          if(cb)cb(obj.data)
+      }        
+    }
+  }
 }
+async function deleteW(id:number,cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/wohnungen/"+id
+  http.open("DELETE",url);
+  http.send();
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4 && http.status === 200){
+      let obj = JSON.parse(http.responseText)
 
-async function addWohnung(wohnung:Wohnung){
-    
-
+      if(obj && obj.data){
+          if(cb)cb(obj.data)
+      }        
+    }
+  }
 }
-
-
 
 
 const functions = {
-    getWohnung,
-    getWohnungWithParam,
-    getWohnungWithParams,
-    addWohnung
+    get,
+    add,
+    change,
+    deleteW
 }
 
 export default functions

@@ -31,7 +31,13 @@ export const toAuftraggeberConverter = (
         return new Auftraggeber(data.id,new Adresse(data.hausnummer,data.ort,data.plz,data.straße),data.email,data.name,data.telefon);
       }
 
+
+export type ChangeKey = 'id'
+
 export class User{
+    prepForSave(): any {
+        throw new Error("Method not implemented.");
+    }
     constructor(
       readonly id:number,
       readonly username:string,
@@ -85,6 +91,9 @@ export const toObjektConverter = (
       }
 
 export class Rauchmelder{
+    prepForSave(): any {
+      throw new Error("Method not implemented.");
+    }
     constructor(
       readonly id:number,
       public objekt:string,
@@ -139,13 +148,16 @@ export const toRauchmelderConverter = (
       }
 
 export class Wohnung{
+    prepForSave(): any {
+      throw new Error("Method not implemented.");
+    }
     constructor(
     readonly id:number,
-    readonly objektid:number,
-    readonly etage:string,
-    readonly haus:string,
-    readonly lage:string,
-    readonly mieter:string,
+    public objektid:number,
+    public etage:string,
+    public haus:string,
+    public lage:string,
+    public mieter:string,
     ){}
 }
 export const toWohnungConverter = (

@@ -1,6 +1,12 @@
 import React from 'react'
 
-function AddTable() {
+function AddTable(props:{
+  columns:{
+    type:'text'|'number'|'textarea'|'password'|'date',
+    name:string,
+    
+  }
+}) {
   return (
     <div>AddTable</div>
   )

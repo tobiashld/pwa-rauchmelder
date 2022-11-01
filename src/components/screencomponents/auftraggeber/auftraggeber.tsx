@@ -8,28 +8,107 @@ import DataTable from '../../datatable/datatable'
 import Loadingspinner from '../../loadingspinner/loadingspinner'
 import styles from './auftraggeber.module.css'
 import {BsArrowDown, BsArrowUp} from 'react-icons/bs'
+import SaveButton from '../../savebutton/savebutton'
+import { useAppDispatch } from '../../../store/store'
+import { addError } from '../../../store/slice'
+import { useAddError } from '../../../services/helperfunctions'
+
+type AuftraggeberChangeKeys = 'adresse' | 'email' | 'name' | 'telefon';
 
 function AuftraggeberComponent() {
-  const [alleAuftraggeber,setAlleAuftraggeber] = useState<Auftraggeber[]>()
-  const navigate = useNavigate()
+  const [alleAuftraggeber,setAlleAuftraggeber] = useState<Auftraggeber[]>([])
+  const [changedAuftraggeber,setChangedAuftraggeber] = useState<Auftraggeber[]>([])
+  const [isSavable,setIsSavable] = useState(false);
+  const [reload,setReload] = useState(false)
+  const dispatch = useAppDispatch()
+
   useEffect(()=>{
     data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
       const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
-      console.log(convertedAuftraggeber)
       setAlleAuftraggeber(convertedAuftraggeber)
     })
+    setChangedAuftraggeber([])
+
   },[])
-  if(!alleAuftraggeber){
-    return (
-      <div>
-        <Loadingspinner size='Big'/>
-      </div>
-    )
+  useEffect(()=>{
+    if(changedAuftraggeber.length > 0){
+      setIsSavable(true)
+    }else{
+      setIsSavable(false)
+    }
+  },[changedAuftraggeber])
+  useEffect(()=>{
+    console.log(alleAuftraggeber)
+  },[alleAuftraggeber])
+
+
+  const handleSave = ()=>{
+    changedAuftraggeber.forEach(auftraggeber=>{
+      data[ClientStatus.online].auftraggeber.change(auftraggeber,(data)=>{
+        //error if error is there
+      })
+    })
+    
+    setTimeout(()=>data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
+      const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
+      setAlleAuftraggeber(convertedAuftraggeber)
+    }),400)
+    setChangedAuftraggeber([])
+    setIsSavable(false)
+    setReload(!reload)
   }
   return (
     <>
       <div className={styles.table}>
-        <DataTable rows={alleAuftraggeber} columns={['id','adresse','email','name','telefon']} headline="Auftraggeber" handleEdit={(id)=>navigate("/edit/auftraggeber/"+id)} 
+        <DataTable 
+          rows={alleAuftraggeber} 
+          columns={['id','adresse','email','name','telefon']} 
+          headline="Auftraggeber" 
+          handleEdit={(id,key ,value)=>{
+            
+            if(id === -1){
+              
+            }else{
+              let currAuftraggeber = alleAuftraggeber.slice().find((auftraggeber)=>auftraggeber.id === id)
+              let newAuftraggeber = currAuftraggeber?new Auftraggeber(currAuftraggeber.id,currAuftraggeber.adresse,currAuftraggeber.email,currAuftraggeber.name,currAuftraggeber.telefon):undefined
+              if(newAuftraggeber && (newAuftraggeber[key as AuftraggeberChangeKeys].toString() !== value.toString() && value.toString() !== "")){
+
+                let alreadyChanged = changedAuftraggeber.slice().find((auftraggeber)=>auftraggeber.id===id)
+                
+                if(alreadyChanged){
+                  let addChangedAuftraggeber = changedAuftraggeber.map((kurzAuftraggeber)=>{
+                    if(kurzAuftraggeber.id === id){
+                      kurzAuftraggeber[key as AuftraggeberChangeKeys] = value
+                      return kurzAuftraggeber
+                    }else{
+                      return kurzAuftraggeber
+                    }
+                  })
+                  setChangedAuftraggeber(addChangedAuftraggeber)
+                }else{
+                  newAuftraggeber[key as AuftraggeberChangeKeys] = value
+                  let addChangedAuftraggeber = changedAuftraggeber.slice()
+                  addChangedAuftraggeber.push(newAuftraggeber)
+                  setChangedAuftraggeber(addChangedAuftraggeber)
+                }
+                
+              }else if(newAuftraggeber && (newAuftraggeber[key as AuftraggeberChangeKeys].toString() === value.toString() || value.toString() === "")){
+                let removeNotChangedAuftraggeber = changedAuftraggeber.slice().filter((auftraggeber)=>auftraggeber.id!==id)
+                setChangedAuftraggeber(removeNotChangedAuftraggeber)
+              }else{
+                //error
+              }
+            }
+          }}
+          handleDelete={(id)=>{
+            data[ClientStatus.online].auftraggeber.delete(id).then((dataParam)=>{
+              setTimeout(()=>data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
+                const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
+                setAlleAuftraggeber(convertedAuftraggeber)
+              }),400)
+              setReload(!reload)
+            })
+          }} 
           sort={[
             {
               name:"id",
@@ -51,9 +130,15 @@ function AuftraggeberComponent() {
               function:(a:Auftraggeber,b:Auftraggeber)=>(b.name.localeCompare(a.name)),
               icon:<BsArrowUp />
             }
-          ]}/>
+          ]}
+          editedElementIds={changedAuftraggeber.map(auftraggeber=>auftraggeber.id)}
+
+          />
       </div>
-      <AddButton routeParam='auftraggeber' />
+      <div className={styles.interactions}>
+        <AddButton routeParam='auftraggeber' />
+        <SaveButton onClick={handleSave} isShown={isSavable}/>
+      </div>
     </>
     
   )

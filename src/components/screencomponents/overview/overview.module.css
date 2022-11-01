@@ -1,0 +1,22 @@
+.overview{
+    width: 100%;
+    height:calc(100% - 50px);
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-template-rows: repeat(2,1fr);
+
+}
+.overviewelement{
+    margin:20px;
+    border-radius: 15px;    
+    background-color: white;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    transition:margin 300ms cubic-bezier(0.165, 0.84, 0.44, 1),box-shadow 300ms cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.overviewelement:hover{
+    margin:10px;
+    box-shadow:0px 0px 30px 2px rgba(0,0,0,0.4);
+}

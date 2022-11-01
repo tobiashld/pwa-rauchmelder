@@ -17,12 +17,12 @@ function SignInScreen() {
   const handleLoginbutton = (event:any)=>{
 
     if(!usernameRef.current || !passwordRef.current || !validateInput()){
-      dispatch(addError({
-        type:"warning",
-        title:"Login Failed",
-        message:"Benutzernamen und Passwort eingeben!",
-      }))
-      setTimeout(()=>dispatch(clearError()),5000)
+      // dispatch(addError({
+      //   type:"warning",
+      //   title:"Login Failed",
+      //   message:"Benutzernamen und Passwort eingeben!",
+      // }))
+      // setTimeout(()=>dispatch(clearError()),5000)
       return;
     }
     dispatch(login({isSuccessfull:true,username:"test"}))
@@ -49,11 +49,11 @@ function SignInScreen() {
       if(validateInput()){
         handleLoginbutton(null)
       }else{
-        dispatch(addError({
-          type:"error",
-          message:"Entweder das Passwort oder der Benutzername sind Falsch",
-          title:"Login Failed!"
-        }))
+        // dispatch(addError({
+        //   type:"error",
+        //   message:"Entweder das Passwort oder der Benutzername sind Falsch",
+        //   title:"Login Failed!"
+        // }))
 
       }
       

@@ -7,28 +7,85 @@ import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
 import Loadingspinner from '../../loadingspinner/loadingspinner'
+import SaveButton from '../../savebutton/savebutton'
 import styles from './objekte.module.css'
 
+type ObjektChangeKeys = 'name'|'beschreibung'|'adresse'
+
 function ObjekteComponent() {
-  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>()
+  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
+  const [changedObjekte,setChangedObjekte] = useState<Objekt[]>([])
+  const [isSavable,setIsSavable] = useState(false)
   const navigate = useNavigate()
+
   useEffect(()=>{
     data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
       setAlleObjekte(data.map((item)=>toObjektConverter(item)))
     })
+    setChangedObjekte([])
   },[])
-  if(!alleObjekte){
-    return (
-      <div>
-        <Loadingspinner size='Big'/>
-      </div>
-    )
+
+  useEffect(()=>{
+    if(changedObjekte.length > 0){
+      setIsSavable(true)
+    }else{
+      setIsSavable(false)
+    }
+  },[changedObjekte])
+
+  const handleSave = ()=>{
+
   }
-  console.log(alleObjekte[0].adresse.toString())
+
   return (
     <>
       <div className={styles.table}>
-        <DataTable rows={alleObjekte} columns={['id','name','beschreibung']} headline="Objekte" handleEdit={(id)=>navigate("/edit/objekte/"+id)}
+        <DataTable 
+          rows={alleObjekte} 
+          columns={['id','name','beschreibung']} 
+          headline="Objekte" 
+          editedElementIds={changedObjekte.map((objekt)=>objekt.id)}
+          handleEdit={(id,key,value)=>{
+            if(id === -1){
+              
+            }else{
+              let currObjekt = alleObjekte.slice().find((objekt)=>objekt.id === id)
+              let newObjekt = currObjekt?new Objekt(currObjekt.id,currObjekt.adresse,currObjekt.beschreibung,currObjekt.name,currObjekt.auftraggeberID):undefined
+              if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
+                let alreadyChanged = changedObjekte.slice().find((objekt)=>objekt.id===id)
+                if(alreadyChanged){
+                  let addChangedObjekt = changedObjekte.slice().map((kurzObjekt:Objekt)=>{
+                    if(kurzObjekt.id === id){
+                      kurzObjekt[key as ObjektChangeKeys] = value
+                      return kurzObjekt
+                    }else{
+                      return kurzObjekt
+                    }
+                  })
+                  setChangedObjekte(addChangedObjekt)
+                }else{
+                  let addChangedObjek = changedObjekte.slice()
+                  addChangedObjek.push(newObjekt)
+                  setChangedObjekte(addChangedObjek)
+                }
+                
+              }else if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() === value.toString() || value.toString() === "")){
+                let removeNotChangedObjek = changedObjekte.slice().filter((objekt)=>objekt.id!==id)
+                setChangedObjekte(removeNotChangedObjek)
+              }else{
+                //error
+              }
+            }
+          }}
+          handleDelete={(id)=>{
+            data[ClientStatus.online].objekte.delete(id)
+            setTimeout(()=>{
+              data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
+                setAlleObjekte(data.map((item)=>toObjektConverter(item)))
+              })
+              setChangedObjekte([])
+            },300)
+          }}
           sort={[
             {
               name:"id",
@@ -53,7 +110,10 @@ function ObjekteComponent() {
           ]}
         />
       </div>
-      <AddButton routeParam='objekt'/>
+      <div className={styles.interactions}>
+        <AddButton routeParam='auftraggeber' />
+        <SaveButton onClick={handleSave} isShown={isSavable}/>
+      </div>
     </>
   )
 }
