@@ -36,12 +36,32 @@
 .selectElement:hover{
   cursor: pointer;
 }
+.adressDivDiv{
+  display: flex;
+  flex-direction: row;
+  gap:5px
+}
+.adressDiv{
+  display: flex;
+  flex-direction: column;
+  gap:5px
+}
+.adressDiv-straße{
+  flex:9
+}
+.adressDiv-hausnummer{
+  flex:3
+}
+.adressDiv-plz{
+  flex:5
+}
+.adressDiv-ort{
+  flex:7
+}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+
+@media only screen and (min-width:1450px) {
+  .adressDiv{
+    flex-direction: row;
   }
 }

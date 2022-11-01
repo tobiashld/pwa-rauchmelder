@@ -1,4 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Md5 } from 'ts-md5'
+import data from '../services/datafunctions'
+import { dynamicurl } from '../services/globals'
 import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
@@ -26,29 +29,29 @@ export const slice = createSlice({
   name: 'error',
   initialState: initialState,
   reducers: {
-    login(state,action:PayloadAction<{isSuccessfull:boolean,username?:string | undefined}>){
-        if(action.payload.isSuccessfull && action.payload.username){
-            //backendaction
-            return ({
-                ...state,
-                authentication:{
-                    isSignedIn:true,
-                    user:new User(1,"admin"),
-                }
-            })
-        }else{
-            return  ({
-                ...state,
-                authentication:{
-                    isSignedIn:false,
-                    user:new User(1,"admin"),
-                }
-            })
-        }
+    login(state,action:PayloadAction<{password:string,username:string}>){
+        // const http = new XMLHttpRequest();
+        // const url = dynamicurl + "/user"
+        // http.open("POST",url);
+        // http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
+        // http.send(JSON.stringify({username:action.payload.username,password:action.payload.username}));
         
-                
-        
-        
+        // http.onreadystatechange=(e:Event)=>{
+        //     if(http.readyState === 4 && http.status === 200){
+        //     let obj = JSON.parse(http.responseText)
+
+        //     if(obj && obj.data){
+        //         if(cb)cb(obj.data)
+        //     }        
+        //     }
+        // }
+        return ({
+            ...state,
+            authentication:{
+                isSignedIn:true,
+                user:new User(1,"admin"),
+            }
+        })
     },
     setOfflineMode(state,action:PayloadAction<{isOffline:ClientStatus}>){
         return ({

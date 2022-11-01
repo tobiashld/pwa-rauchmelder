@@ -28,9 +28,9 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
         }
         
         if(currIndex < (currMaxIndex)){
-          setCurrData(props.rows.slice((currIndex)*100+1,(currIndex+1)*100))
+          setCurrData(newData.slice((currIndex)*100,(currIndex+1)*100))
         }else if(currIndex === (currMaxIndex)){
-          setCurrData(props.rows.slice((currIndex)*100+1,(currIndex)*100+currOverflow))
+          setCurrData(newData.slice((currIndex)*100,(currIndex)*100+currOverflow))
         }
       
     }
@@ -46,10 +46,10 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
   }
   const setDataToNextPage = (page:number)=>{
     if(page < (currMaxIndex)){
-      setCurrData(props.rows!.slice((page)*100+1,(page+1)*100))
+      setCurrData(props.rows!.slice((page)*100+((page >0)?1:0),(page+1)*100))
       setCurrIndex(page)
     }else if(page === (currMaxIndex)){
-      setCurrData(props.rows!.slice((page)*100+1,(page)*100+currOverflow))
+      setCurrData(props.rows!.slice((page)*100+((page >0)?1:0),(page)*100+currOverflow))
       setCurrIndex(page)
     }
   }
@@ -63,9 +63,9 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
     setActiveSortIndex(index)
     if(currSortedData.length > 100){
       if(currIndex < (currMaxIndex)){
-        setCurrData(currSortedData.slice((currIndex)*100+1,(currIndex+1)*100))
+        setCurrData(currSortedData.slice((currIndex)*100,(currIndex+1)*100))
       }else if(currIndex === (currMaxIndex)){
-        setCurrData(currSortedData.slice((currIndex)*100+1,(currIndex)*100+currOverflow))
+        setCurrData(currSortedData.slice((currIndex)*100,(currIndex)*100+currOverflow))
       }
     }else{
       setCurrData(currSortedData)
@@ -230,21 +230,24 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
         <div className={styles.actualTable}>
           <div className={styles.columns}>{props.columns.map((column,index)=>{
             return (
-            <div key={index} className={styles.columnsegment+ (column === "id"?" "+styles.id:"")}>{column}</div>)
+            <div key={index} className={styles.columnsegment+ (column === "id"?" "+styles.id:column ==="adresse"?" "+styles.adresse:"")}>{column}</div>)
             })}
             <div className={styles.columnsegment+ " "+styles.id}></div>
           </div>
           <div className={styles.dataRow}>
             {
               currData.map((item,index)=>{
-
                 return (
                   <div key={index} className={(props.editedElementIds && props.editedElementIds.find((id)=>id===item.id!))?styles.datarowelement+' datarow'+index+" "+styles.edited :styles.datarowelement+' datarow'+index} onClick={(e)=>{}}>
                     {
                       props.columns.map((key,smallIndex)=>{
                         if(Object.keys(item).find(itemkey=>itemkey===key)){
-                          return (<div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:"")}>{getFittingInputsForKey(key as KeyType,item[key].toString(),(event)=>{
-                            props.handleEdit(item.id?item.id:-1,key,event.currentTarget.value)
+                          return (<div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:key ==="adresse"?" "+styles.adresse:"")}>{getFittingInputsForKey(key as KeyType,item[key],(event,zusatz)=>{
+                            if(zusatz){
+                              props.handleEdit(item.id?item.id:-1,key+"."+zusatz,event.currentTarget.value)
+                            }else{
+                              props.handleEdit(item.id?item.id:-1,key,event.currentTarget.value)
+                            }
                           })}</div>)
                         }else{
                           return <div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:"")}></div>

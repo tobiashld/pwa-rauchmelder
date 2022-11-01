@@ -36,11 +36,11 @@ const TextInput = React.forwardRef<HTMLInputElement,params>((props:params,ref)=>
 
   let classNames = props.size && props.size === 'Small'?styles.Small:styles.Big;
   classNames += props.icon?' '+styles.input+' '+styles["input-icon"]:' '+styles.input+' '+styles["input-wo-icon"];
-  classNames = props.className?classNames+ " " + props.className:classNames;
+  
   return (
     <>
       {(props.onFocusPointOut)?<><div className={props.focus?styles.coverup:styles["coverup-gone"]} onClick={(event)=>{if(props.onBlur&&props.setFocus){props.onBlur();props.setFocus(false)}}}></div></>:<></>}
-      <div className={styles.container}>
+      <div className={props.className?styles.container+ " " + props.className:styles.container}>
           {props.icon?<div className={styles.icon}>{props.icon}</div>:<></>}
           <input 
               disabled={props.disabled?props.disabled:false}

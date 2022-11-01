@@ -25,7 +25,7 @@ function SignInScreen() {
       // setTimeout(()=>dispatch(clearError()),5000)
       return;
     }
-    dispatch(login({isSuccessfull:true,username:"test"}))
+    dispatch(login({password:passwordRef.current.value,username:usernameRef.current.value}))
     // data[ClientStatus.online].user.getWithParam("full_name",usernameRef.current.value).then(user=>{
     //   if(0 < user.length && user.length < 2 && validPassword(user[0].full_name,user[0].password)){
     //     console.log("right password")

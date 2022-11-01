@@ -92,6 +92,9 @@
     
     flex:1;
 }
+.adresse{
+    flex:3
+}
 .sortSection{
     width: fit-content;
     margin:10px;
@@ -144,11 +147,15 @@
 .datarowelement:hover select{
     background-color: rgb(232, 232, 232);
 }
+
 .datarowelement>*{
     
 }
+.datarowelement:nth-child(even){
+    background-color: rgba(209, 209, 209, 0.894);
+}
 .edited{
-    background-color: rgb(212, 212, 129);
+    background-color: rgb(236, 220, 43) !important;
 }
 @media only screen and (max-width:600px){
     .gesamtContainer{

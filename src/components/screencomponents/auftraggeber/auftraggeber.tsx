@@ -25,6 +25,8 @@ function AuftraggeberComponent() {
   useEffect(()=>{
     data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
       const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
+      console.log("converted first useeffect")
+      console.log(convertedAuftraggeber)
       setAlleAuftraggeber(convertedAuftraggeber)
     })
     setChangedAuftraggeber([])
@@ -38,6 +40,7 @@ function AuftraggeberComponent() {
     }
   },[changedAuftraggeber])
   useEffect(()=>{
+    console.log("auftraggeber changed")
     console.log(alleAuftraggeber)
   },[alleAuftraggeber])
 
@@ -51,6 +54,7 @@ function AuftraggeberComponent() {
     
     setTimeout(()=>data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
       const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
+      console.log(convertedAuftraggeber)
       setAlleAuftraggeber(convertedAuftraggeber)
     }),400)
     setChangedAuftraggeber([])

@@ -42,7 +42,10 @@ function RauchmelderComponent() {
           rows={alleRauchmelder} 
           columns={['id','objekt','produktionsdatum','raum','seriennr','mieter']} 
           headline="Rauchmelder" 
-          editedElementIds={changedRauchmelder.map(rauchmelder=>rauchmelder.id)}
+          editedElementIds={changedRauchmelder.map(rauchmelder=>{
+            console.log(rauchmelder.id)
+            return rauchmelder.id
+          })}
           handleEdit={(id,key,value)=>{
             if(id === -1){
               

@@ -1,8 +1,8 @@
 
 import { Auftraggeber } from "../../types/allgemein"
+import { dynamicurl } from "../globals";
 
 
-const dynamicurl="http://localhost:3000"
 
 async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     const http = new XMLHttpRequest();

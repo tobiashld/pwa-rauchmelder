@@ -5,12 +5,12 @@ import {ErrorType} from '../types/errortype'
 import { RootState, useAppDispatch } from '../store/store';
 import { useSelector } from 'react-redux';
 import CustomSelect from '../components/customselect/customselect';
-export type KeyType = 'id'|'objekt'|'produktionsdatum'|'timestamp'|'raum'|'seriennr'|'mieter'|'user'|'etage'
+export type KeyType = 'id'|'objekt'|'produktionsdatum'|'timestamp'|'raum'|'seriennr'|'mieter'|'user'|'etage'|'adresse'
 
-export const getFittingInputsForKey = (key:KeyType,placeholder:string,onChange:(event:React.ChangeEvent<any>)=>void)=>{
+export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(event:React.ChangeEvent<any>,zusatz?:string)=>void)=>{
     switch(key){
-        case "id":return (<>{placeholder}</>)
-        case "user":return (<>{placeholder}</>)
+        case "id":return (<>{placeholder.toString()}</>)
+        case "user":return (<>{placeholder.toString()}</>)
         case "etage":return (<div>
             <select
                 onChange={onChange}
@@ -28,7 +28,18 @@ export const getFittingInputsForKey = (key:KeyType,placeholder:string,onChange:(
                 <option>DG</option>
             </select>
         </div>)
-        default:return (<TextInput placeholder={placeholder} onChange={onChange} value="" size='Small'/>)
+        case "adresse":return(
+            <div className='adressDiv'>
+                <div className='adressDivDiv'>
+                    <TextInput onChange={(event)=>onChange(event,"straße")} size={"Small"}  placeholder={placeholder.straße} className={"adressDiv-straße"}/>
+                    <TextInput onChange={(event)=>onChange(event,"hausnummer")} size={"Small"}  placeholder={placeholder.hausnummer} className={"adressDiv-hausnummer"}/>
+                </div>
+                <div className='adressDivDiv'>
+                    <TextInput onChange={(event)=>onChange(event,"plz")} size={"Small"} placeholder={placeholder.plz} className={"adressDiv-plz"}/>
+                    <TextInput onChange={(event)=>onChange(event,"ort")} size={"Small"}  placeholder={placeholder.ort} className={"adressDiv-ort"}/>
+                </div>
+            </div>)
+        default:return (<TextInput placeholder={placeholder.toString()} onChange={onChange} size='Small'/>)
     }
 }
 

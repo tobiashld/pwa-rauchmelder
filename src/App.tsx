@@ -10,7 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import OfflineScreen from './screens/offline/offlinescreen';
 function App(props:{status:'online'|'offline'}) {
   
-  const isSignedin = useSelector((state:RootState)=>state.authentication.isSignedIn)
+  const isSignedin = useSelector((state:RootState)=>state.authentication.user)
   const errorListe = useSelector((state:RootState)=>state.errorListe)
   //data[ClientStatus.online].auftraggeber.getWithParams([{key:"id",operator:"<=",value:4}])
   useEffect(()=>{

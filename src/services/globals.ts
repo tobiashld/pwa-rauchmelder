@@ -1,0 +1,1 @@
+export const dynamicurl="http://localhost:3000"
