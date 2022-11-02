@@ -37,7 +37,7 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[props, props.rows])
 
-  if(!props || !props.rows || !props.columns){
+  if(!props || !props.rows || !props.columns || props.rows.length <= 0){
     return (
       <div className={styles.gesamtContainer + " " + styles.loadingspinner}>
           <Loadingspinner size="Big" />
