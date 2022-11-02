@@ -15,16 +15,16 @@ export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(eve
                 onChange={onChange}
                 className={"selectElement"}
             >
-                <option>Souterrain</option>
-                <option>EG</option>
-                <option>1.OG</option>
-                <option>2.OG</option>
-                <option>3.OG</option>
-                <option>4.OG</option>
-                <option>5.OG</option>
-                <option>6.OG</option>
-                <option>7.OG</option>
-                <option>DG</option>
+                <option selected={placeholder.toString()==="Souterrain"?true:false}>Souterrain</option>
+                <option selected={placeholder.toString()==="EG"?true:false}>EG</option>
+                <option selected={placeholder.toString()==="1. OG"?true:false}>1.OG</option>
+                <option selected={placeholder.toString()==="2. OG"?true:false}>2.OG</option>
+                <option selected={placeholder.toString()==="3. OG"?true:false}>3.OG</option>
+                <option selected={placeholder.toString()==="4. OG"?true:false}>4.OG</option>
+                <option selected={placeholder.toString()==="5. OG"?true:false}>5.OG</option>
+                <option selected={placeholder.toString()==="6. OG"?true:false}>6.OG</option>
+                <option selected={placeholder.toString()==="7. OG"?true:false}>7.OG</option>
+                <option selected={placeholder.toString()==="DG"?true:false}>DG</option>
             </select>
         </div>)
         case "adresse":return(
