@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/pwa-rauchmelder/static/css/main.4b8d3c03.css",
-    "main.js": "/pwa-rauchmelder/static/js/main.5ef1d587.js",
+    "main.js": "/pwa-rauchmelder/static/js/main.8c675968.js",
     "static/media/Quicksand-VariableFont_wght.ttf": "/pwa-rauchmelder/static/media/Quicksand-VariableFont_wght.cf52df73d8529b4815ed.ttf",
     "service-worker.js": "/pwa-rauchmelder/service-worker.js",
     "index.html": "/pwa-rauchmelder/index.html",
     "main.4b8d3c03.css.map": "/pwa-rauchmelder/static/css/main.4b8d3c03.css.map",
-    "main.5ef1d587.js.map": "/pwa-rauchmelder/static/js/main.5ef1d587.js.map"
+    "main.8c675968.js.map": "/pwa-rauchmelder/static/js/main.8c675968.js.map"
   },
   "entrypoints": [
     "static/css/main.4b8d3c03.css",
-    "static/js/main.5ef1d587.js"
+    "static/js/main.8c675968.js"
   ]
 }
