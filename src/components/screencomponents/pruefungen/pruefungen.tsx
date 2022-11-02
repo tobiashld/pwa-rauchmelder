@@ -6,7 +6,6 @@ import { Pruefung, toPruefungConverter } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
-import SaveButton from '../../savebutton/savebutton'
 import styles from './pruefungen.module.css'
 
 function PruefungenComponent() {

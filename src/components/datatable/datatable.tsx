@@ -54,10 +54,10 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
     }
   }
 
-  const filterWithPredicate = (filterfunction:(item:any,index?:number)=>boolean)=>{
-    let currFilteredData = currData.filter(filterfunction)
-    setCurrData(currFilteredData)
-  }
+  // const filterWithPredicate = (filterfunction:(item:any,index?:number)=>boolean)=>{
+  //   let currFilteredData = currData.filter(filterfunction)
+  //   setCurrData(currFilteredData)
+  // }
   const sortWithPredicate = (sortfunction:(a:any,b:any)=>number,index:number)=>{
     let currSortedData = props.rows!.slice().sort(sortfunction)
     setActiveSortIndex(index)

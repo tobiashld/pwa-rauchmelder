@@ -1,5 +1,4 @@
 import { Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
-import { objectTraps } from 'immer/dist/internal';
 import React, { useEffect, useState } from 'react'
 import { BsGeo } from 'react-icons/bs';
 import data from '../../services/datafunctions';

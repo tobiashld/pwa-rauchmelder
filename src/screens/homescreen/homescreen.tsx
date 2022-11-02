@@ -20,7 +20,6 @@ import { RootState, useAppDispatch } from '../../store/store'
 import { setOfflineMode } from '../../store/slice'
 import OfflinePruefen from '../../components/screencomponents/offlinepruefen/offlinepruefen'
 import { useSelector } from 'react-redux'
-import OfflineScreen from '../offline/offlinescreen'
 import Add from '../../components/screencomponents/add/add'
 import AddPruefung from '../../components/screencomponents/add/pruefung/addpruefung'
 
@@ -35,8 +34,9 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
     if(props.clientstatus === ClientStatus.offline && prevStatus === ClientStatus.online){
       setIsOfflineOhneSaven(true)
     }else{
-      setIsOfflineOhneSaven(false)
+      setIsOfflineOhneSaven(isOfflineOhneSaven)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[prevStatus, props, props.clientstatus])
 
   const {width} = useWindowDimensions();

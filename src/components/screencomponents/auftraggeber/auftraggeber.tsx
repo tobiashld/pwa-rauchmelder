@@ -1,17 +1,12 @@
 import React,{useState,useEffect} from 'react'
-import { useNavigate } from 'react-router-dom'
 import data from '../../../services/datafunctions'
 import { Auftraggeber, toAuftraggeberConverter } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
-import Loadingspinner from '../../loadingspinner/loadingspinner'
 import styles from './auftraggeber.module.css'
 import {BsArrowDown, BsArrowUp} from 'react-icons/bs'
 import SaveButton from '../../savebutton/savebutton'
-import { useAppDispatch } from '../../../store/store'
-import { addError } from '../../../store/slice'
-import { useAddError } from '../../../services/helperfunctions'
 
 type AuftraggeberChangeKeys = 'adresse' | 'email' | 'name' | 'telefon';
 
@@ -20,7 +15,6 @@ function AuftraggeberComponent() {
   const [changedAuftraggeber,setChangedAuftraggeber] = useState<Auftraggeber[]>([])
   const [isSavable,setIsSavable] = useState(false);
   const [reload,setReload] = useState(false)
-  const dispatch = useAppDispatch()
 
   useEffect(()=>{
     data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{

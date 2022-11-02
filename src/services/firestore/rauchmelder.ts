@@ -1,5 +1,3 @@
-
-import db from "../../config/firebase.config"
 import { Rauchmelder,  } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 

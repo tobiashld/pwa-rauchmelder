@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import SignInScreen from './screens/signin/signinscreen';
 import { useSelector } from 'react-redux';
@@ -7,7 +7,6 @@ import HomeScreen from './screens/homescreen/homescreen';
 import { ClientStatus } from './types/statusenum';
 import ErrorComponent from './components/errorcomponent/errorcomponent';
 import { BrowserRouter } from 'react-router-dom';
-import OfflineScreen from './screens/offline/offlinescreen';
 function App(props:{status:'online'|'offline'}) {
   
   const isSignedin = useSelector((state:RootState)=>state.authentication.user)

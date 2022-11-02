@@ -4,10 +4,7 @@ import styles from './signinscreen.module.css'
 import { FiUser } from 'react-icons/fi'
 import { RiLockPasswordLine } from 'react-icons/ri'
 import { useAppDispatch } from '../../store/store';
-import { addError, clearError, login } from '../../store/slice';
-import data from '../../services/datafunctions';
-import { ClientStatus } from '../../types/statusenum';
-import {Md5} from 'ts-md5'
+import { login } from '../../store/slice';
 
 function SignInScreen() {
   const usernameRef = React.createRef<HTMLInputElement>();

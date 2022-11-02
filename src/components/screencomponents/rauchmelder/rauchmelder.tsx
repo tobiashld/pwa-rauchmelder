@@ -1,12 +1,10 @@
 import React,{useEffect,useState} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
-import { useNavigate } from 'react-router-dom'
 import data from '../../../services/datafunctions'
 import { Rauchmelder, toRauchmelderConverter } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
-import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
 
@@ -16,7 +14,6 @@ function RauchmelderComponent() {
   const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
   const [changedRauchmelder,setChangedRauchmelder] = useState<Rauchmelder[]>([])
   const [isSavable,setIsSavable] = useState(false)
-  const navigate = useNavigate()
   useEffect(()=>{
     data[ClientStatus.online].rauchmelder.get(undefined,(data:any[])=>{
       setAlleRauchmelder(data.map((data:any)=>toRauchmelderConverter(data)))

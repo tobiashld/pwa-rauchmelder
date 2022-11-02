@@ -1,7 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Md5 } from 'ts-md5'
-import data from '../services/datafunctions'
-import { dynamicurl } from '../services/globals'
 import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'

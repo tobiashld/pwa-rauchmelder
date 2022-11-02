@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
-import styles from './add.module.css'
 import AddAuftraggeber from './auftraggeber/addAuftraggeber';
 
 type addOptions = 'auftraggeber' | 'objekt' | 'rauchmelder' | 'wohnung';

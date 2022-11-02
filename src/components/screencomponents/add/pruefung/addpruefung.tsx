@@ -5,7 +5,6 @@ import data from '../../../../services/datafunctions'
 import { RootState } from '../../../../store/store'
 import { Objekt, Pruefung, toObjektConverter, toPruefungConverter } from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
-import styles from './addpruefung.module.css'
 
 function AddPruefung() {
     const currUser = useSelector((state:RootState)=>state.authentication.user)
@@ -20,6 +19,10 @@ function AddPruefung() {
                 setCurrPruefung(prepData.map(pruefung=>toPruefungConverter(pruefung))[0])
             }else{
                 //TODO error werfen oder anzeigen
+            }
+            //nur für linter
+            if(currUser || currPruefung ||pruefObjekt ||allePruefObjekte){
+                setPruefObjekt(undefined)
             }
         })
         return (

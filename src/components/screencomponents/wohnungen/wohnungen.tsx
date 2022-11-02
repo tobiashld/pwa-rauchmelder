@@ -1,6 +1,5 @@
 import React,{useState,useEffect} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
-import { useNavigate } from 'react-router-dom'
 import data from '../../../services/datafunctions'
 import { toWohnungConverter, Wohnung } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
@@ -15,7 +14,6 @@ function WohnungenComponent() {
   const [alleWohnungen,setAlleWohnungen] = useState<Wohnung[]>([])
   const [changedWohnungen,setChangedWohnungen] = useState<Wohnung[]>([])
   const [isSavable,setIsSavable] = useState(false)
-  const navigate = useNavigate()
   useEffect(()=>{
     data[ClientStatus.online].wohnungen.get(undefined,(wohnungen:any[])=>{
       setAlleWohnungen(wohnungen.map(item=>toWohnungConverter(item)))

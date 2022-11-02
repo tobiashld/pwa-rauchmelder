@@ -1,4 +1,3 @@
-import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
 
 export class Auftraggeber{
     constructor(

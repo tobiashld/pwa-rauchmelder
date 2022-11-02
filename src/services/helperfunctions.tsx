@@ -1,10 +1,9 @@
-import React, { ReactHTMLElement, useState } from 'react'
+import React from 'react'
 import TextInput from '../components/textinput/textinput';
 import { addError, clearError } from '../store/slice';
 import {ErrorType} from '../types/errortype' 
 import { RootState, useAppDispatch } from '../store/store';
 import { useSelector } from 'react-redux';
-import CustomSelect from '../components/customselect/customselect';
 export type KeyType = 'id'|'objekt'|'produktionsdatum'|'timestamp'|'raum'|'seriennr'|'mieter'|'user'|'etage'|'adresse'
 
 export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(event:React.ChangeEvent<any>,zusatz?:string)=>void)=>{

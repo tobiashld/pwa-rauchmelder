@@ -5,7 +5,6 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
-import { Offline, Online } from 'react-detect-offline';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
