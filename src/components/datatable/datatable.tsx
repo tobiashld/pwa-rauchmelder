@@ -5,7 +5,15 @@ import { getFittingInputsForKey, KeyType } from '../../services/helperfunctions'
 import Loadingspinner from '../loadingspinner/loadingspinner'
 import styles from './datatable.module.css'
 
-function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,handleEdit:(id:number,key:string,value:any)=>void,handleDelete:(id:number)=>void,editedElementIds?:number[],sort?:{name:string,function:(a:any,b:any)=>number,icon?:React.ReactNode}[]}) {
+function DataTable(props:{
+  rows:any[]|undefined,
+  columns:string[],
+  headline:string,
+  handleEdit:(id:number,key:string,value:any)=>void,
+  handleDelete:(id:number)=>void,editedElementIds?:number[],
+  sort?:{name:string,function:(a:any,b:any)=>number,icon?:React.ReactNode}[],
+  options?:any[]
+}) {
   
   const [currData,setCurrData] = useState<any[]>([])
   const [currIndex, setCurrIndex] = useState(0)
@@ -248,7 +256,7 @@ function DataTable(props:{rows:any[]|undefined,columns:string[],headline:string,
                             }else{
                               props.handleEdit(item.id?item.id:-1,key,event.currentTarget.value)
                             }
-                          })}</div>)
+                          },props.options?props.options:undefined)}</div>)
                         }else{
                           return <div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:"")}></div>
                         }

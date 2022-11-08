@@ -4,27 +4,47 @@ import { addError, clearError } from '../store/slice';
 import {ErrorType} from '../types/errortype' 
 import { RootState, useAppDispatch } from '../store/store';
 import { useSelector } from 'react-redux';
+import { Objekt } from '../types/allgemein';
+import { BsTextareaResize } from 'react-icons/bs';
 export type KeyType = 'id'|'objekt'|'produktionsdatum'|'timestamp'|'raum'|'seriennr'|'mieter'|'user'|'etage'|'adresse'
+export const etagen = [
+    'Souterrain',
+    'EG',
+    '1. OG',
+    '2. OG',
+    '3. OG',
+    '4. OG',
+    '5. OG',
+    '6. OG',
+    '7. OG',
+    'DG',
+]
 
-export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(event:React.ChangeEvent<any>,zusatz?:string)=>void)=>{
+export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(event:React.ChangeEvent<any>,zusatz?:string)=>void,options?:any[])=>{
+    
     switch(key){
         case "id":return (<>{placeholder.toString()}</>)
         case "user":return (<>{placeholder.toString()}</>)
+        case "objekt":return(
+            <div>
+                <select
+                    onChange={onChange}
+                    className={"selectElement"}
+                >
+                    {options!.map((objekt:Objekt)=>{
+                        return <option selected={(objekt.name === placeholder || (placeholder.id && placeholder.id === objekt.id))?true:false} value={objekt.id}>{objekt.name}</option>
+                    })}
+                </select>
+            </div>
+            )
         case "etage":return (<div>
             <select
                 onChange={onChange}
                 className={"selectElement"}
             >
-                <option selected={placeholder.toString()==="Souterrain"?true:false}>Souterrain</option>
-                <option selected={placeholder.toString()==="EG"?true:false}>EG</option>
-                <option selected={placeholder.toString()==="1. OG"?true:false}>1.OG</option>
-                <option selected={placeholder.toString()==="2. OG"?true:false}>2.OG</option>
-                <option selected={placeholder.toString()==="3. OG"?true:false}>3.OG</option>
-                <option selected={placeholder.toString()==="4. OG"?true:false}>4.OG</option>
-                <option selected={placeholder.toString()==="5. OG"?true:false}>5.OG</option>
-                <option selected={placeholder.toString()==="6. OG"?true:false}>6.OG</option>
-                <option selected={placeholder.toString()==="7. OG"?true:false}>7.OG</option>
-                <option selected={placeholder.toString()==="DG"?true:false}>DG</option>
+                {etagen.map(etage=>{
+                    return <option selected={placeholder.toString()===etage?true:false} value={etage}>{etage}</option>
+                })}
             </select>
         </div>)
         case "adresse":return(

@@ -2,24 +2,32 @@ import React,{useState,useEffect} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
 import data from '../../../services/datafunctions'
-import { Pruefung, toPruefungConverter } from '../../../types/allgemein'
+import { Objekt, Pruefung, toObjektConverter, toPruefungConverter } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
 import styles from './pruefungen.module.css'
 
 function PruefungenComponent() {
-  const [allePruefungen,setAllePruefungen] = useState<Pruefung[] | undefined>(undefined)
+  const [allePruefungen,setAllePruefungen] = useState<Pruefung[]>([])
+  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
   const navigate = useNavigate()
   useEffect(()=>{
     data[ClientStatus.online].pruefungen.get(undefined,(pruefungen:any[])=>{
       setAllePruefungen(pruefungen.map(item=>toPruefungConverter(item)))
     })
+    data[ClientStatus.online].objekte.get(undefined,(objekte:any[])=>{
+      setAlleObjekte(objekte.map(objekt=>toObjektConverter(objekt)))
+    })
   },[])
   return (
     <>
       <div className={styles.table}>
-        <DataTable rows={allePruefungen} columns={['id','timestamp','user','objekt']} headline="Prüfungen" handleEdit={(id)=>navigate("/edit/pruefung/"+id)}
+        <DataTable rows={allePruefungen} 
+          columns={['id','timestamp','user','objekt']} 
+          headline="Prüfungen" 
+          options={alleObjekte}
+          handleEdit={(id)=>navigate("/edit/pruefung/"+id)}
           handleDelete={(id)=>{
             data[ClientStatus.online].pruefungen.delete(id)
             setTimeout(()=>{

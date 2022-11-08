@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import data from '../../../services/datafunctions'
-import { Rauchmelder, toRauchmelderConverter } from '../../../types/allgemein'
+import { Objekt, Rauchmelder, toObjektConverter, toRauchmelderConverter } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
@@ -12,11 +12,15 @@ type RauchmelderChangeKeys = 'objekt'|'produktionsdatum'|'raum'|'seriennr'|'miet
 
 function RauchmelderComponent() {
   const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
+  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
   const [changedRauchmelder,setChangedRauchmelder] = useState<Rauchmelder[]>([])
   const [isSavable,setIsSavable] = useState(false)
   useEffect(()=>{
     data[ClientStatus.online].rauchmelder.get(undefined,(data:any[])=>{
       setAlleRauchmelder(data.map((data:any)=>toRauchmelderConverter(data)))
+    })
+    data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
+      setAlleObjekte(data.map((data:any)=>toObjektConverter(data)))
     })
     
   },[])
@@ -38,6 +42,7 @@ function RauchmelderComponent() {
         <DataTable 
           rows={alleRauchmelder} 
           columns={['id','objekt','produktionsdatum','raum','seriennr','mieter']} 
+          options={alleObjekte}
           headline="Rauchmelder" 
           editedElementIds={changedRauchmelder.map(rauchmelder=>{
             console.log(rauchmelder.id)
