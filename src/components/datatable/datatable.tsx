@@ -11,8 +11,10 @@ function DataTable(props:{
   headline:string,
   handleEdit:(id:number,key:string,value:any)=>void,
   handleDelete:(id:number)=>void,editedElementIds?:number[],
+  handleRowClick?:(id:number)=>void,
   sort?:{name:string,function:(a:any,b:any)=>number,icon?:React.ReactNode}[],
-  options?:any[]
+  options?:any[],
+  disabledRows?:boolean
 }) {
   
   const [currData,setCurrData] = useState<any[]>([])
@@ -246,7 +248,7 @@ function DataTable(props:{
             {
               currData.map((item,index)=>{
                 return (
-                  <div key={index} className={(props.editedElementIds && props.editedElementIds.find((id)=>id===item.id!))?styles.datarowelement+' datarow'+index+" "+styles.edited :styles.datarowelement+' datarow'+index} onClick={(e)=>{}}>
+                  <div key={index} className={(props.editedElementIds && props.editedElementIds.find((id)=>id===item.id!))?styles.datarowelement+' datarow'+index+" "+styles.edited+  " "+(props.handleRowClick?styles.clickable:"") :styles.datarowelement+' datarow'+index +  " "+ (props.handleRowClick?styles.clickable:"")} onClick={()=>props.handleRowClick?props.handleRowClick(item.id!):undefined}>
                     {
                       props.columns.map((key,smallIndex)=>{
                         if(Object.keys(item).find(itemkey=>itemkey===key)){
@@ -256,7 +258,7 @@ function DataTable(props:{
                             }else{
                               props.handleEdit(item.id?item.id:-1,key,event.currentTarget.value)
                             }
-                          },props.options?props.options:undefined)}</div>)
+                          },props.options?props.options:undefined,props.disabledRows?props.disabledRows:undefined)}</div>)
                         }else{
                           return <div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:"")}></div>
                         }

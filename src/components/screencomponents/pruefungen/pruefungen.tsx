@@ -27,7 +27,9 @@ function PruefungenComponent() {
           columns={['id','timestamp','user','objekt']} 
           headline="Prüfungen" 
           options={alleObjekte}
-          handleEdit={(id)=>navigate("/edit/pruefung/"+id)}
+          disabledRows={true}
+          handleEdit={(id)=>{}}
+          handleRowClick={(id)=>navigate("/edit/pruefung/"+id)}
           handleDelete={(id)=>{
             data[ClientStatus.online].pruefungen.delete(id)
             setTimeout(()=>{
@@ -81,7 +83,7 @@ function PruefungenComponent() {
           ]}
         />
         <div className={styles.interactions}>
-          <AddButton routeParam='pruefung' />
+          <AddButton routeParam='/pruefung' onClick={()=>navigate("/pruefung")} />
           
         </div>
       </div>

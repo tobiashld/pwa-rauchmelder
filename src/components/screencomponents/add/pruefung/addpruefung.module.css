@@ -1,0 +1,111 @@
+.gesamtbox{
+    display:grid;
+    flex:1;
+    padding:20px;
+}
+.outerbox{
+    display: flex;
+    padding:10px;
+    border-radius: 10px;
+    gap:10px;
+    background-color: white;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+}
+.rauchmelderbox{
+    width:clamp(300px,27%,600px);
+    height:stretch;
+}
+.pruefungsbox{
+    flex:1;
+}
+.rauchmelderboxInside{
+    overflow-y:auto;
+    overflow-x:hidden;
+    height:calc(100vh - 110px);
+    width: 100%;
+    
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding:5px;
+    box-sizing: border-box;
+    background-color: rgb(214, 214, 214);
+}
+.pruefungboxInside{
+    overflow-y:auto;
+    overflow-x:hidden;
+    display: flex;
+    flex-direction: column;
+    height:100%;
+    width: 100%;
+    border-radius: 10px;
+    padding:5px;
+    box-sizing: border-box;
+    background-color: rgb(238, 238, 238);
+}
+.rauchmeldercard{
+    height:clamp(80px,6vh,100px);
+    width:stretch;
+    
+    padding:10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin:5px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: whitesmoke;
+}
+.rauchmeldercardtext{
+    width: stretch;
+    height:stretch;
+    display:flex;
+    overflow: hidden;
+}
+.activeRauchmelder,
+.rauchmeldercard:hover{
+    cursor: pointer;
+    color:white;
+    background-color: rgb(86, 131, 147);
+}
+
+.addcard:hover{
+    background-color: whitesmoke;
+    cursor: default;
+    color:black;
+}
+
+@media only screen and (max-width:800px){
+
+    .outerbox{
+        flex-direction: column;
+    }
+    .rauchmelderboxInside{
+        overflow-x:scroll;
+        height:100px;
+        overflow-y:hidden;
+        flex-direction: row;
+        align-items: center;
+        max-width: calc(100vw - 60px);
+    }
+    .rauchmeldercard{
+        height:80%;
+        width: auto;
+        
+    }
+    .rauchmelderselect{
+        width: 100% !important;
+        height:90% !important;
+    }
+    .rauchmeldercardtext{
+        justify-content: center;
+    align-items: center;
+    }
+    .rauchmelderbox{
+        height:100px;
+        width:stretch;
+    }
+    .pruefungsbox{
+
+    }
+}

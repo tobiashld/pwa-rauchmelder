@@ -95,7 +95,7 @@ export class Rauchmelder{
     }
     constructor(
       readonly id:number,
-      public objekt:string,
+      public objekt:smallObjekt,
       public produktionsdatum:string,
       public raum:string,
       public seriennr:string,
@@ -143,9 +143,14 @@ export const toGeprRauchmelderConverter = (
 export const toRauchmelderConverter = (
         data:any
       ): Rauchmelder =>{
-        return new Rauchmelder(data.id,data.objekt,data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
+        return new Rauchmelder(data.id,new smallObjekt(data.objektid,data.objektname),data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
       }
-
+class smallObjekt {
+  constructor(
+    public id:number,
+    public name:string, 
+  ){}
+}
 export class Wohnung{
     prepForSave(): any {
       throw new Error("Method not implemented.");

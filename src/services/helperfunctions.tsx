@@ -20,8 +20,10 @@ export const etagen = [
     'DG',
 ]
 
-export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(event:React.ChangeEvent<any>,zusatz?:string)=>void,options?:any[])=>{
-    
+export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(event:React.ChangeEvent<any>,zusatz?:string)=>void,options?:any[],disabled?:boolean)=>{
+    if(disabled){
+        return (<>{placeholder.toString()}</>)
+    }
     switch(key){
         case "id":return (<>{placeholder.toString()}</>)
         case "user":return (<>{placeholder.toString()}</>)
@@ -50,15 +52,15 @@ export const getFittingInputsForKey = (key:KeyType,placeholder:any,onChange:(eve
         case "adresse":return(
             <div className='adressDiv'>
                 <div className='adressDivDiv'>
-                    <TextInput onChange={(event)=>onChange(event,"straße")} size={"Small"}  placeholder={placeholder.straße} className={"adressDiv-straße"}/>
-                    <TextInput onChange={(event)=>onChange(event,"hausnummer")} size={"Small"}  placeholder={placeholder.hausnummer} className={"adressDiv-hausnummer"}/>
+                    <TextInput onChange={(event)=>onChange(event,"straße")} size={"Small"}  placeholder={placeholder.straße} className={"adressDiv-straße"} />
+                    <TextInput onChange={(event)=>onChange(event,"hausnummer")} size={"Small"}  placeholder={placeholder.hausnummer} className={"adressDiv-hausnummer"} />
                 </div>
                 <div className='adressDivDiv'>
-                    <TextInput onChange={(event)=>onChange(event,"plz")} size={"Small"} placeholder={placeholder.plz} className={"adressDiv-plz"}/>
-                    <TextInput onChange={(event)=>onChange(event,"ort")} size={"Small"}  placeholder={placeholder.ort} className={"adressDiv-ort"}/>
+                    <TextInput onChange={(event)=>onChange(event,"plz")} size={"Small"} placeholder={placeholder.plz} className={"adressDiv-plz"} />
+                    <TextInput onChange={(event)=>onChange(event,"ort")} size={"Small"}  placeholder={placeholder.ort} className={"adressDiv-ort"} />
                 </div>
             </div>)
-        default:return (<TextInput placeholder={placeholder.toString()} onChange={onChange} size='Small'/>)
+        default:return (<TextInput placeholder={placeholder.toString()} onChange={onChange} size='Small' />)
     }
 }
 
