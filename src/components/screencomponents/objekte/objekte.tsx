@@ -14,10 +14,12 @@ function ObjekteComponent() {
   const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
   const [changedObjekte,setChangedObjekte] = useState<Objekt[]>([])
   const [isSavable,setIsSavable] = useState(false)
+  const [reload,setReload] = useState(false)
 
   useEffect(()=>{
     data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
       setAlleObjekte(data.map((item)=>toObjektConverter(item)))
+      setReload(true)
     })
     setChangedObjekte([])
   },[])
@@ -31,7 +33,7 @@ function ObjekteComponent() {
   },[changedObjekte])
 
   const handleSave = ()=>{
-
+    if(reload){}
   }
 
   return (

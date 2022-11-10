@@ -7,6 +7,7 @@ import DataTable from '../../datatable/datatable'
 import styles from './auftraggeber.module.css'
 import {BsArrowDown, BsArrowUp} from 'react-icons/bs'
 import SaveButton from '../../savebutton/savebutton'
+import { useSnackbar } from 'notistack'
 
 type AuftraggeberChangeKeys = 'adresse' | 'email' | 'name' | 'telefon';
 
@@ -14,6 +15,7 @@ function AuftraggeberComponent() {
   const [alleAuftraggeber,setAlleAuftraggeber] = useState<Auftraggeber[]>([])
   const [changedAuftraggeber,setChangedAuftraggeber] = useState<Auftraggeber[]>([])
   const [isSavable,setIsSavable] = useState(false);
+  const {enqueueSnackbar} = useSnackbar()
   const [reload,setReload] = useState(false)
 
   useEffect(()=>{
@@ -22,6 +24,7 @@ function AuftraggeberComponent() {
       console.log("converted first useeffect")
       console.log(convertedAuftraggeber)
       setAlleAuftraggeber(convertedAuftraggeber)
+      setReload(true)
     })
     setChangedAuftraggeber([])
 
@@ -41,9 +44,14 @@ function AuftraggeberComponent() {
 
   const handleSave = ()=>{
     changedAuftraggeber.forEach(auftraggeber=>{
+      let error = undefined
       data[ClientStatus.online].auftraggeber.change(auftraggeber,(data)=>{
         //error if error is there
+        if(data && data.error)error = data.error
       })
+      if(error){
+        enqueueSnackbar(error,{variant:"error"})
+      }
     })
     
     setTimeout(()=>data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
