@@ -1,1 +1,1 @@
-export const dynamicurl="http://localhost:3000"
+export const dynamicurl= window.location.href.includes("localhost")?"http://localhost:3000":"https://martinherhold.tk"

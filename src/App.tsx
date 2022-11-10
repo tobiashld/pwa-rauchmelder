@@ -37,6 +37,7 @@ function App(props:{status:'online'|'offline'}) {
       })
     }else{
       dispatch(logout())
+      setReadyToRender(true)
     }
   },[dispatch, enqueueSnackbar])
   
