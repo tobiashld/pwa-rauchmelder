@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from './store/store';
 import HomeScreen from './screens/homescreen/homescreen';
 import { ClientStatus } from './types/statusenum';
-import ErrorComponent from './components/errorcomponent/errorcomponent';
 import { BrowserRouter } from 'react-router-dom';
 import data from './services/datafunctions';
 import { cookies } from './services/cookieService';
@@ -39,7 +38,7 @@ function App(props:{status:'online'|'offline'}) {
     }else{
       dispatch(logout())
     }
-  },[])
+  },[dispatch, enqueueSnackbar])
   
   
   return (

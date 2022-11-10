@@ -5,7 +5,6 @@ import {ErrorType} from '../types/errortype'
 import { RootState, useAppDispatch } from '../store/store';
 import { useSelector } from 'react-redux';
 import { Objekt } from '../types/allgemein';
-import { BsTextareaResize } from 'react-icons/bs';
 export type KeyType = 'id'|'objekt'|'produktionsdatum'|'timestamp'|'raum'|'seriennr'|'mieter'|'user'|'etage'|'adresse'
 export const etagen = [
     'Souterrain',

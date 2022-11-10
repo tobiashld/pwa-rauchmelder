@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import data from '../../../../services/datafunctions'
-import { RootState } from '../../../../store/store'
-import { Adresse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder, toObjektConverter, toPruefungConverter, toRauchmelderConverter, User } from '../../../../types/allgemein'
+import { Adresse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder, toPruefungConverter, toRauchmelderConverter, User } from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
 import AddButton from '../../../addbutton/addbutton'
 import styles from './addpruefung.module.css'
@@ -12,7 +10,7 @@ function AddPruefung() {
     const [currGeprRauchmelder,setCurrGeprRauchmelder] = useState<GeprRauchmelder | undefined>() 
     const [pruefObjekt,setPruefObjekt] = useState<Objekt>(new Objekt(1,new Adresse(1,"1","1","1"),"test","name",1))
     const [currPruefung,setCurrPruefung] = useState<Pruefung>(new Pruefung(0,"",new User(0,"admin"),pruefObjekt,[]))
-    const [allePruefObjekte,setAllePruefObjekte] = useState<Objekt[] | undefined>()
+    //const [allePruefObjekte,setAllePruefObjekte] = useState<Objekt[] | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
     const { id } = useParams()
     const rauchmelderselectRef = useRef<HTMLSelectElement>(null)
@@ -20,6 +18,7 @@ function AddPruefung() {
     useEffect(()=>{
         console.log("rauchmelder changed")
         console.log(alleRauchmelder)
+        setPruefObjekt(new Objekt(1,new Adresse(1,"1","1","1"),"test","name",1))
     },[alleRauchmelder])
     useEffect(()=>{
         if(id){
