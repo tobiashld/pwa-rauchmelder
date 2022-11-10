@@ -5,41 +5,30 @@ import { FiUser } from 'react-icons/fi'
 import { RiLockPasswordLine } from 'react-icons/ri'
 import { useAppDispatch } from '../../store/store';
 import { login } from '../../store/slice';
+import data from '../../services/datafunctions';
+import { ClientStatus } from '../../types/statusenum';
+import { useSnackbar } from 'notistack'
 
 function SignInScreen() {
   const usernameRef = React.createRef<HTMLInputElement>();
   const passwordRef = React.createRef<HTMLInputElement>();
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useAppDispatch()
 
   const handleLoginbutton = (event:any)=>{
 
     if(!usernameRef.current || !passwordRef.current || !validateInput()){
-      // dispatch(addError({
-      //   type:"warning",
-      //   title:"Login Failed",
-      //   message:"Benutzernamen und Passwort eingeben!",
-      // }))
-      // setTimeout(()=>dispatch(clearError()),5000)
+      enqueueSnackbar("Alle Felder Müssen ausgefüllt sein", {variant:"error"})
       return;
     }
-    dispatch(login({password:passwordRef.current.value,username:usernameRef.current.value}))
-    // data[ClientStatus.online].user.getWithParam("full_name",usernameRef.current.value).then(user=>{
-    //   if(0 < user.length && user.length < 2 && validPassword(user[0].full_name,user[0].password)){
-    //     console.log("right password")
-    //     dispatch(login({isSuccessfull:true,username:user[0].full_name}))
-    //   }else{
-    //     dispatch(login({isSuccessfull:false}))
-    //     dispatch(addError({
-    //       type:"warning",
-    //       title:"Login Failed",
-    //       message:"Benutzername oder Passwort ist falsch.",
-    //     }))
-    //     setTimeout(()=>dispatch(clearError()),3000)
-    //   }
-      
-    // })
-    
-    
+    data[ClientStatus.online].user.login(usernameRef.current.value,passwordRef.current.value,response=>{
+      if(response.error){
+        enqueueSnackbar(response.error,{variant:"error"})
+      }else if(response.token && response.status === 200){
+        enqueueSnackbar("Erfolgreich eingelogt!", {variant:"success"})
+        dispatch(login({successfull:true,username:usernameRef.current!.value}))
+      }
+    })
   }
   const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {

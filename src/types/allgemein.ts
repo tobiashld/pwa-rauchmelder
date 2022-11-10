@@ -1,4 +1,4 @@
-
+import { JwtPayload } from "jwt-decode";
 export class Auftraggeber{
     constructor(
       readonly id:number,
@@ -220,4 +220,9 @@ export class Adresse {
     toString(){
       return this.straße + " " + this.hausnummer + ", " + this.plz + " " + this.ort;
     }
+}
+
+export interface CustomJwtPayload extends JwtPayload{
+    id:number,
+    username:string
 }

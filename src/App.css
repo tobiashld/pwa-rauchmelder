@@ -58,6 +58,12 @@
 .adressDiv-ort{
   flex:7
 }
+.fullscreen-center{
+  width: 100vw;
+  height:100vh;
+  display: grid;
+  place-items: center;
+}
 
 
 @media only screen and (min-width:1450px) {

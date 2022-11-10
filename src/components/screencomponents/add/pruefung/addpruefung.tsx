@@ -3,16 +3,15 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import data from '../../../../services/datafunctions'
 import { RootState } from '../../../../store/store'
-import { Adresse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder, toObjektConverter, toPruefungConverter, toRauchmelderConverter } from '../../../../types/allgemein'
+import { Adresse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder, toObjektConverter, toPruefungConverter, toRauchmelderConverter, User } from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
 import AddButton from '../../../addbutton/addbutton'
 import styles from './addpruefung.module.css'
 
 function AddPruefung() {
-    const currUser = useSelector((state:RootState)=>state.authentication.user)
     const [currGeprRauchmelder,setCurrGeprRauchmelder] = useState<GeprRauchmelder | undefined>() 
     const [pruefObjekt,setPruefObjekt] = useState<Objekt>(new Objekt(1,new Adresse(1,"1","1","1"),"test","name",1))
-    const [currPruefung,setCurrPruefung] = useState<Pruefung>(new Pruefung(0,"",currUser!,pruefObjekt,[]))
+    const [currPruefung,setCurrPruefung] = useState<Pruefung>(new Pruefung(0,"",new User(0,"admin"),pruefObjekt,[]))
     const [allePruefObjekte,setAllePruefObjekte] = useState<Objekt[] | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
     const { id } = useParams()

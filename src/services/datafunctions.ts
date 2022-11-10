@@ -40,7 +40,9 @@ const data = {
             get:user.get,
             create:user.add,
             change:user.change,
-            delete:user.deleteU
+            delete:user.deleteU,
+            login:user.login,
+            changepw:user.changepw
         },
         auftraggeber:{
             get:auftraggeber.get,

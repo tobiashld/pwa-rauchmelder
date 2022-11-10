@@ -1,24 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { cookies } from '../services/cookieService'
 import { User } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
 
 interface InitialState{
     errorListe:Error[],
-    authentication:{
-        isSignedIn:boolean,
-        user:User | undefined,
-    },
+    isAuthenticated:boolean,
+    username:string | undefined,
     isOffline:ClientStatus,
     colorScheme:'light'|'dark',
 }
 
 const initialState : InitialState = {
   errorListe: [],
-  authentication:{
-    isSignedIn:false,
-    user:undefined,
-  },
+  isAuthenticated:false,
+  username:undefined,
   isOffline:ClientStatus.online,
   colorScheme:'light',
 }
@@ -26,28 +23,11 @@ export const slice = createSlice({
   name: 'error',
   initialState: initialState,
   reducers: {
-    login(state,action:PayloadAction<{password:string,username:string}>){
-        // const http = new XMLHttpRequest();
-        // const url = dynamicurl + "/user"
-        // http.open("POST",url);
-        // http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-        // http.send(JSON.stringify({username:action.payload.username,password:action.payload.username}));
-        
-        // http.onreadystatechange=(e:Event)=>{
-        //     if(http.readyState === 4 && http.status === 200){
-        //     let obj = JSON.parse(http.responseText)
-
-        //     if(obj && obj.data){
-        //         if(cb)cb(obj.data)
-        //     }        
-        //     }
-        // }
+    login(state,action:PayloadAction<{successfull:boolean,username:string}>){
         return ({
             ...state,
-            authentication:{
-                isSignedIn:true,
-                user:new User(1,"admin"),
-            }
+            isAuthenticated:action.payload.successfull,
+            username:action.payload.username
         })
     },
     setOfflineMode(state,action:PayloadAction<{isOffline:ClientStatus}>){
@@ -57,12 +37,11 @@ export const slice = createSlice({
         })
     },
     logout(state){
+        cookies.remove("token")
         return ({
             ...state,
-            authentication:{
-                isSignedIn:false,
-                user:undefined,
-            }
+            username:undefined,
+            isAuthenticated:false
         })
     },
     changeColorScheme(state,action:PayloadAction<{

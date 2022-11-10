@@ -1,7 +1,7 @@
 
 import { Pruefung } from "../../types/allgemein"
+import { cookies } from "../cookieService";
 import { dynamicurl } from "../globals";
-
 
 
 
@@ -9,6 +9,7 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     const http = new XMLHttpRequest();
     const url = dynamicurl + "/pruefungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
     http.open("GET",url);
+    http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
     http.send();
     
     http.onreadystatechange=(e:Event)=>{
@@ -25,6 +26,7 @@ async function add(pruefung:Pruefung,cb?:(data:any)=>void){
   const http = new XMLHttpRequest();
   const url = dynamicurl + "/auftraggeber"
   http.open("POST",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
   http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
   http.send(JSON.stringify(pruefung.prepForSave()));
   
@@ -42,6 +44,7 @@ async function change(pruefung:Pruefung,cb?:(data:any)=>void){
   const http = new XMLHttpRequest();
   const url = dynamicurl + "/pruefungen/"+pruefung.id
   http.open("PUT",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
   http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
   http.send(JSON.stringify(pruefung.prepForSave()));
   
@@ -59,6 +62,7 @@ async function deleteP(id:number,cb?:(data:any)=>void){
   const http = new XMLHttpRequest();
   const url = dynamicurl + "/pruefungen/"+id
   http.open("DELETE",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
   http.send();
   
   http.onreadystatechange=(e:Event)=>{

@@ -1,4 +1,5 @@
 import { Wohnung,  } from "../../types/allgemein"
+import { cookies } from "../cookieService";
 import { dynamicurl } from "../globals";
 
 
@@ -7,6 +8,7 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     const http = new XMLHttpRequest();
     const url = dynamicurl + "/wohnungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
     http.open("GET",url);
+    http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
     http.send();
     
     http.onreadystatechange=(e:Event)=>{
@@ -24,6 +26,7 @@ async function add(wohnung:Wohnung,cb?:(data:any)=>void){
   const http = new XMLHttpRequest();
   const url = dynamicurl + "/wohnungen"
   http.open("POST",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
   http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
   http.send(JSON.stringify(wohnung.prepForSave()));
   
@@ -41,6 +44,7 @@ async function change(wohnung:Wohnung,cb?:(data:any)=>void){
   const http = new XMLHttpRequest();
   const url = dynamicurl + "/wohnungen/"+wohnung.id
   http.open("PUT",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
   http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
   http.send(JSON.stringify(wohnung.prepForSave()));
   
@@ -58,6 +62,7 @@ async function deleteW(id:number,cb?:(data:any)=>void){
   const http = new XMLHttpRequest();
   const url = dynamicurl + "/wohnungen/"+id
   http.open("DELETE",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
   http.send();
   
   http.onreadystatechange=(e:Event)=>{

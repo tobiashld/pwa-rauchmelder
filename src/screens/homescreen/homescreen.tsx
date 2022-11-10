@@ -6,6 +6,7 @@ import useWindowDimensions from '../../hooks/useWindowDimensions'
 import { ClientStatus } from '../../types/statusenum'
 import styles from './homescreen.module.css';
 import {
+  Navigate,
   Route,
   Routes,
   useNavigate
@@ -74,6 +75,7 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
             <Route path="/pruefung" element={<AddPruefung />} />
             <Route path="/offline" element={<OfflinePruefen />} />
             <Route path="/add/:element" element={<Add />} />
+            <Route path="/pwa-rauchmelder" element={<Navigate replace to="/" />} />
           </Routes>
         </div>
       </div>
