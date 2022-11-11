@@ -76,6 +76,24 @@ async function deleteP(id:number,cb?:(data:any)=>void){
   }
 }
 
+async function statistics(cb?:(data:any)=>void){
+  const http = new XMLHttpRequest();
+  const url = dynamicurl + "/statistics/pruefungen"
+  http.open("GET",url);
+  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
+  http.send();
+  
+  http.onreadystatechange=(e:Event)=>{
+    if(http.readyState === 4){
+      let obj = JSON.parse(http.responseText)
+
+      if(obj){
+          if(cb)cb(obj)
+      }
+    }
+  }
+}
+
 
 
 
@@ -84,7 +102,8 @@ const functions = {
     get,
     add,
     change,
-    deleteP
+    deleteP,
+    statistics
 }
 
 export default functions

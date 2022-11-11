@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cookies } from '../services/cookieService'
+import { Objekt } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
 
@@ -7,6 +8,7 @@ interface InitialState{
     errorListe:Error[],
     isAuthenticated:boolean,
     username:string | undefined,
+    currPruefobjekt:string | undefined,
     isOffline:ClientStatus,
     colorScheme:'light'|'dark',
 }
@@ -15,6 +17,7 @@ const initialState : InitialState = {
   errorListe: [],
   isAuthenticated:false,
   username:undefined,
+  currPruefobjekt:undefined,
   isOffline:ClientStatus.online,
   colorScheme:'light',
 }
@@ -33,6 +36,12 @@ export const slice = createSlice({
         return ({
             ...state,
             isOffline:action.payload.isOffline
+        })
+    },
+    setPruefObjekt(state,action:PayloadAction<{pruefObjekt:string|undefined}>){
+        return ({
+            ...state,
+            currPruefobjekt:action.payload.pruefObjekt
         })
     },
     logout(state){
@@ -92,6 +101,6 @@ export const slice = createSlice({
 })
 
 
-export const { addError,clearError,changeColorScheme,login,logout,setOfflineMode } = slice.actions
+export const { addError,clearError,changeColorScheme,login,logout,setOfflineMode,setPruefObjekt } = slice.actions
 
 export default slice.reducer

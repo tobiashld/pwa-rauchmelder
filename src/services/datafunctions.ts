@@ -28,7 +28,8 @@ const data = {
             get:pruefungen.get,
             create:pruefungen.add,
             change:pruefungen.change,
-            delete:pruefungen.deleteP
+            delete:pruefungen.deleteP,
+            statistics:pruefungen.statistics
         },
         rauchmelder:{
             get:rauchmelder.get,

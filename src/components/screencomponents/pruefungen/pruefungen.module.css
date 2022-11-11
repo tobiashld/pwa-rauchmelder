@@ -11,3 +11,19 @@
     gap:15px;
     z-index:3
 }
+
+.objektauswahl{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width:250px;
+    position:absolute;
+    transform: translate(-100%,-100%);
+    left:80%;
+    top:-40%;
+    background-color: white;
+    padding:20px;
+    border-radius: 15px;
+    gap:10px;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+}

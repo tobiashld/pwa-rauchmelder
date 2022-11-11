@@ -60,7 +60,7 @@ function PruefungenPlanen() {
           value={pruefObjekte}
           label="Objekte"
           onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          input={<OutlinedInput id="select-multiple-chip" label="Objekte" />}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value,index) => {

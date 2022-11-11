@@ -11,10 +11,10 @@ function OverviewComponent() {
         <OverviewChart />
       </div>
       <div className={styles.overviewelement}>
-        <Loadingspinner size="Big"/>
+        <PruefungenPlanen />
       </div>
       <div className={styles.overviewelement}>
-        <PruefungenPlanen />
+        <Loadingspinner size="Big"/>
       </div>
       <div className={styles.overviewelement}>
         <Loadingspinner size="Big"/>
