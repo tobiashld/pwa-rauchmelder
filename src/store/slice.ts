@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cookies } from '../services/cookieService'
-import { Objekt } from '../types/allgemein'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
 

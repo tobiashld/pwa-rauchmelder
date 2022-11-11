@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 // import styles from './overview.module.css'
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
+import {CartesianGrid,  Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
 import data from '../../../../services/datafunctions'
 import { ClientStatus } from '../../../../types/statusenum'
 import styles from './overview.module.css'

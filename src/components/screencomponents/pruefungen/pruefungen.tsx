@@ -1,4 +1,4 @@
-import { Box, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
+import {  FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
 import React,{useState,useEffect} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
@@ -10,7 +10,6 @@ import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import Button from '../../button/button'
 import DataTable from '../../datatable/datatable'
-import Optionbox from '../../optionbox/optionbox'
 import styles from './pruefungen.module.css'
 
 function PruefungenComponent() {
