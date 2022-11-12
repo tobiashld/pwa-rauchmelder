@@ -9,10 +9,11 @@ function OverviewChart() {
   const [chartData,setChartData] = useState<{name:string,value:number}[]>([])
   useEffect(()=>{
     data[ClientStatus.online].pruefungen.statistics((data)=>{
-      setChartData(Object.keys(data.data[0]).map((key:string)=>{
+      console.log(data)
+      setChartData(Object.keys(data[0]).map((key:string)=>{
         return {
           name:key,
-          value:data.data[0][key] as number
+          value:data[0][key] as number
         }
       }))
     })

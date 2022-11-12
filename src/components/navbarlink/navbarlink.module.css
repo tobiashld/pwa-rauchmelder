@@ -20,3 +20,7 @@
 .icon{
     padding-right:10px;
 }
+.active{
+    background-color: #124559;
+    transition:  cubic-bezier(0.075, 0.82, 0.165, 1) background 0.5s
+}

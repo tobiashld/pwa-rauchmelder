@@ -108,6 +108,7 @@ export class Rauchmelder{
 export class GeprRauchmelder{
   constructor(
      readonly id:number,
+     readonly rauchmelderId:number,
      public grund:number,
      public  baulichUnveraendert:boolean,
      public  hindernisseUmgebung:boolean,
@@ -116,11 +117,31 @@ export class GeprRauchmelder{
      public  relevanteBeschaedigung:boolean,
      public  selberRaum:boolean,
      public  warnmelderGereinigt:boolean,
+     public batterieGut:boolean,
      public anmerkungen:string,
      public anmerkungenZwei:string,
      public timestamp?:string,
      public pruefungsId?:number,
   ){}
+
+  prepForSave(){
+    return {
+      id:this.rauchmelderId,
+      selberRaum: this.selberRaum,
+      baulichUnveraendert: this.baulichUnveraendert,
+      hindernisseUmgebung: this.hindernisseUmgebung,
+      relevanteBeschaedigung: this.relevanteBeschaedigung,
+      oeffnungenFrei: this.oeffnungenFrei,
+      warnmelderGereinigt: this.warnmelderGereinigt,
+      pruefungErfolgreich: this.pruefungErfolgreich,
+      batterieGut: this.batterieGut,
+      timestamp:"12.11.2022 22:27",
+      grund: this.grund,
+      anmerkungen: this.anmerkungen,
+      anmerkungenZwei: this.anmerkungenZwei,
+      pruefungsId:!this.pruefungsId || this.pruefungsId === 0?undefined:this.pruefungsId
+    }
+  }
 }
 
 export const toGeprRauchmelderConverter = (
@@ -128,6 +149,7 @@ export const toGeprRauchmelderConverter = (
       ): GeprRauchmelder => {
         return new GeprRauchmelder(
           data.id,
+          data.rauchmelderId,
           data.grund,
           data.baulichUnveraendert,
           data.hindernisseUmgebung,
@@ -136,6 +158,7 @@ export const toGeprRauchmelderConverter = (
           data.relevanteBeschaedigung,
           data.selberRaum,
           data.warnmelderGereinigt,
+          data.batterieGut,
           data.anmerkungen,
           data.anmerkungenZwei,
         )
@@ -153,7 +176,13 @@ class smallObjekt {
 }
 export class Wohnung{
     prepForSave(): any {
-      throw new Error("Method not implemented.");
+      return {
+        objektID:this.objektid,
+        etage:this.etage,
+        wohnungslage:this.lage,
+        haus:this.haus,
+        nachname:this.mieter,
+      }
     }
     constructor(
     readonly id:number,
@@ -171,6 +200,20 @@ export const toWohnungConverter = (
       }
 
 export class Pruefung{
+  prepForSave():any{
+    return {
+      ...this.objekt.dump(),
+      rauchmelder:this.rauchmelder.map(rauchmelder=>rauchmelder.prepForSave())
+    }
+  }
+  dump(){
+    return {
+      ...this.objekt.dump(),
+      ...this.user.dump(),
+      rauchmelder:this.rauchmelder
+    }
+  }
+
     constructor(
       readonly id:number,
       public timestamp:string,
@@ -179,24 +222,13 @@ export class Pruefung{
       public rauchmelder:GeprRauchmelder[]
     ){}
 
-    prepForSave(){
-      return {
-        ...this.objekt.dump(),
-        ...this.user.dump(),
-        rauchmelder:this.rauchmelder
-      }
-    }
-    dump(){
-      return {
-        ...this.objekt.dump(),
-        ...this.user.dump(),
-        rauchmelder:this.rauchmelder
-      }
-    }
+   
+    
 }
 export const toPruefungConverter = (
         data:any
       ): Pruefung =>{
+        console.log(data)
         return new Pruefung(
           data.id,
           data.timestamp,

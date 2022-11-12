@@ -1,3 +1,4 @@
+import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import data from '../../../services/datafunctions'
@@ -14,6 +15,8 @@ function WohnungenComponent() {
   const [alleWohnungen,setAlleWohnungen] = useState<Wohnung[]>([])
   const [changedWohnungen,setChangedWohnungen] = useState<Wohnung[]>([])
   const [isSavable,setIsSavable] = useState(false)
+  const {enqueueSnackbar} = useSnackbar()
+  const [reload,setReload] = useState(false)
   useEffect(()=>{
     data[ClientStatus.online].wohnungen.get(undefined,(wohnungen:any[])=>{
       setAlleWohnungen(wohnungen.map(item=>toWohnungConverter(item)))
@@ -30,7 +33,24 @@ function WohnungenComponent() {
   },[changedWohnungen])
 
   const handleSave = ()=>{
-
+    changedWohnungen.forEach(wohnung=>{
+      let error = undefined
+      data[ClientStatus.online].wohnungen.change(wohnung,(data)=>{
+        //error if error is there
+        if(data && data.error)error = data.error
+      })
+      if(error){
+        enqueueSnackbar(error,{variant:"error"})
+      }
+    })
+    
+    setTimeout(()=>data[ClientStatus.online].wohnungen.get(undefined,(data)=>{
+      const convertedWohnungen = data.map((wohnung:any)=>toWohnungConverter(wohnung))
+      setAlleWohnungen(convertedWohnungen)
+    }),400)
+    setChangedWohnungen([])
+    setIsSavable(false)
+    setReload(!reload)
   }
 
 

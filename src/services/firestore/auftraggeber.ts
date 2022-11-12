@@ -1,80 +1,77 @@
 
 import { Auftraggeber } from "../../types/allgemein"
-import { cookies } from "../cookieService";
 import { dynamicurl } from "../globals";
 
 
 
 async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
-    const http = new XMLHttpRequest();
-    const url = dynamicurl + "/auftraggeber" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    http.open("GET",url);
-    http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-    http.send();
-    
-    http.onreadystatechange=(e:Event)=>{
-      if(http.readyState === 4){
-        let obj = JSON.parse(http.responseText)
-
-        if(obj && obj.data){
-            if(cb)cb(obj.data)
-        }        
+  const url = dynamicurl + "/auftraggeber" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
+  fetch(url,{
+    credentials: "include",
+    method:"GET",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
+      if(obj && obj.data){
+        if(cb)cb(obj.data)
       }
-    }
+    })
 }
 
 async function add(auftraggeber:Auftraggeber,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
   const url = dynamicurl + "/auftraggeber"
-  http.open("POST",url);
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send(JSON.stringify(auftraggeber.prepForSave()));
-  
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4){
-      let obj = JSON.parse(http.responseText)
-
+  fetch(url,{
+    credentials: "include",
+    method:"POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body:JSON.stringify(auftraggeber.prepForSave())
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
 }
 async function change(auftraggeber:Auftraggeber,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
   const url = dynamicurl + "/auftraggeber/"+auftraggeber.id
-  http.open("PUT",url);
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send(JSON.stringify(auftraggeber.prepForSave()));
-  
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4){
-      let obj = JSON.parse(http.responseText)
-
+  fetch(url,{
+    credentials: "include",
+    method:"PUT",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body:JSON.stringify(auftraggeber.prepForSave())
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
+  
+  
 }
 async function deleteA(id:number,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
   const url = dynamicurl + "/auftraggeber/"+id
-  http.open("DELETE",url);
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send();
-  
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4){
-      let obj = JSON.parse(http.responseText)
-
-      if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }        
+  fetch(url,{
+    credentials: "include",
+    method:"DELETE",
+    headers: {
+      'Content-Type': 'application/json'
     }
-  }
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
+      if(obj && obj.data){
+        if(cb)cb(obj.data)
+    }
+    })
 }
 
 

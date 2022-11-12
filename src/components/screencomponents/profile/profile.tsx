@@ -48,6 +48,7 @@ function ProfileComponent() {
 
         </div>
         <div className={styles.changepw}>
+          <h2>Passwort ändern </h2>
           <TextInput
             placeholder='Passwort'
             type='password'
@@ -65,8 +66,21 @@ function ProfileComponent() {
         <div>
           
         </div>
-        <div>
-
+        <div className={styles.changepw}>
+        <h2>Email ändern </h2>
+          <TextInput
+            placeholder='Email'
+            type='text'
+            icon={<RiLockPasswordLine />}
+            ref={passwordOneRef}
+          />
+          <TextInput
+            placeholder='Email bestätigen'
+            type='text'
+            icon={<RiLockPasswordLine />}
+            ref={passwordTwoRef}
+          />
+          <Button value="Email ändern" onClick={handlePwChange}></Button>
         </div>
       </div>
     </div>

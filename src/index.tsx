@@ -6,6 +6,7 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { SnackbarProvider } from 'notistack';
+import { CookiesProvider } from 'react-cookie';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,9 +14,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <React.StrictMode>
-      <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal:"left",vertical:"top"}} disableWindowBlurListener preventDuplicate>
-        <App status="online"/>
-      </SnackbarProvider>
+      <CookiesProvider>
+        <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal:"left",vertical:"top"}} disableWindowBlurListener preventDuplicate>
+          <App status="online"/>
+        </SnackbarProvider>
+      </CookiesProvider>
     </React.StrictMode>
   </Provider>
 );

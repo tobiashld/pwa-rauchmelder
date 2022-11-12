@@ -7,11 +7,8 @@ import HomeScreen from './screens/homescreen/homescreen';
 import { ClientStatus } from './types/statusenum';
 import { BrowserRouter } from 'react-router-dom';
 import data from './services/datafunctions';
-import { cookies } from './services/cookieService';
 import { login, logout } from './store/slice';
 import { useSnackbar } from 'notistack';
-import jwtDecode from 'jwt-decode'
-import { CustomJwtPayload } from './types/allgemein';
 import Loadingspinner from './components/loadingspinner/loadingspinner';
 
 
@@ -23,22 +20,17 @@ function App(props:{status:'online'|'offline'}) {
   const {enqueueSnackbar} = useSnackbar()
   //data[ClientStatus.online].auftraggeber.getWithParams([{key:"id",operator:"<=",value:4}])
   useEffect(()=>{
-    let token = cookies.get("token")
-    if(token){
-      data[ClientStatus.online].rauchmelder.get(undefined,(data:any)=>{
-        if(data.error){
-          enqueueSnackbar(data.error,{variant:"error"})
-        }else{
-          let payload = jwtDecode<CustomJwtPayload>(token)
-          dispatch(login({successfull:true,username:payload.username}))
-        }
-        setReadyToRender(true)
-
-      })
-    }else{
-      dispatch(logout())
+  
+    data[ClientStatus.online].user.get(undefined,(data:any)=>{
+      if(!data || data.error){
+        enqueueSnackbar(data?data.error:"Backend ist nich erreichbar",{variant:"error"})
+        dispatch(logout())
+      }else{
+        enqueueSnackbar("Automatisch angemeldet",{variant:"success"})
+        dispatch(login({successfull:true,username:data.data.username}))
+      }
       setReadyToRender(true)
-    }
+    })
   },[dispatch, enqueueSnackbar])
   
   

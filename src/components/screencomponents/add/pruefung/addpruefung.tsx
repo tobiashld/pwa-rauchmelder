@@ -1,4 +1,4 @@
-import { Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
+import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent,  TextField } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import React, { useEffect,  useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -9,6 +9,7 @@ import { RootState, useAppDispatch } from '../../../../store/store'
 import {  GeprRauchmelder, Objekt, Pruefung, Rauchmelder,  toPruefungConverter, toRauchmelderConverter, User } from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
 import AddButton from '../../../addbutton/addbutton'
+import SaveButton from '../../../savebutton/savebutton'
 import styles from './addpruefung.module.css'
 
 function AddPruefung() {
@@ -17,7 +18,6 @@ function AddPruefung() {
     const [currPruefObjekt,setCurrPruefObjekt] = useState<Objekt | undefined>(pruefObjektString?JSON.parse(pruefObjektString):undefined)
     const [currPruefung,setCurrPruefung] = useState<Pruefung | undefined>(undefined)
     const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<Rauchmelder | undefined>()
-    //const [allePruefObjekte,setAllePruefObjekte] = useState<Objekt[] | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
@@ -64,11 +64,27 @@ function AddPruefung() {
             // })
         }
     },[dispatch, id, currPruefObjekt])
+
+    useEffect(()=>{
+        console.log(currGeprRauchmelder)
+    },[currGeprRauchmelder])
     
     const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode)=>{
         setCurrSelectedRauchmelder(JSON.parse(event.target.value))
     }
-
+    const handleSave = ()=>{
+        if(currPruefung){
+            if(id){
+                data[ClientStatus.online].pruefungen.change(currPruefung,(data)=>{
+                    console.log(data)
+                })
+            }else{
+                data[ClientStatus.online].pruefungen.create(currPruefung,(data)=>{
+                    console.log(data)
+                })
+            }
+        }
+    }
     
 
     return (
@@ -76,7 +92,7 @@ function AddPruefung() {
             <div className={styles.outerbox}>
                 <div className={styles.rauchmelderbox} >
                     <div className={styles.rauchmelderboxInside}>
-                        <>
+                        
                         <div className={styles.rauchmeldercard + " " + styles.addcard}>
                             <FormControl sx={{ width:"98%" }} >
                                 <InputLabel id="Rauchmelder">Rauchmelder</InputLabel>
@@ -97,25 +113,25 @@ function AddPruefung() {
                                     }}
                                 >
                                     {
-                                    alleRauchmelder.filter(rauchmelder=>currPruefung?.rauchmelder.find(index=>index.id===rauchmelder.id)?false:true).map(rauchmelder=>(
+                                    alleRauchmelder.filter(rauchmelder=>currPruefung?.rauchmelder.find(index=>index.rauchmelderId===rauchmelder.id)?false:true).map(rauchmelder=>(
                                             <MenuItem
                                                 key={rauchmelder.id}
                                                 value={JSON.stringify(rauchmelder)}
                                             >
-                                                {rauchmelder.mieter + " "+ rauchmelder.raum }
+                                                {rauchmelder.seriennr+ " "+rauchmelder.mieter + " "+ rauchmelder.raum }
                                             </MenuItem>
                                     ))
                                     }
                                     
                                 </Select>
                             </FormControl>
-                            <AddButton routeParam='test' onClick={()=>{
+                            <AddButton routeParam='test' className={styles.addbutton} onClick={()=>{
                                 if(!currSelectedRauchmelder)return
-                                if(currPruefung?.rauchmelder.find(item=>item.id===currSelectedRauchmelder.id)){
+                                if(currPruefung?.rauchmelder.find(item=>item.rauchmelderId===currSelectedRauchmelder.id)){
                                     enqueueSnackbar("Dieser Rauchmelder ist bereits geprüft!",{variant:"warning"})
                                     return
                                 }
-                                let geprRauchmelder = new GeprRauchmelder(currSelectedRauchmelder.id,0,true,true,true,true,true,true,true,"","","now",currPruefung?.id)
+                                let geprRauchmelder = new GeprRauchmelder(0,currSelectedRauchmelder.id,0,true,true,true,true,true,true,true,true,"","","now",currPruefung?.id)
                                 let newGeprRauchmelderList = (currPruefung && currPruefung.rauchmelder)?currPruefung?.rauchmelder.slice():[]
                                 newGeprRauchmelderList.push(geprRauchmelder)
                                 let helperPruefung = new Pruefung(currPruefung!.id,currPruefung!.timestamp,currPruefung!.user,currPruefung!.objekt,newGeprRauchmelderList)
@@ -124,40 +140,217 @@ function AddPruefung() {
                                 setCurrSelectedRauchmelder(undefined)
                             }}/>
                         </div>
+                        <div className={styles.rauchmelderliste}>
                         {
                             currPruefung?
                             currPruefung.rauchmelder.map(rauchmelder=>{
-                                console.log(rauchmelder)
-                                let wholeRauchmelder = alleRauchmelder.find(item=>item.id === rauchmelder.id)
+                                let wholeRauchmelder = alleRauchmelder.find(item=>item.id === rauchmelder.rauchmelderId)
                                 return (
-                                    <div className={(currGeprRauchmelder && rauchmelder.id === currGeprRauchmelder!.id)?styles.rauchmeldercard + " "+styles.activeRauchmelder:styles.rauchmeldercard} onClick={(event)=>{
+                                    <div className={(currGeprRauchmelder && rauchmelder.rauchmelderId === currGeprRauchmelder!.rauchmelderId)?styles.rauchmeldercard + " "+styles.activeRauchmelder:styles.rauchmeldercard} onClick={(event)=>{
                                         setCurrGeprRauchmelder(rauchmelder)
                                     }}>
-                                        <div className={styles.rauchmeldercardtext}>
+                                        
                                             <div className={styles.rauchmeldercardTitle}>
-                                            {wholeRauchmelder?wholeRauchmelder.mieter + " "+ wholeRauchmelder.raum:rauchmelder.id }
+                                            {wholeRauchmelder?wholeRauchmelder.mieter + " "+ wholeRauchmelder.raum:rauchmelder.rauchmelderId }
                                             </div>
+                                            <div>    
                                             {wholeRauchmelder?wholeRauchmelder.seriennr:""}
-                                        </div>
+                                            </div>
+                                        
                                     </div>)
                             })
                             :
                             <></>
                         }
-                        </>
+                        
+                        </div>
+                        <div className={styles.saveinteractions}>
+                            <SaveButton onClick={handleSave} value="Prüfung abschließen" isShown={currPruefung?currPruefung?.rauchmelder.length > 0:false}/>
+                        </div>
                     </div>
                 </div>
                 <div className={styles.pruefungsbox}>
                     <div className={styles.pruefungboxInside}>
                         <div className={styles.actualPruefung}>
                         {
-                            currGeprRauchmelder?.id
+                            currGeprRauchmelder?
+                            <div className={styles.pruefungsinhalt}>
+                                <div>
+                                    {
+                                        alleRauchmelder.filter(rauchmelder=>rauchmelder.id===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
+                                            return (
+                                                <div className={styles.infotable}>
+                                                        <div>
+                                                            <strong>
+                                                            Seriennr
+                                                            </strong>
+                                                        </div>
+                                                        <div>
+                                                            <strong>
+                                                            Mieter
+                                                            </strong>
+                                                        </div>
+                                                        <div>
+                                                            <strong>
+                                                            Objekt
+                                                            </strong>
+                                                        </div>
+                                                    
+                                                        <div>
+                                                            {rauchmelder.seriennr}
+                                                        </div>
+                                                        <div>
+                                                            {rauchmelder.mieter}
+                                                        </div>
+                                                        <div>
+                                                            {rauchmelder.objekt.name}
+                                                        </div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                <div>
+                                    <TextField 
+                                        fullWidth
+                                        className={styles.anmerkung}
+                                        placeholder="Allgemeine Anmerkungen"
+                                        onChange={(event)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.anmerkungen = event.target.value
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }}
+                                        value={currGeprRauchmelder.anmerkungen}
+                                    />
+                                </div>
+
+                                <div className={styles.pruefungskriterien}>
+                                    <FormGroup>
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.selberRaum = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder!.selberRaum?true:false}/>} label="Nutzung des Raums gleich (z.B. Wohnzimmer wurde nicht zum Schlafzimmer)?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.baulichUnveraendert = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder &&currGeprRauchmelder.baulichUnveraendert?currGeprRauchmelder.baulichUnveraendert:false}/>} label="Raum ist baulich unverändert?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.hindernisseUmgebung = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder.hindernisseUmgebung?true:false} />} label="Keine Hindernisse in der umgebung von 0,5m? Leuchte näher als 50 cm?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.relevanteBeschaedigung = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder.relevanteBeschaedigung?true:false} />} label="Keine funktionsrelevante Beschädigung?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.oeffnungenFrei = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder.oeffnungenFrei?true:false} />} label="Raucheindringöffnungen frei?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.warnmelderGereinigt = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder.warnmelderGereinigt?true:false} />} label="Rauchwarnmelder gereinigt?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.pruefungErfolgreich = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder.pruefungErfolgreich?true:false} />} label="Funktionsprüfung erfolgreich?" />
+                                        <FormControlLabel onChange={(event,checked)=>{
+                                            let helpPruefung = structuredClone(currGeprRauchmelder)
+                                            helpPruefung!.batterieGut = checked
+                                            setCurrGeprRauchmelder(helpPruefung)
+                                        }} control={<Checkbox checked={currGeprRauchmelder.batterieGut?true:false} />} label="Batterie in Ordnung?" />
+                                    </FormGroup>
+                                </div>
+                                <div className={styles.pruefungstext}>
+                                    <div className={styles.grundselect}>
+
+                                        <FormControl sx={{ width:"100%",backgroundColor:"white" }} >
+                                            <InputLabel id="grund">Grund</InputLabel>
+                                            <Select
+                                                labelId="grund"
+                                                id="single-select"
+                                                value={currGeprRauchmelder.grund.toString()}
+                                                label="Grund"
+                                                onChange={(event)=>{
+                                                    let helpPruefung = structuredClone(currGeprRauchmelder)
+                                                    helpPruefung!.grund = Number.parseInt(event.target.value)
+                                                    setCurrGeprRauchmelder(helpPruefung)
+                                                }}
+                                            >
+                                                
+                                                        <MenuItem value="0">Erstinbetriebnahme</MenuItem>
+                                                        <MenuItem value="1">Inspektion / Wartung</MenuItem>
+                                                        <MenuItem value="2">Erstinbetriebnahme + Ausgetauscht</MenuItem>
+                                                
+                                                
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div>
+                                        <TextField
+                                            placeholder='Prüfungsrelevante Anmerkungen' 
+                                            value={currGeprRauchmelder.anmerkungenZwei}
+                                            fullWidth
+                                            onChange={(event)=>{
+                                                let helpPruefung = structuredClone(currGeprRauchmelder)
+                                                helpPruefung!.anmerkungenZwei = event.target.value
+                                                setCurrGeprRauchmelder(helpPruefung)
+                                            }}
+                                            className={styles.anmerkung}
+                                        />
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            :
+                            <></>
                         }
+
+                        
                         </div>
-                        <div className={styles.interactions}>
-                            <Button color="error" variant="contained" disableElevation>Rauchmelder löschen</Button>
-                            <Button color="success" variant="contained" disableElevation>Speichern</Button>
-                        </div>
+                        {
+                            currGeprRauchmelder?
+                            <div className={styles.interactions}>
+                                <Button color="error" variant="contained" onClick={(event)=>{
+                                    let newGeprRauchmelderList = currPruefung?.rauchmelder.slice()
+                                    if(newGeprRauchmelderList){
+                                        let filteredList = newGeprRauchmelderList.filter(item=>item.rauchmelderId!==currGeprRauchmelder.rauchmelderId)
+                                        let helperPruefung = new Pruefung(currPruefung!.id,currPruefung!.timestamp,currPruefung!.user,currPruefung!.objekt,filteredList)
+                                        setCurrGeprRauchmelder(undefined)
+                                        setCurrPruefung(helperPruefung)
+                                        setCurrSelectedRauchmelder(undefined)
+                                    }
+                                }} disableElevation>Rauchmelder löschen</Button>
+                                <Button color="success" variant="contained" disableElevation onClick={(event)=>{
+                                    let newPruefung = structuredClone(currPruefung)
+                                    let newGeprRauchmelderList = newPruefung?.rauchmelder
+                                    if(newGeprRauchmelderList){
+                                        let filteredList = newGeprRauchmelderList.map(item=>{
+                                            if(item.rauchmelderId===currGeprRauchmelder.rauchmelderId){
+                                                return currGeprRauchmelder
+                                            }else{
+                                                return item
+                                            }
+                                        })
+                                        let helperPruefung = newPruefung
+                                        helperPruefung!.rauchmelder = filteredList
+                                        setCurrPruefung(helperPruefung)
+                                        setCurrSelectedRauchmelder(undefined)
+                                    }
+                                }}>Rauchmelder Speichern</Button>
+                            </div>
+                            :
+                            <></>
+                        }
+                        
                     </div>
                 </div>
             </div>

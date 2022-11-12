@@ -1,85 +1,74 @@
 import { Objekt } from "../../types/allgemein"
-import { cookies } from "../cookieService";
 import { dynamicurl } from "../globals";
 
 
 async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
-    const http = new XMLHttpRequest();
     const url = dynamicurl + "/objekte" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    http.open("GET",url);
-    http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-    http.send();
-    
-    http.onreadystatechange=(e:Event)=>{
-      if(http.readyState === 4 && http.status === 200){
-        let obj = JSON.parse(http.responseText)
-
+    fetch(url,{
+      credentials: "include",
+      method:"GET",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(response=>{
+      return response.json()})
+      .then(obj=>{
         if(obj && obj.data){
-            if(cb)cb(obj.data)
-        }else{
-          if(cb)cb(obj)
-        }        
+          if(cb)cb(obj.data)
       }
-    }
+      })
 }
 async function add(objekt:Objekt,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
-  const url = dynamicurl + "/auftraggeber"
-  http.open("POST",url);
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send(JSON.stringify(objekt.prepForSave()));
   
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4 && http.status === 200){
-      let obj = JSON.parse(http.responseText)
-
+  const url = dynamicurl + "/auftraggeber"
+  fetch(url,{
+    credentials: "include",
+    method:"POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body:JSON.stringify(objekt.prepForSave())
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }else{
-        if(cb)cb(obj)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
+  
 }
 async function change(objekt:Objekt,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
   const url = dynamicurl + "/objekte/"+objekt.id
-  http.open("PUT",url);
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send(JSON.stringify(objekt.prepForSave()));
-  
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4 && http.status === 200){
-      let obj = JSON.parse(http.responseText)
-
+  fetch(url,{
+    credentials: "include",
+    method:"PUT",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body:JSON.stringify(objekt.prepForSave())
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }else{
-        if(cb)cb(obj)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
 }
 async function deleteO(id:number,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
   const url = dynamicurl + "/objekte/"+id
-  http.open("DELETE",url);
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send();
-  
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4 && http.status === 200){
-      let obj = JSON.parse(http.responseText)
-
+  fetch(url,{
+    credentials: "include",
+    method:"DELETE",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }else{
-        if(cb)cb(obj)
-      }       
+        if(cb)cb(obj.data)
     }
-  }
+    })
 }
 
 

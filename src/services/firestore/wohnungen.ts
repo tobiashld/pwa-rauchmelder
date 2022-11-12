@@ -1,79 +1,76 @@
 import { Wohnung,  } from "../../types/allgemein"
-import { cookies } from "../cookieService";
 import { dynamicurl } from "../globals";
 
 
 
 async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
-    const http = new XMLHttpRequest();
     const url = dynamicurl + "/wohnungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    http.open("GET",url);
-    http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-    http.send();
-    
-    http.onreadystatechange=(e:Event)=>{
-      if(http.readyState === 4 && http.status === 200){
-        let obj = JSON.parse(http.responseText)
-
+    fetch(url,{
+      credentials: "include",
+      method:"GET",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(response=>{
+      return response.json()})
+      .then(obj=>{
         if(obj && obj.data){
-            if(cb)cb(obj.data)
-        }        
+          if(cb)cb(obj.data)
       }
-    }
+      })
 }
 
 async function add(wohnung:Wohnung,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
-  const url = dynamicurl + "/wohnungen"
-  http.open("POST",url);
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-  http.send(JSON.stringify(wohnung.prepForSave()));
   
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4 && http.status === 200){
-      let obj = JSON.parse(http.responseText)
-
+  const url = dynamicurl + "/wohnungen"
+  fetch(url,{
+    credentials: "include",
+    method:"POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body:JSON.stringify(wohnung.prepForSave())
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
 }
 async function change(wohnung:Wohnung,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
-  const url = dynamicurl + "/wohnungen/"+wohnung.id
-  http.open("PUT",url);
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.setRequestHeader("Content-Type", "application/json;charset=UTF-16");
-  http.send(JSON.stringify(wohnung.prepForSave()));
   
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4 && http.status === 200){
-      let obj = JSON.parse(http.responseText)
-
+  const url = dynamicurl + "/wohnungen/"+wohnung.id
+  fetch(url,{
+    credentials: "include",
+    method:"PUT",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body:JSON.stringify(wohnung.prepForSave())
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
 }
 async function deleteW(id:number,cb?:(data:any)=>void){
-  const http = new XMLHttpRequest();
   const url = dynamicurl + "/wohnungen/"+id
-  http.open("DELETE",url);
-  http.setRequestHeader("Authorization","Bearer "+cookies.get("token"))
-  http.send();
-  
-  http.onreadystatechange=(e:Event)=>{
-    if(http.readyState === 4 && http.status === 200){
-      let obj = JSON.parse(http.responseText)
-
+  fetch(url,{
+    credentials: "include",
+    method:"DELETE",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
       if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }        
+        if(cb)cb(obj.data)
     }
-  }
+    })
 }
 
 
