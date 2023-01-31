@@ -1,139 +1,260 @@
-import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
-
+import { JwtPayload } from "jwt-decode";
 export class Auftraggeber{
     constructor(
-    readonly adresse:Adresse,
-    readonly email:string,
-    readonly id:number,
-    readonly name:string,
-    readonly telefon:string
+      readonly id:number,
+      public adresse:Adresse,
+      public email:string,
+      public name:string,
+      public telefon:string
     ){}
-}
-export const AuftraggeberConverter = {
-    toFirestore(auftraggeber: Auftraggeber): DocumentData {
-        return {adresse:auftraggeber.adresse,email:auftraggeber.email,id:auftraggeber.id,name:auftraggeber.name,telefon:auftraggeber.telefon};
-      },
-      fromFirestore(
-        snapshot: QueryDocumentSnapshot,
-        options: SnapshotOptions
-      ): Auftraggeber {
-        const data = snapshot.data(options)!;
-        return new Auftraggeber(data.adresse,data.email,data.id,data.name,data.telefon);
+    prepForSave(){
+      return {
+        ...this.adresse,
+        email:this.email,
+        name:this.name,
+        telefon:this.telefon
       }
+    }
+    dump(){
+      return {
+        auftraggeberID:this.id
+      }
+    }
+    toString(){
+      return this.name + "\n" + this.adresse.toString()
+    }
 }
+export const toAuftraggeberConverter = (
+        data:any
+      ): Auftraggeber => {
+        return new Auftraggeber(data.id,new Adresse(data.hausnummer,data.ort,data.plz,data.straße),data.email,data.name,data.telefon);
+      }
+
+
+export type ChangeKey = 'id'
+
 export class User{
+    prepForSave(): any {
+        throw new Error("Method not implemented.");
+    }
     constructor(
-    readonly full_name:string,
-    readonly age:number,
-    readonly password:string,
+      readonly id:number,
+      readonly username:string,
     ){}
+    dump(){
+      return {"userid":this.id}
+    }
+    toString(){
+      return this.username
+    }
 }
-export const UserConverter = {
-    toFirestore(user: User): DocumentData {
-        return {full_name:user.full_name,age:user.age,password:user.password};
-      },
-      fromFirestore(
-        snapshot: QueryDocumentSnapshot,
-        options: SnapshotOptions
-      ): User {
-        const data = snapshot.data(options)!;
-        return new User(data.full_name,data.age,data.password);
+export const toUserConverter =(
+        data:any
+      ): User =>{
+        return new User(data[0].user_id,data[0].username);
       }
-}
+
 export class Objekt{
     constructor(
-    readonly adresse:Adresse,
-    readonly auftraggeber:Auftraggeber|undefined,
-    readonly beschreibung:string,
-    readonly id:number,
-    readonly objektname:string
+      readonly id:number,
+      public adresse:Adresse,
+      public beschreibung:string,
+      public name:string,
+      public auftraggeberID?:number
     ){}
+    prepForSave(){
+      return {
+        ...this.adresse,
+        auftraggeberID:this.auftraggeberID,
+        beschreibung:this.beschreibung,
+        objekt:this.name, 
+      }  
+    }
+    toString(){
+      return this.name
+    }
+    dump(){
+      return {"objektid":this.id}
+    }
 }
-export const ObjektConverter = {
-    toFirestore(Objekt: Objekt): DocumentData {
-        return {adresse:Objekt.adresse,auftraggeber:Objekt.auftraggeber,beschreibung:Objekt.beschreibung,id:Objekt.id,objektname:Objekt.objektname};
-      },
-      fromFirestore(
-        snapshot: QueryDocumentSnapshot,
-        options: SnapshotOptions
-      ): Objekt {
-        const data = snapshot.data(options)!;
-        return new Objekt(data.adresse,data.auftraggeber,data.beschreibung,data.id,data.objektname);
+export const toObjektConverter = (
+       data:any
+      ): Objekt =>{
+        
+        return new Objekt(
+          data.id,
+          new Adresse(data.hausnummer,data.ort,data.plz,data.straße),
+          data.beschreibung,
+          data.objekt,
+          data.auftraggeberID);
       }
-}
+
 export class Rauchmelder{
+    prepForSave(): any {
+      throw new Error("Method not implemented.");
+    }
     constructor(
-    readonly auftraggeber:Auftraggeber,
-    readonly objekt:Objekt,
-    readonly produktionsdatum:string,
-    readonly id:number,
-    readonly raum:string,
-    readonly seriennr:string,
-    readonly wohnung:Wohnung
+      readonly id:number,
+      public objekt:smallObjekt,
+      public produktionsdatum:string,
+      public raum:string,
+      public seriennr:string,
+      public letztePruefungsID:number,
+      public mieter:string
     ){}
+
+    
 }
-export const RauchmelderConverter = {
-    toFirestore(rauchmelder: Rauchmelder): DocumentData {
-        return {auftraggeber:rauchmelder.auftraggeber,objekt:rauchmelder.objekt,id:rauchmelder.id,raum:rauchmelder.raum,seriennr:rauchmelder.seriennr,wohnung:rauchmelder.wohnung};
-      },
-      fromFirestore(
-        snapshot: QueryDocumentSnapshot,
-        options: SnapshotOptions
-      ): Rauchmelder {
-        const data = snapshot.data(options)!;
-        return new Rauchmelder(data.auftraggeber,data.objekt,data.produktionsdatum,data.id,data.raum,data.seriennr,data.wohnung);
-      }
-}
-export class Wohnung{
-    constructor(
-    readonly auftraggeber:Auftraggeber,
-    readonly objekt:Objekt,
-    readonly etage:string,
-    readonly haus:string,
-    readonly id:number,
-    readonly lage:string,
-    readonly mieter:string,
-    ){}
-}
-export const WohnungConverter = {
-    toFirestore(wohnung: Wohnung): DocumentData {
-        return {auftraggeber:wohnung.auftraggeber,objekt:wohnung.objekt,id:wohnung.id,etage:wohnung.etage,haus:wohnung.haus,lage:wohnung.lage,mieter:wohnung.mieter};
-      },
-      fromFirestore(
-        snapshot: QueryDocumentSnapshot,
-        options: SnapshotOptions
-      ): Wohnung {
-        const data = snapshot.data(options)!;
-        return new Wohnung(data.auftraggeber,data.objekt,data.etage,data.haus,data.id,data.lage,data.mieter);
-      }
-}
-export class Pruefung{
-    constructor(
-    readonly auftraggeber:Auftraggeber,
-    readonly objekt:Objekt,
-    readonly etage:string,
-    readonly haus:string,
-    readonly id:number,
-    readonly lage:string,
-    readonly mieter:string,
-    ){}
-}
-export const PruefungConverter = {
-    toFirestore(pruefung: Pruefung): DocumentData {
-        return {auftraggeber:pruefung.auftraggeber,objekt:pruefung.objekt,id:pruefung.id,etage:pruefung.etage,haus:pruefung.haus,lage:pruefung.lage,mieter:pruefung.mieter};
-      },
-      fromFirestore(
-        snapshot: QueryDocumentSnapshot,
-        options: SnapshotOptions
-      ): Pruefung {
-        const data = snapshot.data(options)!;
-        return new Pruefung(data.auftraggeber,data.objekt,data.etage,data.haus,data.id,data.lage,data.mieter);
-      }
+export class GeprRauchmelder{
+  constructor(
+     readonly id:number,
+     readonly rauchmelderId:number,
+     public grund:number,
+     public  baulichUnveraendert:boolean,
+     public  hindernisseUmgebung:boolean,
+     public  oeffnungenFrei:boolean,
+     public  pruefungErfolgreich:boolean,
+     public  relevanteBeschaedigung:boolean,
+     public  selberRaum:boolean,
+     public  warnmelderGereinigt:boolean,
+     public batterieGut:boolean,
+     public anmerkungen:string,
+     public anmerkungenZwei:string,
+     public timestamp?:string,
+     public pruefungsId?:number,
+  ){}
+
 }
 
-export type Adresse = {
-    hausnummer:number,
-    ort:string,
-    plz:string,
-    straße:string
+export const toGeprRauchmelderConverter = (
+        data:any
+      ): GeprRauchmelder => {
+        return new GeprRauchmelder(
+          data.id,
+          data.rauchmelderId,
+          data.grund,
+          data.baulichUnveraendert,
+          data.hindernisseUmgebung,
+          data.oeffnungenFrei,
+          data.pruefungErfolgreich,
+          data.relevanteBeschaedigung,
+          data.selberRaum,
+          data.warnmelderGereinigt,
+          data.batterieGut,
+          data.anmerkungen,
+          data.anmerkungenZwei,
+        )
+      }
+export const toRauchmelderConverter = (
+        data:any
+      ): Rauchmelder =>{
+        return new Rauchmelder(data.id,new smallObjekt(data.objektid,data.objektname),data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
+      }
+class smallObjekt {
+  constructor(
+    public id:number,
+    public name:string, 
+  ){}
+}
+export class Wohnung{
+    prepForSave(): any {
+      return {
+        objektID:this.objektid,
+        etage:this.etage,
+        wohnungslage:this.lage,
+        haus:this.haus,
+        nachname:this.mieter,
+      }
+    }
+    constructor(
+    readonly id:number,
+    public objektid:number,
+    public etage:string,
+    public haus:string,
+    public lage:string,
+    public mieter:string,
+    ){}
+}
+export const toWohnungConverter = (
+        data:any
+      ): Wohnung =>{
+        return new Wohnung(data.id,data.objektID,data.etage,data.wohnungslage,data.haus,data.nachname);
+      }
+
+export class Pruefung{
+  
+  
+
+    constructor(
+      readonly id:number,
+      public timestamp:string,
+      public user:User,
+      public objekt:Objekt,
+      public rauchmelder:GeprRauchmelder[]
+    ){}
+
+    
+}
+
+export const prepPruefung=(pruefung:Pruefung) =>{
+  return {
+    objektid:pruefung.objekt.id,
+    rauchmelder:pruefung.rauchmelder.map(rauchmelder=>prepGeprRauchmelder(rauchmelder))
+  }
+}
+export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
+  return {
+    id:geprRauchmelder.rauchmelderId,
+    selberRaum: geprRauchmelder.selberRaum,
+    baulichUnveraendert: geprRauchmelder.baulichUnveraendert,
+    hindernisseUmgebung: geprRauchmelder.hindernisseUmgebung,
+    relevanteBeschaedigung: geprRauchmelder.relevanteBeschaedigung,
+    oeffnungenFrei: geprRauchmelder.oeffnungenFrei,
+    warnmelderGereinigt: geprRauchmelder.warnmelderGereinigt,
+    pruefungErfolgreich: geprRauchmelder.pruefungErfolgreich,
+    batterieGut: geprRauchmelder.batterieGut,
+    timestamp:"12.11.2022 22:27",
+    grund: geprRauchmelder.grund,
+    anmerkungen: geprRauchmelder.anmerkungen,
+    anmerkungenZwei: geprRauchmelder.anmerkungenZwei,
+    pruefungsId:!geprRauchmelder.pruefungsId || geprRauchmelder.pruefungsId === 0?undefined:geprRauchmelder.pruefungsId
+  }
+}
+
+export const toPruefungConverter = (
+        data:any
+      ): Pruefung =>{
+        return new Pruefung(
+          data.id,
+          data.timestamp,
+          new User(data.user.id,data.user.username),
+          new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
+          (data.rauchmelder.length > 0)?data.rauchmelder.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):[],
+          
+          );
+      }
+
+
+export class Adresse {
+    
+    constructor(
+      public hausnummer:number,
+      public ort:string,
+      public plz:string,
+      public straße:string
+      ){}
+  
+    toString(){
+      return this.straße + " " + this.hausnummer + ", " + this.plz + " " + this.ort;
+    }
+}
+
+export interface BackendResponse {
+  status:number,
+  data?:any[]
+}
+
+export interface CustomJwtPayload extends JwtPayload{
+    id:number,
+    username:string
 }

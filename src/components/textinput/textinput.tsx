@@ -8,6 +8,7 @@ type params = {
     onKeyUp?: ((event:React.KeyboardEvent<HTMLInputElement>)=>void),
     onBlur?: ((event?:React.FocusEvent<HTMLInputElement,Element>)=>void),
     setFocus?:(value:boolean)=>void,
+    value?:string,
     dropdownRef?:React.Ref<any>,
     regexValidator?:string,
     style?: string,
@@ -18,27 +19,31 @@ type params = {
     children?:any,
     icon?:any,
     focus?:boolean
-    size?:'Big' | 'Small'
+    size?:'Big' |'Medium' | 'Small',
+    className?:string,
+    disabled?:boolean
 }
 
 const TextInput = React.forwardRef<HTMLInputElement,params>((props:params,ref)=> {
   
-  const [value, setValue] = useState("")
+  const [value, setValue] = useState(props&&props.value?props.value:"")
+
 
   if(!props){
     return (<div className='container'><input className={styles.big + " " +styles.input}/></div>)
   }
   
 
-  let classNames = props.size && props.size === styles.Small?styles.Small:styles.Big;
+  let classNames = props.size && props.size === 'Small'?styles.Small:styles.Big;
   classNames += props.icon?' '+styles.input+' '+styles["input-icon"]:' '+styles.input+' '+styles["input-wo-icon"];
-
+  
   return (
     <>
       {(props.onFocusPointOut)?<><div className={props.focus?styles.coverup:styles["coverup-gone"]} onClick={(event)=>{if(props.onBlur&&props.setFocus){props.onBlur();props.setFocus(false)}}}></div></>:<></>}
-      <div className={styles.container}>
+      <div className={props.className?styles.container+ " " + props.className:styles.container}>
           {props.icon?<div className={styles.icon}>{props.icon}</div>:<></>}
           <input 
+              disabled={props.disabled?props.disabled:false}
               ref={ref}
               type={props.type?props.type:"text"}
               value={value}

@@ -4,13 +4,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fbfbfa;
+    background-color: #dadddf;
 }
 .loginbox{
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.4);
     width:clamp(400px,40vw,900px);
     padding:20px;
     min-height: 400px;
-    background-color: #598392;
+    background-color: #01161E;
     display: flex;
     border-radius: 15px;
     flex-direction: column;
@@ -21,7 +22,7 @@
     flex:2;
     display: flex;
     justify-content: center;
-    align-items: start;
+    align-items: center;
 }
 .username{
     display: flex;
@@ -40,25 +41,30 @@
     align-items: flex-end;
 }
 .headertext{
-    color:#01161E;
+    color:rgb(232, 232, 232);
     flex:1;
     font-size:20px;
     display: flex;
-    align-items: end;
+    align-items: flex-end;
 }
 .loginButton{
     outline:none;
     border: none;
-    background-color: #01161E;
-    color:white;
+    background-color: #124559;
+    color:rgb(232, 232, 232);
     font-size:20px;
     font-weight: 400;
     width: 80%;
     height:40px;
     border-radius: 10px;
 }
+.loginButton:active,
+.loginButton:focus{
+    background-color: #305462;
+}
 .loginButton:hover{
     cursor: pointer;
+    background-color: #305462
 }
 .loginbuttoncontainer{
     display: flex;
@@ -69,9 +75,22 @@
     flex:3;
     width: clamp(300px,90%,400px);
 }
-.divider{
-    height:1px;
-    width: stretch;
-    background-color: rgba(232, 232, 232, 0.584);
-    margin:10px;
+
+@media only screen and (max-width:600px) {
+    .header{
+        display:none;
+    }
+    .loginboxcontainer{
+        height:fit-content;
+        width: fit-content;
+    }
+    .loginbox{
+        height: 100vh;
+        width: 100vw;
+        padding:0;
+        border-radius: 0;
+    }
+    .usereingabe{
+        flex:2
+    }
 }

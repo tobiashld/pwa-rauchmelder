@@ -1,21 +1,62 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store/store'
+import { logout } from '../../store/slice'
+import { RootState, useAppDispatch } from '../../store/store'
 import NavBarLink from '../navbarlink/navbarlink'
+import { FaRegUser } from 'react-icons/fa'
+import { BiLogOut } from 'react-icons/bi'
 import styles from './navbar.module.css'
+import { useSnackbar } from 'notistack'
 
+const navbarElemente = [
+    {
+        name:"Home",
+        route:"/"
+    },
+    {
+        name:"Prüfungen",
+        route:"/pruefungen"
+    },
+    {
+        name:"Rauchmelder",
+        route:"/rauchmelder"
+    },
+    {
+        name:"Wohnungen",
+        route:"/wohnungen"
+    },
+    {
+        name:"Objekte",
+        route:"/objekte"
+    },
+    {
+        name:"Auftraggeber",
+        route:"/auftraggeber"
+    },
+  ]
+function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
+    const username = useSelector((state:RootState)=>state.username)
+    const dispatch = useAppDispatch()
+    const {enqueueSnackbar} = useSnackbar()
 
-function NavBar(props:{changeComponent:(component:()=>JSX.Element)=>void}) {
-    const navBarElemente = useSelector((state:RootState)=>state.navbarElemente)
   return (
-    <div className={styles.container}>
-        
-        <div className={styles.links}>
-            {navBarElemente.map(item=>{
-                return (
-                    <NavBarLink name={item.name} onClick={()=>props.changeComponent(item.component)} />
-                )
-            })}
+    <div className={styles.widthcontroller+(props.isShown?` ${styles.fullwidth}`:"")}>
+        <div className={styles.container+(props.isShown?` ${styles.navactive}`:"")}>
+            
+            <div className={styles.links}>
+                {navbarElemente.map((item,index)=>{
+                    return (
+                        <NavBarLink key={index} name={item.name} onClick={()=>props.changeComponent(item.route)} />
+                    )
+                })}
+            </div>
+            <div className={styles.auth}>
+                <NavBarLink name={username?username:""} icon={<FaRegUser />} flexi={true} onClick={()=>props.changeComponent("/profile")} />
+                <NavBarLink name="Logout" flexi={true} icon={<BiLogOut />} onClick={()=>{
+                        enqueueSnackbar("Erfolgreich ausgeloggt!",{variant:"success"})
+                        dispatch(logout())
+                    }} />
+            </div>
         </div>
     </div>
   )

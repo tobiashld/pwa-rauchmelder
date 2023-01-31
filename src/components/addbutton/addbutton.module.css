@@ -1,0 +1,17 @@
+.container{
+    
+    font-size: 40px;
+    height:40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:5px;
+    width:auto;
+    border-radius: 50%;
+    background-color: #01161E;
+    color:#EFF6E0
+}
+.container:hover{
+    cursor: pointer;
+    background-color: #053346fb;
+}

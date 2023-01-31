@@ -1,78 +1,52 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import NavBar from '../components/navbar/navbar'
-import TextInput from '../components/textinput/textinput'
-import SignInScreen from '../screens/signin/signinscreen'
-import SignUpScreen from '../screens/signup/signupscreen'
 import { Error, ErrorType } from '../types/errortype'
+import { ClientStatus } from '../types/statusenum'
 
 interface InitialState{
     errorListe:Error[],
-    authentication:{
-        isSignedIn:boolean,
-        signedInAt:Date | null,
-    },
-    isOffline:boolean,
+    isAuthenticated:boolean,
+    username:string | undefined,
+    currPruefobjekt:string | undefined,
+    isOffline:ClientStatus,
     colorScheme:'light'|'dark',
-    navbarElemente:{name:string,component:()=>JSX.Element}[]
 }
 
 const initialState : InitialState = {
   errorListe: [],
-  authentication:{
-    isSignedIn:false,
-    signedInAt:null
-  },
-  isOffline:false,
+  isAuthenticated:false,
+  username:undefined,
+  currPruefobjekt:undefined,
+  isOffline:ClientStatus.online,
   colorScheme:'light',
-  navbarElemente:[
-    {
-        name:"Prüfungen",
-        component:SignUpScreen
-    },
-    {
-        name:"Rauchmelder",
-        component:SignUpScreen
-    },
-    {
-        name:"Wohnungen",
-        component:SignUpScreen
-    },
-    {
-        name:"Objekte",
-        component:SignUpScreen
-    },
-    {
-        name:"Auftraggeber",
-        component:SignUpScreen
-    },
-  ]
 }
 export const slice = createSlice({
   name: 'error',
   initialState: initialState,
   reducers: {
-    login(state,action:PayloadAction<{username:string,password:string}>){
+    login(state,action:PayloadAction<{successfull:boolean,username:string}>){
         return ({
             ...state,
-            authentication:{
-                isSignedIn:true,
-                signedInAt:new Date()
-            }
+            isAuthenticated:action.payload.successfull,
+            username:action.payload.username
         })
     },
-    setOfflineMode(state,action:PayloadAction<{isOffline:boolean}>){
+    setOfflineMode(state,action:PayloadAction<{isOffline:ClientStatus}>){
         return ({
             ...state,
             isOffline:action.payload.isOffline
         })
     },
+    setPruefObjekt(state,action:PayloadAction<{pruefObjekt:string|undefined}>){
+        return ({
+            ...state,
+            currPruefobjekt:action.payload.pruefObjekt
+        })
+    },
     logout(state){
         return ({
             ...state,
-            authentication:{
-                isSignedIn:false,
-                signedInAt:null
-            }
+            username:undefined,
+            isAuthenticated:false
         })
     },
     changeColorScheme(state,action:PayloadAction<{
@@ -85,40 +59,45 @@ export const slice = createSlice({
         })
     },
     addError(state, action:PayloadAction<{
+        id:number,
         type:ErrorType,
         title:string,
         message:string,
-        handleClose:(id:number)=>void
     }>) {
         let helpArray : any = [...state.errorListe]
-        let id = state.errorListe.length+1
         helpArray.push({
-            id:id,
+            id:action.payload.id,
             type:action.payload.type,
             title:action.payload.title,
             message:action.payload.message,
-            handleClose:()=>action.payload.handleClose(id)
         })
         
-        setTimeout(action.payload.handleClose,5000)
+        
         return ({
             ...state,
             errorListe:helpArray,
-            
         })
     },
-    clearError(state,action) {
+    clearError(state,action:PayloadAction<{id:number}>) {
         let helpArray = [...state.errorListe]
-        helpArray.splice(action.payload.id,1)
-        return ({
-            ...state,
-            errorListe:helpArray
-        })
+        if(helpArray.length <=1){
+            return ({
+                ...state,
+                errorListe:[]
+            })
+        }else{
+            helpArray = helpArray.filter(item=>item.id!==action.payload.id)
+            return ({
+                ...state,
+                errorListe:helpArray
+            })
+        }
+        
     },
   },
 })
 
 
-export const { addError,clearError,changeColorScheme,login,logout,setOfflineMode } = slice.actions
+export const { addError,clearError,changeColorScheme,login,logout,setOfflineMode,setPruefObjekt } = slice.actions
 
 export default slice.reducer

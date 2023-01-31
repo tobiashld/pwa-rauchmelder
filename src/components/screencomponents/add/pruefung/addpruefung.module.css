@@ -1,0 +1,202 @@
+.gesamtbox{
+    display:grid;
+    flex:1;
+    padding:20px;
+}
+.outerbox{
+    display: flex;
+    padding:10px;
+    border-radius: 10px;
+    gap:10px;
+    background-color: white;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+}
+.rauchmelderbox{
+    width:clamp(300px,27%,600px);
+    height:stretch;
+}
+.pruefungsbox{
+    flex:1;
+    position: relative;
+}
+.rauchmelderboxInside{
+    overflow-y:auto;
+    overflow-x:hidden;
+    height:calc(100vh - 110px);
+    width: 100%;
+    
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding:5px;
+    box-sizing: border-box;
+    background-color: rgb(214, 214, 214);
+}
+.pruefungboxInside{
+    overflow-y:auto;
+    overflow-x:hidden;
+    display: flex;
+    flex-direction: column;
+    height:100%;
+    width: 100%;
+    border-radius: 10px;
+    padding:5px;
+    box-sizing: border-box;
+    background-color: rgb(238, 238, 238);
+}
+.rauchmeldercard{
+    height:clamp(80px,6vh,100px);
+    width:auto;
+    min-width:100px;
+    
+    padding:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin:5px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: whitesmoke;
+}
+.rauchmeldercardtext{
+    width: stretch;
+    height:stretch;
+    display:flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.rauchmeldercardTitle{
+    font-size: large;
+    font-weight: 600;
+}
+.activeRauchmelder,
+.rauchmeldercard:hover{
+    cursor: pointer;
+    color:white;
+    background-color: #01161E;
+}
+
+.addcard:hover{
+    background-color: whitesmoke;
+    cursor: default;
+    color:black;
+}
+.addcard{
+    gap:5px;
+    flex-direction: row;
+}
+.actualPruefung{
+    flex:1;
+    overflow-y:auto;
+    overflow-x:hidden
+}
+.saveinteractions{
+
+    z-index:3;
+    justify-self: flex-start;
+    margin:5px
+}
+.rauchmelderliste{
+    flex:1;
+    overflow-y:auto
+}
+.interactions{
+    display: flex;
+    gap:10px;
+    justify-content: center;
+    padding:10px;
+    height:40px;
+    justify-self: flex-end;
+}
+.addbutton{
+    border-radius:10px;
+    height:84%;
+    aspect-ratio: 1;
+}
+.pruefungsinhalt{
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding:20px;
+    box-sizing: border-box;
+    gap:10px;
+    display: flex;
+    flex-direction: column;
+}
+.pruefungskriterien{
+    
+}
+.anmerkung{
+    background-color: white;
+}
+.pruefungstext{
+    display: flex;
+    flex-direction: column;
+    gap:20px
+}
+.infotable{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(2,1fr);
+    place-items: center;
+    padding-bottom:10px;
+}
+@media only screen and (max-width:800px){
+    .rauchmelderliste{
+        flex:1;
+        width:auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        overflow-x:visible;
+        overflow-y:visible
+    }
+    .addbutton{
+        height:80%;
+        aspect-ratio: 1;
+    }
+    .outerbox{
+        flex-direction: column;
+    }
+    .rauchmelderboxInside{
+        overflow-x:scroll;
+        height:100px;
+        overflow-y:hidden;
+        flex-direction: row;
+        align-items: center;
+        max-width: calc(100vw - 60px);
+    }
+    .rauchmeldercard{
+        display: flex;
+        width: fit-content;
+        min-width: 150px;
+        height:80%;
+
+
+    }
+    .addcard{
+        align-items: center;
+        min-width: 220px;
+    }
+    .rauchmeldercardTitle{
+        font-size: medium;
+        display: flex;
+        font-weight: 600;
+        width: max-content;
+    }
+    .rauchmelderselect{
+        width: 100% !important;
+        height:90% !important;
+    }
+    .rauchmeldercardtext{
+        height:100%;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    .rauchmelderbox{
+        height:100px;
+        width:stretch;
+    }
+}

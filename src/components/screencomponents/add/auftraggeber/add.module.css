@@ -1,0 +1,168 @@
+.gesamtContainer{
+    overflow:hidden;
+    width: calc(100% - 60px);
+    height:calc(100% - 50px - 60px);
+    display: flex;
+    flex-direction: column;
+    margin:20px;
+    padding:10px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+}
+.interactions{
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    display: flex;
+    flex-direction: row;
+    gap:15px;
+    z-index:3;
+}
+.delete{
+    z-index:2;
+
+}
+.delete:hover{
+    color:red;
+    cursor:pointer
+}
+.loadingspinner{
+    justify-content: center;
+    align-items: center;
+}
+
+.headline{
+    margin:10px;
+    font-size:3em;
+    font-weight: 800;
+}
+.actualTable{
+    border-radius:10px;
+    margin:10px;
+    overflow:hidden;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.2);
+}
+.pageElement{
+    padding:2px;
+    height:25px;
+    font-size:x-large;
+    aspect-ratio: 1;
+    display: flex;
+    font-size:large;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;   
+}
+.pageElement:hover{
+    cursor: pointer;
+    background-color: lightgray;
+}
+.currActivePage{
+    background-color: lightgray;
+}
+.pagination{
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    width:fit-content;
+    margin:10px;
+    margin-left:auto;
+    gap:5px;
+}
+.features{
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+}
+.columns{
+    display:flex;
+    height:40px;
+    flex-direction: row;
+    background-color: rgba(171, 177, 186, 0.894);
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.columnsegment,
+.rowsegment{
+    color:gray;
+    flex:2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:5px;
+}
+.columnsegment{
+    color:rgb(59, 59, 59);
+}
+.id{
+    width:70px;
+
+    flex:1;
+}
+.sortSection{
+    width: fit-content;
+    margin:10px;
+    display:flex;
+    flex-direction: row;
+    margin-right:auto;
+    flex-wrap:wrap;
+    gap:10px;
+}
+.sortbutton{
+    display:flex;
+    align-items: center;
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+    border-radius: 15px;
+    background-color: rgb(226, 226, 226);
+    width: fit-content;
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.sortbutton:hover{
+    cursor: pointer;
+    background-color: rgba(171, 171, 171, 0.894);
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.activesort{
+    background-color: rgba(171, 171, 171, 0.894);
+}
+
+.dataRow{
+    height:calc(96% - 2vh);
+    overflow-y:auto;
+}
+.datarowelement{
+    background-color: rgb(226, 226, 226);
+    display:flex;
+    flex-direction: row;
+    min-height:40px;
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.datarowelement:hover{
+    background-color: rgba(198, 198, 198, 0.894);
+    transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.datarowelement input{
+    background-color: transparent;
+}
+.datarowelement:hover input{
+    background-color: rgb(232, 232, 232);
+}
+.datarowelement>*{
+   
+}
+@media only screen and (max-width:600px){
+    .gesamtContainer{
+        overflow:hidden;
+        width: 100%;
+        height:calc(100vh - 50px);
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        margin:0;
+        padding:0;
+    }
+}
