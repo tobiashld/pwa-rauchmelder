@@ -17,7 +17,7 @@ import RauchmelderComponent from '../../components/screencomponents/rauchmelder/
 import WohnungenComponent from '../../components/screencomponents/wohnungen/wohnungen'
 import AuftraggeberComponent from '../../components/screencomponents/auftraggeber/auftraggeber'
 import PruefungenComponent from '../../components/screencomponents/pruefungen/pruefungen'
-import { RootState, useAppDispatch } from '../../store/store'
+import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import Add from '../../components/screencomponents/add/add'
 import AddPruefung from '../../components/screencomponents/add/pruefung/addpruefung'
