@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/frontend/static/css/main.ad3ea05c.css",
-    "main.js": "/frontend/static/js/main.5a458681.js",
+    "main.js": "/frontend/static/js/main.66182dc4.js",
     "static/media/Quicksand-VariableFont_wght.ttf": "/frontend/static/media/Quicksand-VariableFont_wght.cf52df73d8529b4815ed.ttf",
     "service-worker.js": "/frontend/service-worker.js",
     "index.html": "/frontend/index.html",
     "main.ad3ea05c.css.map": "/frontend/static/css/main.ad3ea05c.css.map",
-    "main.5a458681.js.map": "/frontend/static/js/main.5a458681.js.map"
+    "main.66182dc4.js.map": "/frontend/static/js/main.66182dc4.js.map"
   },
   "entrypoints": [
     "static/css/main.ad3ea05c.css",
-    "static/js/main.5a458681.js"
+    "static/js/main.66182dc4.js"
   ]
 }
