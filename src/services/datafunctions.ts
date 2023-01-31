@@ -1,26 +1,80 @@
-import {  GeprRauchmelder, Objekt, Pruefung,   } from "../types/allgemein"
+import {  Auftraggeber, GeprRauchmelder, Pruefung,   } from "../types/allgemein"
 import { ClientStatus } from "../types/statusenum"
-import auftraggeber from "./firestore/auftraggeber"
-import user from "./firestore/user"
-import objekte from "./firestore/objekte"
-import wohnungen from "./firestore/wohnungen"
+import auftraggeber from "./postsql_db/auftraggeber"
+import user from "./postsql_db/user"
+import objekte from "./postsql_db/objekte"
+import wohnungen from "./postsql_db/wohnungen"
 import { db } from "./myappdatabase"
-import rauchmelder from "./firestore/rauchmelder"
-import pruefungen from "./firestore/pruefungen"
+import rauchmelder from "./postsql_db/rauchmelder"
+import pruefungen from "./postsql_db/pruefungen"
 
 const data = {
     [ClientStatus.offline]:{
+
         pruefungen:{
-            create:(pruefung:Pruefung)=>db.table("pruefungen").add(pruefung,pruefung.id),
+            create:(pruefung:Pruefung)=>{
+                //Pruefung an sich speichern
+                db.table("pruefungen").add({
+                    id:0,
+                    objektID:pruefung.objekt.id,
+                    userID:pruefung.user.id,
+                    timestamp:"jetzt"
+                }).then((value)=>{
+                    console.log(value)
+                    db.table("pruefungenListe").bulkAdd(pruefung.rauchmelder)
+                })                
+            },
             getPruefungen:()=>db.table("pruefungen").toArray(),
             deletePruefung:(pruefung:Pruefung)=>db.table("pruefungen").delete(pruefung.id)
         },
         rauchmelder:{
+            get:(props:{[key:string]:number}|undefined,cb?:(data:any)=>void)=>{
+                if(props){
+                    db.table("rauchmelder").filter((rauchmelder)=>rauchmelder[Object.keys(props)[0]]===props[Object.keys(props)[0]]).toArray().then(data=>{
+                        if(cb){
+                            cb(data)
+                        } 
+                    })
+                }else{
+                    db.table("rauchmelder").toArray().then(value=>{
+                        if(cb){
+                            cb(value)
+                        }
+                    })
+                }
+            },
             addRauchmelder:(geprRauchmelder: GeprRauchmelder)=>db.table("gepruefteRauchmelder").add(geprRauchmelder,geprRauchmelder.id),
             deleteRauchmelder:(geprRauchmelder:GeprRauchmelder)=>db.table("gepruefteRauchmelder").delete(geprRauchmelder.id),
             getAllRauchmelder:()=>db.table("gepruefteRauchmelder").toArray(),
             getRauchmelderWithParams:()=>db.table("gepruefteRauchmelder").toArray()
-        }
+        },
+        auftraggeber:{
+            get:(props:any,cb?:(data:any[])=>void)=>{
+                db.table("auftraggeber").toArray().then(data=>{
+                    if(cb){
+                        cb(data)
+                    }
+                })
+            },
+            create:(auftraggeber:Auftraggeber,cb?:(data:any)=>void)=>{
+                db.table("auftraggeber").add(auftraggeber.prepForSave())
+            },
+            change:auftraggeber.change,
+            delete:auftraggeber.deleteA
+        },
+        objekte:{
+            get:(props:any,cb?:(data:any[])=>void)=>{
+                db.table("objekte").toArray().then(data=>{
+                    console.log(data)
+                    if(cb){
+                        cb(data)
+                    }
+                })
+            },
+            create:objekte.add,
+            change:objekte.change,
+            delete:objekte.deleteO
+        },
         
     },
     [ClientStatus.online]:{
@@ -63,25 +117,51 @@ const data = {
             change:objekte.change,
             delete:objekte.deleteO
         },
-        prepareOffline:async (objekt:Objekt)=>{
-            // db.table("wohnungen").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
-            // db.table("objekte").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
-            // db.table("rauchmelder").clear().then(data=>console.log("successfully deleted old data")).catch(error=>console.error(error.message))
-            // const wohnungenListeToCache = await wohnungen.getWohnungWithParam("objekt.id",objekt.id)
-            // wohnungenListeToCache.every(wohnung=>db.table("wohnungen").add(wohnung,wohnung.id))
-            // const rauchmelderListeToCache = await rauchmelder.getRauchmelderWithParam("objekt.id",objekt.id)
-            // rauchmelderListeToCache.every(rauchmelder=>db.table("rauchmelder").add(rauchmelder,rauchmelder.id))
-            // db.table("objekte").add(objekt)
+        prepareOffline:async (cb?:()=>void)=>{
+
+            //Wohnungen aus db cachen 
+            db.table("wohnungen").clear().then(nothing=>{
+                wohnungen.get(undefined,(data:any[])=>{
+                    db.table("wohnungen").bulkAdd(data)
+                })
+            })
+            .catch(error=>console.error(error))
+
+            //Objekte aus db cachen
+            db.table("objekte").clear().then(nothing=>{
+                objekte.get(undefined,(data:any[])=>{
+                    db.table("objekte").bulkAdd(data)
+                })
+            }).catch(error=>console.error(error))
+
+            //Rauchmelder aus db cachen
+            db.table("rauchmelder").clear().then(nothing=>{
+                rauchmelder.get(undefined,data=>{
+                    db.table("rauchmelder").bulkAdd(data)
+                })
+            }).catch(error=>console.error(error))
+            
+            //Auftraggeber aus db cachen
+            db.table("auftraggeber").clear()
+            .then(nothing=>{
+                auftraggeber.get(undefined,(data:any[])=>{
+                    db.table("auftraggeber").bulkAdd(data)
+                })
+            }).catch(error=>console.error(error))
+
+            if(cb){
+                cb()
+            }
         },
         syncPruefungen:async()=>{
-            const gecachteRauchmelder : GeprRauchmelder[] = (await db.table("gepruefteRauchmelder").toArray()).map((rauch:GeprRauchmelder)=>rauch)
-            const gecachtePruefungen : Pruefung[] = (await db.table("pruefungen").toArray()).map((pruefung:Pruefung)=>pruefung)
-            gecachtePruefungen.at(1)
-            gecachteRauchmelder.at(1)
-            // get last pruefungsindex 
-            // +1 
-            // update all docs if Pruefung noch nicht in 
-            return 1
+            // const gecachteRauchmelder : GeprRauchmelder[] = (await db.table("gepruefteRauchmelder").toArray()).map((rauch:GeprRauchmelder)=>rauch)
+            // const gecachtePruefungen : Pruefung[] = (await db.table("pruefungen").toArray()).map((pruefung:Pruefung)=>pruefung)
+            // gecachtePruefungen.at(1)
+            // gecachteRauchmelder.at(1)
+            // // get last pruefungsindex 
+            // // +1 
+            // // update all docs if Pruefung noch nicht in 
+            // return 1
         }  
     }
 }

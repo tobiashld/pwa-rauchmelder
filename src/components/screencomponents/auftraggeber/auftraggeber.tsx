@@ -8,10 +8,13 @@ import styles from './auftraggeber.module.css'
 import {BsArrowDown, BsArrowUp} from 'react-icons/bs'
 import SaveButton from '../../savebutton/savebutton'
 import { useSnackbar } from 'notistack'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
 
 type AuftraggeberChangeKeys = 'adresse' | 'email' | 'name' | 'telefon';
 
 function AuftraggeberComponent() {
+  const clientStatus = useSelector((state:RootState)=>state.isOffline)
   const [alleAuftraggeber,setAlleAuftraggeber] = useState<Auftraggeber[]>([])
   const [changedAuftraggeber,setChangedAuftraggeber] = useState<Auftraggeber[]>([])
   const [isSavable,setIsSavable] = useState(false);
@@ -19,16 +22,15 @@ function AuftraggeberComponent() {
   const [reload,setReload] = useState(false)
 
   useEffect(()=>{
-    data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
+    data[clientStatus].auftraggeber.get(undefined,(data)=>{
       const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
-      console.log("converted first useeffect")
-      console.log(convertedAuftraggeber)
       setAlleAuftraggeber(convertedAuftraggeber)
       setReload(true)
     })
     setChangedAuftraggeber([])
 
-  },[])
+  },[clientStatus])
+
   useEffect(()=>{
     if(changedAuftraggeber.length > 0){
       setIsSavable(true)
@@ -36,10 +38,6 @@ function AuftraggeberComponent() {
       setIsSavable(false)
     }
   },[changedAuftraggeber])
-  useEffect(()=>{
-    console.log("auftraggeber changed")
-    console.log(alleAuftraggeber)
-  },[alleAuftraggeber])
 
 
   const handleSave = ()=>{
@@ -56,7 +54,6 @@ function AuftraggeberComponent() {
     
     setTimeout(()=>data[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
       const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
-      console.log(convertedAuftraggeber)
       setAlleAuftraggeber(convertedAuftraggeber)
     }),400)
     setChangedAuftraggeber([])

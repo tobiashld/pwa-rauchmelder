@@ -2,7 +2,7 @@ import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel,
 import { useSnackbar } from 'notistack'
 import React, { useEffect,  useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import data from '../../../../services/datafunctions'
 import { setPruefObjekt } from '../../../../store/slice'
 import { RootState, useAppDispatch } from '../../../../store/store'
@@ -13,6 +13,7 @@ import SaveButton from '../../../savebutton/savebutton'
 import styles from './addpruefung.module.css'
 
 function AddPruefung() {
+    const clientStatus = useSelector((state:RootState)=>state.isOffline)
     const [currGeprRauchmelder,setCurrGeprRauchmelder] = useState<GeprRauchmelder | undefined>()
     const pruefObjektString = useSelector((state:RootState)=>state.currPruefobjekt)
     const [currPruefObjekt,setCurrPruefObjekt] = useState<Objekt | undefined>(pruefObjektString?JSON.parse(pruefObjektString):undefined)
@@ -20,6 +21,7 @@ function AddPruefung() {
     const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<Rauchmelder | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar()
     const { id } = useParams()
     const ITEM_HEIGHT = 48;
@@ -38,8 +40,9 @@ function AddPruefung() {
     },[pruefObjektString])
 
     useEffect(()=>{
-        data[ClientStatus.online].rauchmelder.get({"objektID":currPruefObjekt?currPruefObjekt.id:1},(data:any[])=>{
-            setAlleRauchmelder(data.map(rauchmelder=>toRauchmelderConverter(rauchmelder)))})
+        data[clientStatus].rauchmelder.get({"objektID":currPruefObjekt?currPruefObjekt.id:1},(data:any[])=>{
+            setAlleRauchmelder(data.map(rauchmelder=>toRauchmelderConverter(rauchmelder)))
+        })
         if(id){
             data[ClientStatus.online].pruefungen.get({"id":id},(prepData:any[])=>{
                 if(prepData.length > 0){
@@ -50,7 +53,6 @@ function AddPruefung() {
                         dispatch(setPruefObjekt({pruefObjekt:JSON.stringify(helpPruefung.objekt)}))
                     }
 
-                    console.log(helpPruefung)
                 }else{
                     //TODO error werfen oder anzeigen
                 }
@@ -63,12 +65,8 @@ function AddPruefung() {
             //     setAllePruefObjekte(data.map(objekt=>toObjektConverter(objekt)))
             // })
         }
-    },[dispatch, id, currPruefObjekt])
+    },[dispatch, id, currPruefObjekt, clientStatus])
 
-    useEffect(()=>{
-        console.log(currGeprRauchmelder)
-    },[currGeprRauchmelder])
-    
     const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode)=>{
         setCurrSelectedRauchmelder(JSON.parse(event.target.value))
     }
@@ -76,11 +74,21 @@ function AddPruefung() {
         if(currPruefung){
             if(id){
                 data[ClientStatus.online].pruefungen.change(currPruefung,(data)=>{
-                    console.log(data)
+                    if(data && data.status && data.status===200){
+                        enqueueSnackbar(data.data,{variant:"success"})
+                        navigate("/pruefungen")
+                    }else if(data){
+                        enqueueSnackbar("Hinzufügen der Prüfung fehlgeschlagen. Probiere es erneut",{variant:"error"})
+                    }
                 })
             }else{
                 data[ClientStatus.online].pruefungen.create(currPruefung,(data)=>{
-                    console.log(data)
+                    if(data && data.status && data.status===200){
+                        enqueueSnackbar(data.data,{variant:"success"})
+                        navigate("/pruefungen")
+                    }else if(data){
+                        enqueueSnackbar("Hinzufügen der Prüfung fehlgeschlagen. Probiere es erneut",{variant:"error"})
+                    }
                 })
             }
         }
@@ -105,8 +113,6 @@ function AddPruefung() {
                                     input={<OutlinedInput id="select-multiple-chip" label="Rauchmelder" />}
                                     MenuProps={MenuProps}
                                     renderValue={(value)=>{
-                                        console.log("value :")
-                                        console.log(value)
                                         if(value=== "")return ""
                                         let rauchmelder : Rauchmelder= JSON.parse(value)
                                         return rauchmelder.mieter + " " + rauchmelder.raum

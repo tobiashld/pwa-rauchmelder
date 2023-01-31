@@ -15,7 +15,7 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
   }).then(response=>{
     return response.json()})
     .then(obj=>{
-      if(obj && obj.data){
+      if(obj && obj.data ){
         if(cb)cb(obj.data)
       }
     })

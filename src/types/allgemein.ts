@@ -124,24 +124,6 @@ export class GeprRauchmelder{
      public pruefungsId?:number,
   ){}
 
-  prepForSave(){
-    return {
-      id:this.rauchmelderId,
-      selberRaum: this.selberRaum,
-      baulichUnveraendert: this.baulichUnveraendert,
-      hindernisseUmgebung: this.hindernisseUmgebung,
-      relevanteBeschaedigung: this.relevanteBeschaedigung,
-      oeffnungenFrei: this.oeffnungenFrei,
-      warnmelderGereinigt: this.warnmelderGereinigt,
-      pruefungErfolgreich: this.pruefungErfolgreich,
-      batterieGut: this.batterieGut,
-      timestamp:"12.11.2022 22:27",
-      grund: this.grund,
-      anmerkungen: this.anmerkungen,
-      anmerkungenZwei: this.anmerkungenZwei,
-      pruefungsId:!this.pruefungsId || this.pruefungsId === 0?undefined:this.pruefungsId
-    }
-  }
 }
 
 export const toGeprRauchmelderConverter = (
@@ -200,19 +182,8 @@ export const toWohnungConverter = (
       }
 
 export class Pruefung{
-  prepForSave():any{
-    return {
-      ...this.objekt.dump(),
-      rauchmelder:this.rauchmelder.map(rauchmelder=>rauchmelder.prepForSave())
-    }
-  }
-  dump(){
-    return {
-      ...this.objekt.dump(),
-      ...this.user.dump(),
-      rauchmelder:this.rauchmelder
-    }
-  }
+  
+  
 
     constructor(
       readonly id:number,
@@ -222,13 +193,37 @@ export class Pruefung{
       public rauchmelder:GeprRauchmelder[]
     ){}
 
-   
     
 }
+
+export const prepPruefung=(pruefung:Pruefung) =>{
+  return {
+    objektid:pruefung.objekt.id,
+    rauchmelder:pruefung.rauchmelder.map(rauchmelder=>prepGeprRauchmelder(rauchmelder))
+  }
+}
+export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
+  return {
+    id:geprRauchmelder.rauchmelderId,
+    selberRaum: geprRauchmelder.selberRaum,
+    baulichUnveraendert: geprRauchmelder.baulichUnveraendert,
+    hindernisseUmgebung: geprRauchmelder.hindernisseUmgebung,
+    relevanteBeschaedigung: geprRauchmelder.relevanteBeschaedigung,
+    oeffnungenFrei: geprRauchmelder.oeffnungenFrei,
+    warnmelderGereinigt: geprRauchmelder.warnmelderGereinigt,
+    pruefungErfolgreich: geprRauchmelder.pruefungErfolgreich,
+    batterieGut: geprRauchmelder.batterieGut,
+    timestamp:"12.11.2022 22:27",
+    grund: geprRauchmelder.grund,
+    anmerkungen: geprRauchmelder.anmerkungen,
+    anmerkungenZwei: geprRauchmelder.anmerkungenZwei,
+    pruefungsId:!geprRauchmelder.pruefungsId || geprRauchmelder.pruefungsId === 0?undefined:geprRauchmelder.pruefungsId
+  }
+}
+
 export const toPruefungConverter = (
         data:any
       ): Pruefung =>{
-        console.log(data)
         return new Pruefung(
           data.id,
           data.timestamp,
@@ -252,6 +247,11 @@ export class Adresse {
     toString(){
       return this.straße + " " + this.hausnummer + ", " + this.plz + " " + this.ort;
     }
+}
+
+export interface BackendResponse {
+  status:number,
+  data?:any[]
 }
 
 export interface CustomJwtPayload extends JwtPayload{

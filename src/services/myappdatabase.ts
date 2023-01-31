@@ -10,14 +10,18 @@ export class MyAppDatabase extends Dexie {
     gepruefteRauchmelder!: Dexie.Table<GeprRauchmelder,number>;
 
     constructor(){
-        super("OfflineCache");
-        this.version(1).stores({
-            rauchmelder: 'id,auftraggeber,objekt,produktionsdatum,raum,seriennr,wohnung',
-            wohnungen: 'id,auftraggeber,objekt,etage,haus,lage,mieter',
-            auftraggeber: 'id,adresse,email,name,telefon',
-            objekte: 'id,adresse,auftraggeber,beschreibung,objektname',
-            pruefungen: 'id,auftraggeber,objekt,etage,haus,lage,mieter',
-            gepruefteRauchmelder: 'id,pruefung,pruefungsId,anmerkungGesamt,anmerkungPruefung,timestamp'
+        super("MartinHerholdRauchmelderVerwaltung");
+        this.version(2).stores({
+            auftraggeber: 'id,name,straße,hausnummer,plz,ort,telefon,email',
+            changedAuftraggeber: 'id,name,straße,hausnummer,plz,ort,telefon,email',
+            objekte: 'id,objekt,beschreibung,auftraggeberID,straße,hausnummer,plz,ort',
+            changedObjekte: 'id,objekt,beschreibung,auftraggeberID,straße,hausnummer,plz,ort',
+            pruefungen: 'id,objektID,userID,timestamp',
+            pruefungenListe: 'id,rauchmelderID,selberRaum,baulichUnveraendert,hindernisseUmgebung,relevanteBeschaedigung,oeffnungenFrei,warnmelderGereinigt,pruefungErfolgreich,batterieGut,timestamp,pruefungsID,grund,anmerkungen',
+            rauchmelder: 'id,objektID,raum,seriennr,produktionsdatum,letztePruefungsID,wohnungsID',
+            changedRauchmelder: 'id,objektID,raum,seriennr,produktionsdatum,letztePruefungsID,wohnungsID',
+            wohnungen: 'id,objektID,etage,wohnungslage,haus,vorname,nachname',
+            changedWohnungen: 'id,objektID,etage,wohnungslage,haus,vorname,nachname',
         })
     }
 }

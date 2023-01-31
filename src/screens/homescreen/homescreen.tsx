@@ -18,8 +18,6 @@ import WohnungenComponent from '../../components/screencomponents/wohnungen/wohn
 import AuftraggeberComponent from '../../components/screencomponents/auftraggeber/auftraggeber'
 import PruefungenComponent from '../../components/screencomponents/pruefungen/pruefungen'
 import { RootState, useAppDispatch } from '../../store/store'
-import { setOfflineMode } from '../../store/slice'
-import OfflinePruefen from '../../components/screencomponents/offlinepruefen/offlinepruefen'
 import { useSelector } from 'react-redux'
 import Add from '../../components/screencomponents/add/add'
 import AddPruefung from '../../components/screencomponents/add/pruefung/addpruefung'
@@ -28,7 +26,6 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [navBarActive,setNavBarActive] = useState(true)
   const prevStatus = useSelector((state:RootState)=>state.isOffline)
-  const [switchState,setSwitchState] = useState(false)
   const [isOfflineOhneSaven,setIsOfflineOhneSaven] = useState(false) 
 
   useEffect(()=>{
@@ -42,19 +39,11 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
 
   const {width} = useWindowDimensions();
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
   const handleChangeComponent = (route:string)=>{
     if(width < 600)setNavBarActive(false);
     navigate(route)
   }
-  const toOffline = (status:ClientStatus)=>{
-    dispatch(setOfflineMode({isOffline:status}))
-    if(status === ClientStatus.offline){
-      navigate("/offline")
-    }else{
-      navigate("/")
-    }
-  }
+  
 
   return (
     <>
@@ -62,7 +51,7 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
         <div className={styles.anwendung}>
         <NavBar isShown={navBarActive} changeComponent={(route=>handleChangeComponent(route))}/>
         <div className={styles.activeElement}>
-          <TopNavBar onMenuChange={()=>setNavBarActive(!navBarActive)} onClientStatusChange={(status:ClientStatus)=>{toOffline(status);setSwitchState(!switchState)}} offlineSwitchState={switchState}/>
+          <TopNavBar onMenuChange={()=>setNavBarActive(!navBarActive)} />
           <Routes>
             <Route path="/" element={<OverviewComponent />}/>
             <Route path="/profile" element={<ProfileComponent />} />
@@ -73,7 +62,6 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
             <Route path="/pruefungen" element={<PruefungenComponent />} />
             <Route path="/pruefung/:id" element={<AddPruefung />} />
             <Route path="/pruefung" element={<AddPruefung />} />
-            <Route path="/offline" element={<OfflinePruefen />} />
             <Route path="/add/:element" element={<Add />} />
             <Route path="/pwa-rauchmelder" element={<Navigate replace to="/" />} />
           </Routes>

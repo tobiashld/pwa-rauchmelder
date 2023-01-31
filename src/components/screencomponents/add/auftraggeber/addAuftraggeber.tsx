@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import data from '../../../../services/datafunctions'
+import { RootState } from '../../../../store/store'
 import { Adresse, Auftraggeber } from '../../../../types/allgemein'
-import { ClientStatus } from '../../../../types/statusenum'
 import AddButton from '../../../addbutton/addbutton'
 import SaveButton from '../../../savebutton/savebutton'
 import TextInput from '../../../textinput/textinput'
@@ -11,6 +12,7 @@ import styles from './add.module.css'
 type AuftraggeberChangeKeys = 'adresse' | 'email' | 'name' | 'telefon';
 
 function AddAuftraggeber() {
+    const clientStatus = useSelector((state:RootState)=>state.isOffline)
     const [auftraggeber,setAuftraggeber] = useState<Auftraggeber[]>([new Auftraggeber(0,new Adresse(0,"","",""),"","","")])
     const [isSavable,setIsSavable] = useState(false)
     const navigate = useNavigate()
@@ -45,8 +47,9 @@ function AddAuftraggeber() {
     }
 
     const handleSave = ()=>{
+      console.log(clientStatus)
       auftraggeber.forEach(auftraggeber=>{
-        data[ClientStatus.online].auftraggeber.create(auftraggeber,(data)=>{
+        data[clientStatus].auftraggeber.create(auftraggeber,(data)=>{
           
         })
       })

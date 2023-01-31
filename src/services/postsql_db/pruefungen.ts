@@ -1,5 +1,5 @@
 
-import { Pruefung } from "../../types/allgemein"
+import { prepPruefung, Pruefung } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
@@ -22,19 +22,18 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
 }
 async function add(pruefung:Pruefung,cb?:(data:any)=>void){
   const url = dynamicurl + "/pruefungen"
-  console.log(pruefung)
   fetch(url,{
     credentials: "include",
     method:"POST",
     headers: {
       'Content-Type': 'application/json'
     },
-    body:JSON.stringify(pruefung.prepForSave())
+    body:JSON.stringify(prepPruefung(pruefung))
   }).then(response=>{
     return response.json()})
     .then(obj=>{
       if(obj && obj.data){
-        if(cb)cb(obj.data)
+        if(cb)cb(obj)
     }
     })
 }
@@ -46,7 +45,7 @@ async function change(pruefung:Pruefung,cb?:(data:any)=>void){
     headers: {
       'Content-Type': 'application/json'
     },
-    body:JSON.stringify(pruefung.prepForSave())
+    body:JSON.stringify(prepPruefung(pruefung))
   }).then(response=>{
     return response.json()})
     .then(obj=>{
