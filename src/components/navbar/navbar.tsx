@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux'
 import { logout } from '../../store/slice'
 import { RootState, useAppDispatch } from '../../store/store'
 import NavBarLink from '../navbarlink/navbarlink'
-import { FaRegUser } from 'react-icons/fa'
 import { BiLogOut } from 'react-icons/bi'
 import styles from './navbar.module.css'
 import { useSnackbar } from 'notistack'
+import { Avatar } from '@mui/material'
 
 const navbarElemente = [
     {
@@ -51,7 +51,8 @@ function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
                 })}
             </div>
             <div className={styles.auth}>
-                <NavBarLink name={username?username:""} icon={<FaRegUser />} flexi={true} onClick={()=>props.changeComponent("/profile")} />
+                
+                <NavBarLink name={username?username:""} icon={<Avatar {...stringAvatar(username && username.length > 2 && username !== "0"?username:"Test mann")}>{username && username.length > 2?username.slice(0,2):undefined}</Avatar>} flexi={true} onClick={()=>props.changeComponent("/profile")} />
                 <NavBarLink name="Logout" flexi={true} icon={<BiLogOut />} onClick={()=>{
                         enqueueSnackbar("Erfolgreich ausgeloggt!",{variant:"success"})
                         dispatch(logout())
@@ -61,5 +62,33 @@ function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
     </div>
   )
 }
+
+function stringToColor(string: string) {
+    let hash = 0;
+    let i;
+  
+    /* eslint-disable no-bitwise */
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = '#';
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+  
+    return color;
+  }
+  
+  function stringAvatar(name: string) {
+    return {
+      sx: {
+        bgcolor: stringToColor(name),
+      },
+    };
+  }
 
 export default NavBar

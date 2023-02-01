@@ -10,7 +10,7 @@ function AddButton(props:{routeParam:string,onClick?:()=>void,className?:string}
       if(props&& props.onClick){
         props.onClick()
       }else{
-        navigate("/add/"+props.routeParam)
+        navigate("/"+props.routeParam+"/add")
       }  
       }} >
         <IoIosAdd />

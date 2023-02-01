@@ -21,6 +21,7 @@ import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
 import Add from '../../components/screencomponents/add/add'
 import AddPruefung from '../../components/screencomponents/add/pruefung/addpruefung'
+import AddAuftraggeber from '../../components/screencomponents/add/auftraggeber/addAuftraggeber'
 
 function HomeScreen(props:{clientstatus:ClientStatus}) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,8 +60,10 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
             <Route path="/rauchmelder" element={<RauchmelderComponent />} />
             <Route path="/wohnungen" element={<WohnungenComponent />} />
             <Route path="/auftraggeber" element={<AuftraggeberComponent />} />
+            <Route path="/auftraggeber/add" element={<AddAuftraggeber />} />
             <Route path="/pruefungen" element={<PruefungenComponent />} />
-            <Route path="/pruefung/:id" element={<AddPruefung />} />
+            <Route path="/pruefungen/add/:id" element={<AddPruefung />} />
+            <Route path="/pruefungen/add" element={<AddPruefung />} />
             <Route path="/pruefung" element={<AddPruefung />} />
             <Route path="/add/:element" element={<Add />} />
             <Route path="/pwa-rauchmelder" element={<Navigate replace to="/" />} />

@@ -49,7 +49,7 @@ function PruefungenComponent() {
   }
   const handleNewPruefung = ()=>{
     dispatch(setPruefObjekt({pruefObjekt:JSON.stringify(currPruefObjekt)}))
-    navigate("/pruefung")
+    navigate("/pruefungen/add")
   }
 
 
@@ -65,7 +65,7 @@ function PruefungenComponent() {
             options={alleObjekte}
             disabledRows={true}
             handleEdit={(id)=>{}}
-            handleRowClick={(id)=>navigate("/pruefung/"+id)}
+            handleRowClick={(id)=>navigate("/pruefungen/add/"+id)}
             handleDelete={(id)=>{
               data[ClientStatus.online].pruefungen.delete(id)
               setTimeout(()=>{
@@ -161,7 +161,7 @@ function PruefungenComponent() {
           </div>:<></>
           }
           
-          <AddButton  routeParam='/pruefung' onClick={()=>setShowDialog(!showDialog)} />
+          <AddButton  routeParam='/pruefungen/add' onClick={()=>setShowDialog(!showDialog)} />
           
           
         </div>
