@@ -1,6 +1,6 @@
 import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent,  TextField } from '@mui/material'
 import { useSnackbar } from 'notistack'
-import React, { useEffect,  useState } from 'react'
+import React, { useEffect,  useRef,  useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import data from '../../../../services/datafunctions'
@@ -20,6 +20,9 @@ function AddPruefung() {
     const [currPruefung,setCurrPruefung] = useState<Pruefung | undefined>(undefined)
     const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<Rauchmelder | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
+    const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
+    const newSeriennrRef = useRef()
+    const newProdDatumRef = useRef()
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar()
@@ -288,6 +291,12 @@ function AddPruefung() {
                                                     let helpPruefung = structuredClone(currGeprRauchmelder)
                                                     helpPruefung!.grund = Number.parseInt(event.target.value)
                                                     setCurrGeprRauchmelder(helpPruefung)
+                                                    console.log(currSelectedRauchmelder,"rauchmelder")
+                                                    if(helpPruefung!.grund === 2 ){
+                                                        setShowNewRauchmelder(true)
+                                                    }else{
+                                                        setShowNewRauchmelder(false)
+                                                    }
                                                 }}
                                             >
                                                 
@@ -299,6 +308,23 @@ function AddPruefung() {
                                             </Select>
                                         </FormControl>
                                     </div>
+                                    {
+                                        showNewRauchmelder && !id?
+                                        <div className={styles.newRauchmelderDiv}>
+                                            <TextField
+                                                placeholder="Neue Seriennr"
+                                                className={styles.newSeriennr+" "+styles.input}
+                                                inputRef={newSeriennrRef}
+                                            />
+                                            <TextField
+                                                placeholder="Produktionsdatum"
+                                                className={styles.newProddatum+" "+styles.input}
+                                                inputRef={newProdDatumRef}
+                                            />
+                                        </div>:
+                                        <></>
+                                    }
+                                                
                                     <div>
                                         <TextField
                                             placeholder='Prüfungsrelevante Anmerkungen' 
