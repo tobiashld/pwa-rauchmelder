@@ -6,11 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dataFunctions from '../../../../services/datafunctions'
 import { setPruefObjekt } from '../../../../store/slice'
 import { RootState, useAppDispatch } from '../../../../store/store'
-import {  DBResponse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder,  toPruefungConverter, toRauchmelderConverter, User } from '../../../../types/allgemein'
+import {  DBResponse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder,  toPruefungConverter, User } from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
-import AddButton from '../../../addbutton/addbutton'
-import DeleteDialog from '../../../dialogs/deleteDialog/deleteDialog'
-import SaveButton from '../../../savebutton/savebutton'
 import styles from './addpruefung.module.css'
 
 function AddPruefung() {

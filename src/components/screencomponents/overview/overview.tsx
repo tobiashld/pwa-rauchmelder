@@ -1,5 +1,4 @@
 import React from 'react'
-import Loadingspinner from '../../loadingspinner/loadingspinner'
 import PruefungenPlanen from './pruefungPlanen/pruefungplanen'
 import styles from './overview.module.css'
 import OverviewChart from './overviewChart/overviewchart'

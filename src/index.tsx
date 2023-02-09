@@ -8,7 +8,6 @@ import { store } from './store/store';
 import { SnackbarProvider } from 'notistack';
 import { CookiesProvider } from 'react-cookie';
 import { QueryClientProvider,QueryClient } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

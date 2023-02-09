@@ -1,9 +1,6 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material'
-import Paper from '@mui/material/Paper';
+
 import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
-import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
-import { RiDeleteBin5Line } from 'react-icons/ri';
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import dataFunctions from '../../../services/datafunctions'
 import { Objekt } from '../../../types/allgemein'
@@ -21,7 +18,7 @@ function ObjekteComponent() {
   const [changedObjekte,setChangedObjekte] = useState<Objekt[]>([])
   const [isSavable,setIsSavable] = useState(false)
   const {enqueueSnackbar} = useSnackbar()
-  const {data,isError,isLoading,status} = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get(),{
+  const {data,isError,isLoading} = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get(),{
     
   })
   const mutate = useMutation({

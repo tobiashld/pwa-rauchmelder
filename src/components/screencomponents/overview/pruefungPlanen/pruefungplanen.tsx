@@ -2,7 +2,7 @@ import { Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, Se
 import React, { useEffect, useState } from 'react'
 import { BsGeo } from 'react-icons/bs';
 import dataFunctions from '../../../../services/datafunctions';
-import { Objekt, toObjektConverter } from '../../../../types/allgemein';
+import { Objekt } from '../../../../types/allgemein';
 import { ClientStatus } from '../../../../types/statusenum';
 import Button from '../../../button/button';
 import styles from './pruefungen.module.css'
