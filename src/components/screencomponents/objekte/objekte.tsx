@@ -1,28 +1,32 @@
+import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material'
+import Paper from '@mui/material/Paper';
+import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
-import data from '../../../services/datafunctions'
-import { Objekt, toObjektConverter } from '../../../types/allgemein'
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import dataFunctions from '../../../services/datafunctions'
+import { Objekt } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
+import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './objekte.module.css'
 
 type ObjektChangeKeys = 'name'|'beschreibung'|'adresse'
 
 function ObjekteComponent() {
-  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
+  const queryClient = useQueryClient()
   const [changedObjekte,setChangedObjekte] = useState<Objekt[]>([])
   const [isSavable,setIsSavable] = useState(false)
-  const [reload,setReload] = useState(false)
-
-  useEffect(()=>{
-    data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-      setAlleObjekte(data.map((item)=>toObjektConverter(item)))
-      setReload(true)
-    })
-    setChangedObjekte([])
-  },[])
+  const {enqueueSnackbar} = useSnackbar()
+  const {data,isError,isLoading,status} = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get(),{
+    
+  })
+  const mutate = useMutation({
+    mutationFn: (id:number)=> dataFunctions[ClientStatus.online].objekte.delete(id)
+  })
 
   useEffect(()=>{
     if(changedObjekte.length > 0){
@@ -32,23 +36,34 @@ function ObjekteComponent() {
     }
   },[changedObjekte])
 
+  if(isLoading){
+    return <Loadingspinner size='Big' />
+  }
+
+  if(isError || (data && data.error)){
+    enqueueSnackbar("Laden der Objekte Fehlgeschlagen!",{variant:"error"})
+  }
+
+
+
+  
+
   const handleSave = ()=>{
-    if(reload){}
   }
 
   return (
     <>
       <div className={styles.table}>
         <DataTable 
-          rows={alleObjekte} 
-          columns={['id','name','beschreibung']} 
+          rows={[...data!.data]}
+          columns={['name','beschreibung']} 
           headline="Objekte" 
           editedElementIds={changedObjekte.map((objekt)=>objekt.id)}
           handleEdit={(id,key,value)=>{
             if(id === -1){
               
             }else{
-              let currObjekt = alleObjekte.slice().find((objekt)=>objekt.id === id)
+              let currObjekt = data!.data.slice().find((objekt)=>objekt.id === id)
               let newObjekt = currObjekt?new Objekt(currObjekt.id,currObjekt.adresse,currObjekt.beschreibung,currObjekt.name,currObjekt.auftraggeberID):undefined
               if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
                 let alreadyChanged = changedObjekte.slice().find((objekt)=>objekt.id===id)
@@ -77,34 +92,20 @@ function ObjekteComponent() {
             }
           }}
           handleDelete={(id)=>{
-            data[ClientStatus.online].objekte.delete(id)
-            setTimeout(()=>{
-              data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-                setAlleObjekte(data.map((item)=>toObjektConverter(item)))
-              })
-              setChangedObjekte([])
-            },300)
+            mutate.mutate(id)
+            setTimeout(()=>queryClient.invalidateQueries("objekte"),200)
+            setChangedObjekte([])
           }}
           sort={[
             {
-              name:"id",
-              function:(a:Objekt,b:Objekt)=>(a.id-b.id),
-              icon:<BsArrowDown />
-            },
-            {
-              name:"id",
-              function:(a:Objekt,b:Objekt)=>(b.id-a.id),
-              icon:<BsArrowUp />
+              name:"hinzugefügt",
+              functionAsc:(a:Objekt,b:Objekt)=>(a.id-b.id),
+              functionDesc:(a:Objekt,b:Objekt)=>(b.id-a.id),
             },
             {
               name:"name",
-              function:(a:Objekt,b:Objekt)=>(a.name.localeCompare(b.name)),
-              icon:<BsArrowDown />
-            },
-            {
-              name:"name",
-              function:(a:Objekt,b:Objekt)=>(b.name.localeCompare(a.name)),
-              icon:<BsArrowUp />
+              functionAsc:(a:Objekt,b:Objekt)=>(a.name.localeCompare(b.name)),
+              functionDesc:(a:Objekt,b:Objekt)=>(b.name.localeCompare(a.name)),
             }
           ]}
         />

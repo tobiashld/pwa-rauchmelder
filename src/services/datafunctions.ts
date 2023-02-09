@@ -8,7 +8,7 @@ import { db } from "./myappdatabase"
 import rauchmelder from "./postsql_db/rauchmelder"
 import pruefungen from "./postsql_db/pruefungen"
 
-const data = {
+const dataFunctions = {
     [ClientStatus.offline]:{
 
         pruefungen:{
@@ -137,7 +137,7 @@ const data = {
             //Rauchmelder aus db cachen
             db.table("rauchmelder").clear().then(nothing=>{
                 rauchmelder.get(undefined,data=>{
-                    db.table("rauchmelder").bulkAdd(data)
+                    db.table("rauchmelder").bulkAdd(data.data!)
                 })
             }).catch(error=>console.error(error))
             
@@ -166,4 +166,4 @@ const data = {
     }
 }
 
-export default data
+export default dataFunctions

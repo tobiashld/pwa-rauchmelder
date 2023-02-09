@@ -1,6 +1,6 @@
 import React from 'react'
 import Loadingspinner from '../../loadingspinner/loadingspinner'
-import PruefungenPlanen from '../../pruefungPlanen/pruefungplanen'
+import PruefungenPlanen from './pruefungPlanen/pruefungplanen'
 import styles from './overview.module.css'
 import OverviewChart from './overviewChart/overviewchart'
 
@@ -14,10 +14,10 @@ function OverviewComponent() {
         <PruefungenPlanen />
       </div>
       <div className={styles.overviewelement}>
-        <Loadingspinner size="Big"/>
+        <div>coming soon...</div>
       </div>
       <div className={styles.overviewelement}>
-        <Loadingspinner size="Big"/>
+        <div>coming soon...</div>
       </div>
     </div>
   )

@@ -1,6 +1,4 @@
 .overview{
-    width: 100%;
-    height:calc(100% - 50px);
     display:grid;
     grid-template-columns: repeat(2,1fr);
     grid-template-rows: repeat(2,1fr);

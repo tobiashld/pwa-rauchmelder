@@ -3,7 +3,7 @@ import React,{useState,useEffect} from 'react'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import data from '../../../services/datafunctions'
+import dataFunctions from '../../../services/datafunctions'
 import { setPruefObjekt } from '../../../store/slice'
 import { RootState, useAppDispatch } from '../../../store/store'
 import { Objekt, Pruefung, toObjektConverter, toPruefungConverter } from '../../../types/allgemein'
@@ -33,13 +33,14 @@ function PruefungenComponent() {
   };
   useEffect(()=>{
     if(clientStatus){
-      data[ClientStatus.online].pruefungen.get(undefined,(pruefungen:any[])=>{
+      dataFunctions[ClientStatus.online].pruefungen.get(undefined,(pruefungen:any[])=>{
         setAllePruefungen(pruefungen.map(item=>toPruefungConverter(item)))
       })
       
     }
-    data[clientStatus].objekte.get(undefined,(objekte:any[])=>{
-      setAlleObjekte(objekte.map(objekt=>toObjektConverter(objekt)))
+    console.log(clientStatus)
+    dataFunctions[clientStatus].objekte.get(undefined,(objekte:any)=>{
+      setAlleObjekte(objekte.data)
     })
   },[clientStatus])
 
@@ -67,27 +68,22 @@ function PruefungenComponent() {
             handleEdit={(id)=>{}}
             handleRowClick={(id)=>navigate("/pruefungen/add/"+id)}
             handleDelete={(id)=>{
-              data[ClientStatus.online].pruefungen.delete(id)
+              dataFunctions[ClientStatus.online].pruefungen.delete(id)
               setTimeout(()=>{
-                data[ClientStatus.online].pruefungen.get(undefined,(data:any[])=>{
+                dataFunctions[ClientStatus.online].pruefungen.get(undefined,(data:any[])=>{
                   setAllePruefungen(data.map((item)=>toPruefungConverter(item)))
                 })
               },300)
             }}
             sort={[
               {
-                name:"id",
-                function:(a:Pruefung,b:Pruefung)=>(a.id-b.id),
-                icon:<BsArrowDown />
-              },
-              {
-                name:"id",
-                function:(a:Pruefung,b:Pruefung)=>(b.id-a.id),
-                icon:<BsArrowUp />
+                name:"hinzugefügt",
+                functionAsc:(a:Pruefung,b:Pruefung)=>(a.id-b.id),
+                functionDesc:(a:Pruefung,b:Pruefung)=>(b.id-a.id),
               },
               {
                 name:"p.datum",
-                function:(a:Pruefung,b:Pruefung)=>{
+                functionAsc:(a:Pruefung,b:Pruefung)=>{
                   let aS = a.timestamp.split(" ").map((item,index)=>{
                     return item.split(index === 0?":":".").map(number=>Number(number))
                   })
@@ -98,11 +94,7 @@ function PruefungenComponent() {
                   let bD = new Date(bS[1][2],bS[1][1],bS[1][0],bS[0][0],bS[0][1],bS[0][2])
                   return aD.valueOf()-bD.valueOf()
                 },
-                icon:<BsArrowDown />
-              },
-              {
-                name:"p.datum",
-                function:(a:Pruefung,b:Pruefung)=>{
+                functionDesc:(a:Pruefung,b:Pruefung)=>{
                   let aS = a.timestamp.split(" ").map((item,index)=>{
                     return item.split(index === 0?":":".").map(number=>Number(number))
                   })
@@ -113,7 +105,6 @@ function PruefungenComponent() {
                   let bD = new Date(bS[1][2],bS[1][1],bS[1][0],bS[0][0],bS[0][1],bS[0][2])
                   return bD.valueOf()-aD.valueOf()
                 },
-                icon:<BsArrowUp />
               },
               
             ]}

@@ -24,8 +24,8 @@ import AddPruefung from '../../components/screencomponents/add/pruefung/addpruef
 import AddAuftraggeber from '../../components/screencomponents/add/auftraggeber/addAuftraggeber'
 
 function HomeScreen(props:{clientstatus:ClientStatus}) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [navBarActive,setNavBarActive] = useState(true)
+  const {width} = useWindowDimensions()
+  const [navBarActive,setNavBarActive] = useState(width < 800?false:true)
   const prevStatus = useSelector((state:RootState)=>state.isOffline)
   const [isOfflineOhneSaven,setIsOfflineOhneSaven] = useState(false) 
 
@@ -38,10 +38,9 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[prevStatus, props, props.clientstatus])
 
-  const {width} = useWindowDimensions();
   const navigate = useNavigate()
   const handleChangeComponent = (route:string)=>{
-    if(width < 600)setNavBarActive(false);
+    if(width < 800)setNavBarActive(false);
     navigate(route)
   }
   
@@ -51,8 +50,8 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
       {
         <div className={styles.anwendung}>
         <NavBar isShown={navBarActive} changeComponent={(route=>handleChangeComponent(route))}/>
+        <TopNavBar isShown={navBarActive} onMenuChange={()=>setNavBarActive(!navBarActive)} />
         <div className={styles.activeElement}>
-          <TopNavBar onMenuChange={()=>setNavBarActive(!navBarActive)} />
           <Routes>
             <Route path="/" element={<OverviewComponent />}/>
             <Route path="/profile" element={<ProfileComponent />} />

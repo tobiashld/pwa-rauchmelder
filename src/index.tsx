@@ -7,19 +7,27 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { SnackbarProvider } from 'notistack';
 import { CookiesProvider } from 'react-cookie';
+import { QueryClientProvider,QueryClient } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const queryClient = new QueryClient()
+
 root.render(
   <Provider store={store}>
-    <React.StrictMode>
-      <CookiesProvider>
-        <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal:"left",vertical:"top"}} disableWindowBlurListener preventDuplicate>
-          <App status="online"/>
-        </SnackbarProvider>
-      </CookiesProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <React.StrictMode>
+        <CookiesProvider>
+          <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal:"left",vertical:"top"}} disableWindowBlurListener preventDuplicate>
+            <App status="online"/>
+            {/* <ReactQueryDevtools /> */}
+          </SnackbarProvider>
+        </CookiesProvider>
+      </React.StrictMode>
+    </QueryClientProvider>
   </Provider>
 );
 

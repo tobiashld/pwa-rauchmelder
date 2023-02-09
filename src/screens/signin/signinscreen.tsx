@@ -5,7 +5,7 @@ import { FiUser } from 'react-icons/fi'
 import { RiLockPasswordLine } from 'react-icons/ri'
 import { useAppDispatch } from '../../store/store';
 import { login } from '../../store/slice';
-import data from '../../services/datafunctions';
+import dataFunctions from '../../services/datafunctions';
 import { ClientStatus } from '../../types/statusenum';
 import { useSnackbar } from 'notistack'
 
@@ -21,7 +21,7 @@ function SignInScreen() {
       enqueueSnackbar("Alle Felder Müssen ausgefüllt sein", {variant:"error"})
       return;
     }
-    data[ClientStatus.online].user.login(usernameRef.current.value,passwordRef.current.value,response=>{
+    dataFunctions[ClientStatus.online].user.login(usernameRef.current.value,passwordRef.current.value,response=>{
       if(response.error){
         enqueueSnackbar(response.error,{variant:"error"})
       }else if(response.token && response.status === 200){

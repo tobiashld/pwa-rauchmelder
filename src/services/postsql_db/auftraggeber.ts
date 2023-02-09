@@ -6,7 +6,7 @@ import { dynamicurl } from "../globals";
 
 async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
   const url = dynamicurl + "/auftraggeber" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"GET",
     headers: {
@@ -18,12 +18,13 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
       if(obj && obj.data ){
         if(cb)cb(obj.data)
       }
+      return obj
     })
 }
 
 async function add(auftraggeber:Auftraggeber,cb?:(data:any)=>void){
   const url = dynamicurl + "/auftraggeber"
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"POST",
     headers: {
@@ -35,12 +36,13 @@ async function add(auftraggeber:Auftraggeber,cb?:(data:any)=>void){
     .then(obj=>{
       if(obj && obj.data){
         if(cb)cb(obj.data)
-    }
+      }
+      return obj
     })
 }
 async function change(auftraggeber:Auftraggeber,cb?:(data:any)=>void){
   const url = dynamicurl + "/auftraggeber/"+auftraggeber.id
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"PUT",
     headers: {
@@ -52,14 +54,15 @@ async function change(auftraggeber:Auftraggeber,cb?:(data:any)=>void){
     .then(obj=>{
       if(obj && obj.data){
         if(cb)cb(obj.data)
-    }
+      }
+      return obj
     })
   
   
 }
 async function deleteA(id:number,cb?:(data:any)=>void){
   const url = dynamicurl + "/auftraggeber/"+id
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"DELETE",
     headers: {
@@ -70,7 +73,8 @@ async function deleteA(id:number,cb?:(data:any)=>void){
     .then(obj=>{
       if(obj && obj.data){
         if(cb)cb(obj.data)
-    }
+      }
+      return obj
     })
 }
 

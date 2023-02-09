@@ -1,12 +1,19 @@
 .activeElement{
-    flex:1;
+    grid-area: content;
+    overflow:auto;
     display: flex;
     flex-direction: column;
-
 }
 .anwendung{
+    display: grid;
+    width:100vw;
     height:100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: row;
+    max-height:100vh;
+    max-width: 100vw;;
+    grid-template-columns: 400px 1fr;
+    grid-template-rows: 75px 1fr;
+    grid-template-areas:
+        "sidebar    navbar"
+        "sidebar    content";
+    box-sizing: border-box;
 }

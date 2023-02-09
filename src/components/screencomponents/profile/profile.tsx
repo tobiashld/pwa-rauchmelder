@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import React from 'react'
 import { RiLockPasswordLine } from 'react-icons/ri';
-import data from '../../../services/datafunctions';
+import dataFunctions from '../../../services/datafunctions';
 import { ClientStatus } from '../../../types/statusenum';
 import Button from '../../button/button';
 import TextInput from '../../textinput/textinput';
@@ -25,7 +25,7 @@ function ProfileComponent() {
       enqueueSnackbar("Das Passwort muss mindestens 5 Stellen haben!",{variant:"error"})
       return;
     }
-    data[ClientStatus.online].user.changepw(passwordOneRef.current.value,(response)=>{
+    dataFunctions[ClientStatus.online].user.changepw(passwordOneRef.current.value,(response)=>{
       if(response.error){
         enqueueSnackbar(response.error,{variant:"error"})
       }else if(response.status === 200){

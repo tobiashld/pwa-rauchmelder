@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import data from '../../../../services/datafunctions'
+import dataFunctions from '../../../../services/datafunctions'
 import { RootState } from '../../../../store/store'
 import { Adresse, Auftraggeber } from '../../../../types/allgemein'
 import AddButton from '../../../addbutton/addbutton'
@@ -49,9 +49,9 @@ function AddAuftraggeber() {
     const handleSave = ()=>{
       console.log(clientStatus)
       auftraggeber.forEach(auftraggeber=>{
-        data[clientStatus].auftraggeber.create(auftraggeber,(data)=>{
+        dataFunctions[clientStatus].auftraggeber.create(auftraggeber,(data)=>{
           
-        })
+        }) 
       })
       setTimeout(()=>{
         navigate("/auftraggeber")

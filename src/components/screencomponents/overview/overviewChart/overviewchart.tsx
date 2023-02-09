@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 // import styles from './overview.module.css'
 import {CartesianGrid,  Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
-import data from '../../../../services/datafunctions'
+import dataFunctions from '../../../../services/datafunctions'
 import { ClientStatus } from '../../../../types/statusenum'
 import styles from './overview.module.css'
 
 function OverviewChart() {
+  return <div>coming soon...</div>
   const [chartData,setChartData] = useState<{name:string,value:number}[]>([])
   useEffect(()=>{
-    data[ClientStatus.online].pruefungen.statistics((data)=>{
+    dataFunctions[ClientStatus.online].pruefungen.statistics((data)=>{
       setChartData(Object.keys(data[0]).map((key:string)=>{
         return {
           name:key,
