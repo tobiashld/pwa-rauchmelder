@@ -2,6 +2,9 @@
   font-family: 'Quicksand';
   src: url('/src/config/Quicksand-VariableFont_wght.ttf');
 }
+*{
+  transition:  cubic-bezier(0.075, 0.82, 0.165, 1) 0,5s;
+}
 body {
   margin: 0;
   font-family: Quicksand;

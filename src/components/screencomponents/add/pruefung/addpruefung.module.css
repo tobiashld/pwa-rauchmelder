@@ -1,28 +1,35 @@
+.fullcell{
+    height:100%;
+}
 .gesamtbox{
     display:grid;
-    flex:1;
+    height:100%;
+    box-sizing: border-box;
     padding:20px;
 }
 .outerbox{
     display: flex;
-    padding:10px;
     border-radius: 10px;
     gap:10px;
-    background-color: white;
-    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+    flex:1;
+    height:87vh
 }
 .rauchmelderbox{
+    
     width:clamp(300px,27%,600px);
-    height:stretch;
+    height:100%
 }
 .pruefungsbox{
     flex:1;
     position: relative;
+    height:100%;
+    padding-bottom:20px;
 }
 .rauchmelderboxInside{
-    overflow-y:auto;
-    overflow-x:hidden;
-    height:calc(100vh - 110px);
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+    
+
+    height:100%;
     width: 100%;
     
     border-radius: 10px;
@@ -30,18 +37,20 @@
     flex-direction: column;
     padding:5px;
     box-sizing: border-box;
-    background-color: rgb(214, 214, 214);
+    background-color: white;
 }
 .pruefungboxInside{
-    overflow-y:auto;
-    overflow-x:hidden;
+    
     display: flex;
     flex-direction: column;
+    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
+    flex:1;
     height:100%;
-    width: 100%;
     max-height:100%;
+
     border-radius: 10px;
     padding:5px;
+    padding-bottom: 0px;
     box-sizing: border-box;
     background-color: rgb(238, 238, 238);
 }
@@ -58,7 +67,8 @@
     margin:5px;
     box-sizing: border-box;
     border-radius: 10px;
-    background-color: whitesmoke;
+    box-shadow:0px 0px 7px 2px rgba(167, 167, 167, 0.3);
+    background-color: rgb(229, 229, 229);
 }
 .rauchmeldercardtext{
     width: stretch;
@@ -66,6 +76,11 @@
     display:flex;
     flex-direction: column;
     overflow: hidden;
+}
+.actualPruefung{
+    height:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
 }
 .rauchmeldercardTitle{
     font-size: large;
@@ -77,29 +92,37 @@
     color:white;
     background-color: #01161E;
 }
-
 .addcard:hover{
-    background-color: whitesmoke;
-    cursor: default;
-    color:black;
+    cursor:default;
+    color:inherit;
+    background-color: rgb(210, 214, 224);
+
 }
+
+
 .addcard{
+    background-color: rgb(210, 214, 224);
     gap:5px;
     flex-direction: row;
 }
-.actualPruefung{
-    flex:1;
-    overflow-y:auto;
-    overflow-x:hidden
+.addbutton{
+    align-self: center;
+    height:80%;
+    aspect-ratio: 1;
 }
 .saveinteractions{
-
+    width:auto;
+    position:sticky;
+    display: flex;
     z-index:3;
-    justify-self: flex-start;
+    justify-content: center;
     margin:5px
 }
 .rauchmelderliste{
     flex:1;
+    display: flex;
+    flex-direction: column;
+    gap:2px;
     overflow-y:auto
 }
 .interactions{
@@ -107,17 +130,9 @@
     gap:10px;
     justify-content: center;
     padding:10px;
-    height:40px;
-    justify-self: flex-end;
-}
-.addbutton{
-    border-radius:10px;
-    height:84%;
-    aspect-ratio: 1;
+    position:sticky;
 }
 .pruefungsinhalt{
-    overflow-y: auto;
-    overflow-x: hidden;
     padding:20px;
     box-sizing: border-box;
     gap:10px;
@@ -158,6 +173,12 @@
     padding-bottom:10px;
 }
 @media only screen and (max-width:800px){
+    .pruefungboxInside{
+        /* max-height:70vh; */
+    }
+    .saveinteractions{
+        justify-self: flex-start;
+    }
     .rauchmelderliste{
         flex:1;
         width:auto;
@@ -168,10 +189,7 @@
         overflow-x:visible;
         overflow-y:visible
     }
-    .addbutton{
-        height:80%;
-        aspect-ratio: 1;
-    }
+    
     .outerbox{
         flex-direction: column;
     }

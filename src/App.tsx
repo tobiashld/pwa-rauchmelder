@@ -22,10 +22,11 @@ function App(props:{status:'online'|'offline'}) {
   useEffect(()=>{
   
     data[ClientStatus.online].user.get(undefined,(data:any)=>{
-      if(!data || data.error){
+      console.log(data)
+      if(!data || (data.error && data.status !== 401)){
         enqueueSnackbar(data?data.error:"Backend ist nich erreichbar",{variant:"error"})
         dispatch(logout())
-      }else{
+      }else if(data && data.status < 300 && data.status >= 200 && data.data){
         enqueueSnackbar("Automatisch angemeldet",{variant:"success"})
         dispatch(login({successfull:true,username:data.data.username}))
       }

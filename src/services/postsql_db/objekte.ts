@@ -1,73 +1,73 @@
-import { Objekt } from "../../types/allgemein"
+import { DBResponse, Objekt, toObjektConverter } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
-async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Objekt>)=>void):Promise<DBResponse<Objekt>>{
     const url = dynamicurl + "/objekte" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    fetch(url,{
+    return fetch(url,{
       credentials: "include",
       method:"GET",
       headers: {
         'Content-Type': 'application/json'
       },
-    }).then(response=>{
-      return response.json()})
-      .then(obj=>{
-        if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }
+    }).then(response=>response.json())
+    .then((obj:DBResponse<Objekt>)=>{
+      
+      if(obj.error)return obj
+      if(cb)cb({
+        ...obj,
+        data:obj.data!.map((item:any)=>toObjektConverter(item))
       })
+      return {
+        ...obj,
+        data:obj.data!.map((item:any)=>toObjektConverter(item))
+      }
+    })
 }
 async function add(objekt:Objekt,cb?:(data:any)=>void){
   
   const url = dynamicurl + "/auftraggeber"
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"POST",
     headers: {
       'Content-Type': 'application/json'
     },
     body:JSON.stringify(objekt.prepForSave())
-  }).then(response=>{
-    return response.json()})
-    .then(obj=>{
-      if(obj && obj.data){
-        if(cb)cb(obj.data)
-    }
-    })
+  }).then(response=>response.json())
+  .then(obj=>{
+    if(cb)cb(obj)
+    return obj
+  })
   
 }
 async function change(objekt:Objekt,cb?:(data:any)=>void){
   const url = dynamicurl + "/objekte/"+objekt.id
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"PUT",
     headers: {
       'Content-Type': 'application/json'
     },
     body:JSON.stringify(objekt.prepForSave())
-  }).then(response=>{
-    return response.json()})
-    .then(obj=>{
-      if(obj && obj.data){
-        if(cb)cb(obj.data)
-    }
-    })
+  }).then(response=>response.json())
+  .then(obj=>{
+    if(cb)cb(obj)
+    return obj
+  })
 }
 async function deleteO(id:number,cb?:(data:any)=>void){
   const url = dynamicurl + "/objekte/"+id
-  fetch(url,{
+  return fetch(url,{
     credentials: "include",
     method:"DELETE",
     headers: {
       'Content-Type': 'application/json'
     },
-  }).then(response=>{
-    return response.json()})
+  }).then(response=>response.json())
     .then(obj=>{
-      if(obj && obj.data){
-        if(cb)cb(obj.data)
-    }
+      if(cb)cb(obj)
+      return obj
     })
 }
 

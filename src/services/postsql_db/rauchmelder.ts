@@ -1,11 +1,11 @@
-import { Rauchmelder,  } from "../../types/allgemein"
+import { DBResponse, Rauchmelder, toRauchmelderConverter,  } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
 
-async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Rauchmelder>)=>void):Promise<{status:number,data:Rauchmelder[],error?:string}>{
     const url = dynamicurl + "/rauchmelder" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    fetch(url,{
+    return fetch(url,{
       credentials: "include",
       method:"GET",
       headers: {
@@ -14,10 +14,14 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     }).then(response=>{
       return response.json()})
       .then(obj=>{
-        if(obj && obj.data){
-          if(cb)cb(obj.data)
-        }else if(obj && obj.error){
-          if(cb)cb(obj)
+        if(cb)cb({
+          ...obj,
+          data:obj.data.map((item:any)=>toRauchmelderConverter(item))
+        })
+        if(obj.error)return obj
+        return {
+          ...obj,
+          data:obj.data.map((item:any)=>toRauchmelderConverter(item))
         }
       })
 }

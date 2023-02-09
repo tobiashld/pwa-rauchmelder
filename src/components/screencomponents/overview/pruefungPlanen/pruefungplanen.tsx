@@ -1,10 +1,10 @@
 import { Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { BsGeo } from 'react-icons/bs';
-import data from '../../services/datafunctions';
-import { Objekt, toObjektConverter } from '../../types/allgemein';
-import { ClientStatus } from '../../types/statusenum';
-import Button from '../button/button';
+import dataFunctions from '../../../../services/datafunctions';
+import { Objekt } from '../../../../types/allgemein';
+import { ClientStatus } from '../../../../types/statusenum';
+import Button from '../../../button/button';
 import styles from './pruefungen.module.css'
 
 const ITEM_HEIGHT = 48;
@@ -22,8 +22,8 @@ function PruefungenPlanen() {
     const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
     const [pruefObjekte,setPruefObjekte] = useState<number[]>([])
     useEffect(()=>{
-        data[ClientStatus.online].objekte.get(undefined,(data:any)=>{
-            setAlleObjekte(data.map((objekt:any)=>toObjektConverter(objekt)))
+        dataFunctions[ClientStatus.online].objekte.get(undefined,(data)=>{
+            setAlleObjekte(data.data!)
         })
     },[])
 

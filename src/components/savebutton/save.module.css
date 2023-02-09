@@ -1,8 +1,8 @@
 .container{
     
-    width:auto;
+    width:50px;
     opacity: 1;
-    transition:width 500ms cubic-bezier(0.165, 0.84, 0.44, 1),opacity 200ms cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition:width 500ms cubic-bezier(0.165, 0.84, 0.44, 1),opacity 300ms cubic-bezier(0.165, 0.84, 0.44, 1);
     z-index:4;
     overflow:hidden;
 }
@@ -13,13 +13,14 @@
 
 }
 .insideContainer{
-    width: fit-content;
     display: flex;
+    aspect-ratio: 1;
     justify-content: center;
     align-items: center;
     padding:5px;
-    width:auto;
+    height:100%;
     border-radius: 50%;
+    box-sizing: border-box;
     background-color: #065817fb;
     color:#EFF6E0;
 }

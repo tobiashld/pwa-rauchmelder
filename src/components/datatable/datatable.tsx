@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react'
-import { BsArrowLeft, BsArrowRight } from 'react-icons/bs'
+import { BsArrowDown, BsArrowLeft, BsArrowRight, BsArrowUp } from 'react-icons/bs'
 import { RiDeleteBin5Line } from 'react-icons/ri'
 import { getFittingInputsForKey, KeyType } from '../../services/helperfunctions'
 import Loadingspinner from '../loadingspinner/loadingspinner'
@@ -12,36 +12,28 @@ function DataTable(props:{
   handleEdit:(id:number,key:string,value:any)=>void,
   handleDelete:(id:number)=>void,editedElementIds?:number[],
   handleRowClick?:(id:number)=>void,
-  sort?:{name:string,function:(a:any,b:any)=>number,icon?:React.ReactNode}[],
+  sort?:SortArgument[],
   options?:any[],
   disabledRows?:boolean
 }) {
   
-  const [currData,setCurrData] = useState<any[]>([])
   const [currIndex, setCurrIndex] = useState(0)
   const [currMaxIndex, setMaxIndex] = useState(0)
   const [currOverflow,setCurrOverflow] = useState(0)
-  const [updateTable,setUpdateTable] = useState(false)
   const [activeSortIndex,setActiveSortIndex] = useState(0)
+  const [activeSortDirection,setActiveSortDirection] = useState(true) // true -> asc, false -> desc
 
   useEffect(()=>{
     if(props && props.rows && props.columns){
-        let newData = props.rows.slice()
-        if(props.sort && props.sort.length > 0){
-          newData.sort(props.sort[activeSortIndex].function)
-        }
-        setCurrOverflow(newData.length % 100)
-        if(newData.length > 100){
-          setMaxIndex(Math.floor(newData.length / 100))
+        
+        setCurrOverflow(props.rows.length % 100)
+        if(props.rows.length > 100){
+          setMaxIndex(Math.floor(props.rows.length / 100))
         }else{
           setMaxIndex(0)
         }
         
-        if(currIndex < (currMaxIndex)){
-          setCurrData(newData.slice((currIndex)*100,(currIndex+1)*100))
-        }else if(currIndex === (currMaxIndex)){
-          setCurrData(newData.slice((currIndex)*100,(currIndex)*100+currOverflow))
-        }
+        
       
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,34 +46,9 @@ function DataTable(props:{
       </div>
     )
   }
-  const setDataToNextPage = (page:number)=>{
-    if(page < (currMaxIndex)){
-      setCurrData(props.rows!.slice((page)*100+((page >0)?1:0),(page+1)*100))
-      setCurrIndex(page)
-    }else if(page === (currMaxIndex)){
-      setCurrData(props.rows!.slice((page)*100+((page >0)?1:0),(page)*100+currOverflow))
-      setCurrIndex(page)
-    }
-  }
+  
 
-  // const filterWithPredicate = (filterfunction:(item:any,index?:number)=>boolean)=>{
-  //   let currFilteredData = currData.filter(filterfunction)
-  //   setCurrData(currFilteredData)
-  // }
-  const sortWithPredicate = (sortfunction:(a:any,b:any)=>number,index:number)=>{
-    let currSortedData = props.rows!.slice().sort(sortfunction)
-    setActiveSortIndex(index)
-    if(currSortedData.length > 100){
-      if(currIndex < (currMaxIndex)){
-        setCurrData(currSortedData.slice((currIndex)*100,(currIndex+1)*100))
-      }else if(currIndex === (currMaxIndex)){
-        setCurrData(currSortedData.slice((currIndex)*100,(currIndex)*100+currOverflow))
-      }
-    }else{
-      setCurrData(currSortedData)
-    }
-    setUpdateTable(!updateTable)
-  }
+  
 
   const prepPagination = ()=>{
     let children : React.ReactNode[] = []
@@ -91,17 +58,17 @@ function DataTable(props:{
         children.push(
           [
             <div className={(currIndex===0)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(0)
+              setCurrIndex(0)
             }}>
               1
             </div>,
             <div className={(currIndex===1)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(1)
+              setCurrIndex(1)
             }}>
               2
             </div>,
             <div className={(currIndex===2)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(2)
+              setCurrIndex(2)
             }}>
               3
             </div>,
@@ -109,7 +76,7 @@ function DataTable(props:{
               ...
             </div>,
             <div className={styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(currMaxIndex)
+              setCurrIndex(currMaxIndex)
             }}>
               {currMaxIndex+1}
             </div>
@@ -119,7 +86,7 @@ function DataTable(props:{
         children.push(
           [
             <div className={(currIndex===0)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(0)
+              setCurrIndex(0)
             }}>
               1
             </div>,
@@ -127,17 +94,17 @@ function DataTable(props:{
               ...
             </div>,
             <div className={(currIndex===currMaxIndex-2)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(currMaxIndex-2)
+              setCurrIndex(currMaxIndex-2)
             }}>
               {currMaxIndex-1}
             </div>,
             <div className={(currIndex===currMaxIndex-1)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(currMaxIndex-1)
+              setCurrIndex(currMaxIndex-1)
             }}>
               {currMaxIndex}
             </div>,
             <div className={(currIndex===currMaxIndex)?styles.pageElement + " " +styles.currActivePage:styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(currMaxIndex)
+              setCurrIndex(currMaxIndex)
             }}>
               {currMaxIndex+1}
             </div>
@@ -147,7 +114,7 @@ function DataTable(props:{
         children.push(
           [
             <div className={styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(0)
+              setCurrIndex(0)
             }}>
               1
             </div>,
@@ -163,7 +130,7 @@ function DataTable(props:{
               ...
             </div>,
             <div className={styles.pageElement} onClick={(event)=>{
-              setDataToNextPage(currMaxIndex)
+              setCurrIndex(currMaxIndex)
             }}>
               {currMaxIndex+1}
             </div>
@@ -178,7 +145,7 @@ function DataTable(props:{
             <div className={styles.currActivePage+ " "+styles.pageElement}>
               {i+1}
             </div>:
-            <div className={styles.pageElement} onClick={(event)=>setDataToNextPage(i)}>
+            <div className={styles.pageElement} onClick={(event)=>setCurrIndex(i)}>
               {i+1}
             </div>
         )
@@ -189,7 +156,7 @@ function DataTable(props:{
     <>
       <div className={styles.pageElement} onClick={(event)=>{
         if(currIndex > 0){
-          setDataToNextPage(currIndex-1)
+          setCurrIndex(currIndex-1)
         }
       }}>
         <BsArrowLeft />
@@ -197,7 +164,7 @@ function DataTable(props:{
       {children}
       <div className={styles.pageElement} onClick={(event)=>{
         if(currIndex < currMaxIndex){
-          setDataToNextPage(currIndex+1)
+          setCurrIndex(currIndex+1)
         }
       }}>
         <BsArrowRight />
@@ -205,9 +172,18 @@ function DataTable(props:{
     </>)
   }
 
+  const getSortDirection = (sortarg:SortArgument)=>{
+    if(activeSortDirection){
+      return sortarg.functionAsc
+    }else{
+      return sortarg.functionDesc
+    }
+  }
+
   
 
   return (
+    <div className={styles.paddingcontainer}>
       <div className={styles.gesamtContainer}>
         <div className={styles.headline}>{props.headline}</div>
         <div className={styles.features}>
@@ -216,8 +192,15 @@ function DataTable(props:{
             <div className={styles.sortSection}>
               {props.sort!.map((sort,index)=>{
                 return (
-                <div key={index} className={styles.sortbutton + (index === activeSortIndex?` ${styles.activesort}`:"")} onClick={(event)=>sortWithPredicate(sort.function,index)}>
-                    {sort.icon?sort.icon:<></>}
+                <div key={index} className={styles.sortbutton + (index === activeSortIndex?` ${styles.activesort}`:"")} onClick={(event)=>{
+                  if(activeSortIndex === index){
+                    setActiveSortDirection(!activeSortDirection)
+                  }else{
+                    setActiveSortDirection(true)
+                    setActiveSortIndex(index)
+                  }
+                }}>
+                    {activeSortIndex === index? activeSortDirection?<BsArrowDown />:<BsArrowUp />:<></>}
                     {sort.name}
                 </div>
                 )
@@ -239,6 +222,7 @@ function DataTable(props:{
         </div>
         <div className={styles.actualTable}>
           <div className={styles.columns}>{props.columns.map((column,index)=>{
+            if(column === 'id')return <></>
             return (
             <div key={index} className={styles.columnsegment+ (column === "id"?" "+styles.id:column ==="adresse"?" "+styles.adresse:"")}>{column}</div>)
             })}
@@ -246,11 +230,15 @@ function DataTable(props:{
           </div>
           <div className={styles.dataRow}>
             {
-              currData.map((item,index)=>{
+              props.rows!
+                .sort(props.sort && props.sort[activeSortIndex]?getSortDirection(props.sort[activeSortIndex]):(value)=>value)
+                .slice(currIndex * 100,currIndex < (currMaxIndex)?(currIndex+1)*100-1:currIndex*100+currOverflow)
+                .map((item,index)=>{
                 return (
                   <div key={index} className={(props.editedElementIds && props.editedElementIds.find((id)=>id===item.id!))?styles.datarowelement+' datarow'+index+" "+styles.edited+  " "+(props.handleRowClick?styles.clickable:"") :styles.datarowelement+' datarow'+index +  " "+ (props.handleRowClick?styles.clickable:"")} onClick={()=>props.handleRowClick?props.handleRowClick(item.id!):undefined}>
                     {
                       props.columns.map((key,smallIndex)=>{
+                        if(key==='id')return <></>
                         if(Object.keys(item).find(itemkey=>itemkey===key)){
                           return (<div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:key ==="adresse"?" "+styles.adresse:"")}>{getFittingInputsForKey(key as KeyType,item[key],(event,zusatz)=>{
                             if(zusatz){
@@ -272,7 +260,15 @@ function DataTable(props:{
           </div>
         </div>
       </div>
+      </div>
   )
 }
+export interface SortArgument 
+  {
+    name:string,
+    functionAsc:(a:any,b:any)=>number,
+    functionDesc:(a:any,b:any)=>number
+  }
+
 
 export default DataTable

@@ -1,10 +1,12 @@
+import { useSnackbar } from 'notistack'
 import React,{useEffect,useState} from 'react'
-import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
-import data from '../../../services/datafunctions'
-import {  Objekt, Rauchmelder, toObjektConverter, toRauchmelderConverter } from '../../../types/allgemein'
+import { useQuery } from 'react-query'
+import dataFunctions from '../../../services/datafunctions'
+import {  Objekt, Rauchmelder,   } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
+import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
 
@@ -15,12 +17,15 @@ function RauchmelderComponent() {
   const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
   const [changedRauchmelder,setChangedRauchmelder] = useState<Rauchmelder[]>([])
   const [isSavable,setIsSavable] = useState(false)
+  const {enqueueSnackbar} = useSnackbar()
+  const rauchmelderQuery = useQuery('rauchmelder',()=>dataFunctions[ClientStatus.online].rauchmelder.get())
+  const objekteQuery = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get())
   useEffect(()=>{
-    data[ClientStatus.online].rauchmelder.get(undefined,(data:any[])=>{
-        setAlleRauchmelder(data.map((data:any)=>toRauchmelderConverter(data)))
+    dataFunctions[ClientStatus.online].rauchmelder.get(undefined,(data)=>{
+        setAlleRauchmelder(data.data!)
     })
-    data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-      setAlleObjekte(data.map((data:any)=>toObjektConverter(data)))
+    dataFunctions[ClientStatus.online].objekte.get(undefined,(data)=>{
+      setAlleObjekte(data.data!)
     })
     
   },[])
@@ -32,6 +37,15 @@ function RauchmelderComponent() {
       setIsSavable(false)
     }
   },[changedRauchmelder])
+
+  if(rauchmelderQuery.isLoading || objekteQuery.isLoading){
+    return <div className={styles.table}><Loadingspinner size='Big' /></div>
+  }
+
+  if(rauchmelderQuery.isError || objekteQuery.isError || (rauchmelderQuery.data && rauchmelderQuery.data.error) || (objekteQuery.data && objekteQuery.data.error)){
+    enqueueSnackbar("Laden Fehlgeschlagen!",{variant:"error"})
+    return <>Error</>
+  }
 
   const handleSave = ()=>{
 
@@ -80,56 +94,42 @@ function RauchmelderComponent() {
             }
           }}
           handleDelete={(id)=>{
-            data[ClientStatus.online].rauchmelder.delete(id)
+            dataFunctions[ClientStatus.online].rauchmelder.delete(id)
             setTimeout(()=>{
-              data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-                setAlleRauchmelder(data.map((item)=>toRauchmelderConverter(item)))
+              dataFunctions[ClientStatus.online].objekte.get(undefined,data=>{
+                setAlleObjekte(data!.data!)
               })
               setChangedRauchmelder([])
             },300)
           }}
           sort={[
             {
-              name:"id",
-              function:(a:Rauchmelder,b:Rauchmelder)=>(a.id-b.id),
-              icon:<BsArrowDown />
-            },
-            {
-              name:"id",
-              function:(a:Rauchmelder,b:Rauchmelder)=>(b.id-a.id),
-              icon:<BsArrowUp />
+              name:"hinzugefügt",
+              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>(a.id-b.id),
+              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>(b.id-a.id),
             },
             {
               name:"mieter",
-              function:(a:Rauchmelder,b:Rauchmelder)=>(a.mieter.localeCompare(b.mieter)),
-              icon:<BsArrowDown />
-            },
-            {
-              name:"mieter",
-              function:(a:Rauchmelder,b:Rauchmelder)=>(b.mieter.localeCompare(a.mieter)),
-              icon:<BsArrowUp />
+              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>(a.mieter.localeCompare(b.mieter)),
+              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>(b.mieter.localeCompare(a.mieter)),
             },
             {
               name:"p.datum",
-              function:(a:Rauchmelder,b:Rauchmelder)=>{
+              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>{
                 let aS = a.produktionsdatum.split(".").map(item=>Number(item))
                 let bS = b.produktionsdatum.split(".").map(item=>Number(item))
                 let aD = new Date(aS[2],aS[1],aS[0])
                 let bD = new Date(bS[2],bS[1],bS[0])
                 return aD.valueOf()-bD.valueOf()
               },
-              icon:<BsArrowDown />
-            },
-            {
-              name:"p.datum",
-              function:(a:Rauchmelder,b:Rauchmelder)=>{
+              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>{
                 let aS = a.produktionsdatum.split(".").map(item=>Number(item))
                 let bS = b.produktionsdatum.split(".").map(item=>Number(item))
                 let aD = new Date(aS[2],aS[1],aS[0])
                 let bD = new Date(bS[2],bS[1],bS[0])
                 return bD.valueOf()-aD.valueOf()
               },
-              icon:<BsArrowUp />
+              
             },
           ]}
         />

@@ -1,4 +1,4 @@
-import {  Auftraggeber, GeprRauchmelder, Pruefung,   } from "../types/allgemein"
+import {  Auftraggeber, DBResponse, GeprRauchmelder, Pruefung, Rauchmelder,   } from "../types/allgemein"
 import { ClientStatus } from "../types/statusenum"
 import auftraggeber from "./postsql_db/auftraggeber"
 import user from "./postsql_db/user"
@@ -8,7 +8,7 @@ import { db } from "./myappdatabase"
 import rauchmelder from "./postsql_db/rauchmelder"
 import pruefungen from "./postsql_db/pruefungen"
 
-const data = {
+const dataFunctions = {
     [ClientStatus.offline]:{
 
         pruefungen:{
@@ -28,17 +28,23 @@ const data = {
             deletePruefung:(pruefung:Pruefung)=>db.table("pruefungen").delete(pruefung.id)
         },
         rauchmelder:{
-            get:(props:{[key:string]:number}|undefined,cb?:(data:any)=>void)=>{
+            get:(props:{[key:string]:number}|undefined,cb?:(data:DBResponse<Rauchmelder>)=>void)=>{
                 if(props){
                     db.table("rauchmelder").filter((rauchmelder)=>rauchmelder[Object.keys(props)[0]]===props[Object.keys(props)[0]]).toArray().then(data=>{
                         if(cb){
-                            cb(data)
+                            cb({
+                                status:200,
+                                data:data
+                            })
                         } 
                     })
                 }else{
                     db.table("rauchmelder").toArray().then(value=>{
                         if(cb){
-                            cb(value)
+                            cb({
+                                status:200,
+                                data:value
+                            })
                         }
                     })
                 }
@@ -121,31 +127,31 @@ const data = {
 
             //Wohnungen aus db cachen 
             db.table("wohnungen").clear().then(nothing=>{
-                wohnungen.get(undefined,(data:any[])=>{
-                    db.table("wohnungen").bulkAdd(data)
+                wohnungen.get(undefined,(data)=>{
+                    db.table("wohnungen").bulkAdd(data.data!)
                 })
             })
             .catch(error=>console.error(error))
 
             //Objekte aus db cachen
             db.table("objekte").clear().then(nothing=>{
-                objekte.get(undefined,(data:any[])=>{
-                    db.table("objekte").bulkAdd(data)
+                objekte.get(undefined,(data)=>{
+                    db.table("objekte").bulkAdd(data.data!)
                 })
             }).catch(error=>console.error(error))
 
             //Rauchmelder aus db cachen
             db.table("rauchmelder").clear().then(nothing=>{
                 rauchmelder.get(undefined,data=>{
-                    db.table("rauchmelder").bulkAdd(data)
+                    db.table("rauchmelder").bulkAdd(data.data!)
                 })
             }).catch(error=>console.error(error))
             
             //Auftraggeber aus db cachen
             db.table("auftraggeber").clear()
             .then(nothing=>{
-                auftraggeber.get(undefined,(data:any[])=>{
-                    db.table("auftraggeber").bulkAdd(data)
+                auftraggeber.get(undefined,(data)=>{
+                    db.table("auftraggeber").bulkAdd(data.data!)
                 })
             }).catch(error=>console.error(error))
 
@@ -166,4 +172,4 @@ const data = {
     }
 }
 
-export default data
+export default dataFunctions

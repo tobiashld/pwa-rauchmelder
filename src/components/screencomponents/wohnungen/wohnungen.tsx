@@ -1,8 +1,7 @@
 import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
-import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
-import data from '../../../services/datafunctions'
-import { toWohnungConverter, Wohnung } from '../../../types/allgemein'
+import dataFunctions from '../../../services/datafunctions'
+import {  Wohnung } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
@@ -18,8 +17,8 @@ function WohnungenComponent() {
   const {enqueueSnackbar} = useSnackbar()
   const [reload,setReload] = useState(false)
   useEffect(()=>{
-    data[ClientStatus.online].wohnungen.get(undefined,(wohnungen:any[])=>{
-      setAlleWohnungen(wohnungen.map(item=>toWohnungConverter(item)))
+    dataFunctions[ClientStatus.online].wohnungen.get(undefined,(wohnungen)=>{
+      setAlleWohnungen(wohnungen.data!)
     })
     setChangedWohnungen([])
   },[])
@@ -35,7 +34,7 @@ function WohnungenComponent() {
   const handleSave = ()=>{
     changedWohnungen.forEach(wohnung=>{
       let error = undefined
-      data[ClientStatus.online].wohnungen.change(wohnung,(data)=>{
+      dataFunctions[ClientStatus.online].wohnungen.change(wohnung,(data)=>{
         //error if error is there
         if(data && data.error)error = data.error
       })
@@ -44,9 +43,8 @@ function WohnungenComponent() {
       }
     })
     
-    setTimeout(()=>data[ClientStatus.online].wohnungen.get(undefined,(data)=>{
-      const convertedWohnungen = data.map((wohnung:any)=>toWohnungConverter(wohnung))
-      setAlleWohnungen(convertedWohnungen)
+    setTimeout(()=>dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
+      setAlleWohnungen(data.data!)
     }),400)
     setChangedWohnungen([])
     setIsSavable(false)
@@ -95,34 +93,24 @@ function WohnungenComponent() {
           }}
           editedElementIds={changedWohnungen.map(wohnung=>wohnung.id)}
           handleDelete={(id)=>{
-            data[ClientStatus.online].wohnungen.delete(id)
+            dataFunctions[ClientStatus.online].wohnungen.delete(id)
             setTimeout(()=>{
-              data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-                setAlleWohnungen(data.map((item)=>toWohnungConverter(item)))
+              dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
+                setAlleWohnungen(data.data!)
               })
               setChangedWohnungen([])
             },300)
           }}
             sort={[
               {
-                name:"id",
-                function:(a:Wohnung,b:Wohnung)=>(a.id-b.id),
-                icon:<BsArrowDown />
-              },
-              {
-                name:"id",
-                function:(a:Wohnung,b:Wohnung)=>(b.id-a.id),
-                icon:<BsArrowUp />
+                name:"hinzugefügt",
+                functionAsc:(a:Wohnung,b:Wohnung)=>(a.id-b.id),
+                functionDesc:(a:Wohnung,b:Wohnung)=>(b.id-a.id),
               },
               {
                 name:"mieter",
-                function:(a:Wohnung,b:Wohnung)=>(a.mieter.localeCompare(b.mieter)),
-                icon:<BsArrowDown />
-              },
-              {
-                name:"mieter",
-                function:(a:Wohnung,b:Wohnung)=>(b.mieter.localeCompare(a.mieter)),
-                icon:<BsArrowUp />
+                functionAsc:(a:Wohnung,b:Wohnung)=>(a.mieter.localeCompare(b.mieter)),
+                functionDesc:(a:Wohnung,b:Wohnung)=>(b.mieter.localeCompare(a.mieter)),
               },
             ]}
         />

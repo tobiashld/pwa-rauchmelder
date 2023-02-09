@@ -51,7 +51,6 @@ function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
                 })}
             </div>
             <div className={styles.auth}>
-                
                 <NavBarLink name={username?username:""} icon={<Avatar {...stringAvatar(username && username.length > 2 && username !== "0"?username:"Test mann")}>{username && username.length > 2?username.slice(0,2):undefined}</Avatar>} flexi={true} onClick={()=>props.changeComponent("/profile")} />
                 <NavBarLink name="Logout" flexi={true} icon={<BiLogOut />} onClick={()=>{
                         enqueueSnackbar("Erfolgreich ausgeloggt!",{variant:"success"})

@@ -1,4 +1,10 @@
 import { JwtPayload } from "jwt-decode";
+
+export interface DBResponse<T>{
+  status:number,
+  data?:T[]
+  error?:string
+}
 export class Auftraggeber{
     constructor(
       readonly id:number,
