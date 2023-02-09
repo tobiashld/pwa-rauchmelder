@@ -18,8 +18,8 @@ function WohnungenComponent() {
   const {enqueueSnackbar} = useSnackbar()
   const [reload,setReload] = useState(false)
   useEffect(()=>{
-    dataFunctions[ClientStatus.online].wohnungen.get(undefined,(wohnungen:any[])=>{
-      setAlleWohnungen(wohnungen.map(item=>toWohnungConverter(item)))
+    dataFunctions[ClientStatus.online].wohnungen.get(undefined,(wohnungen)=>{
+      setAlleWohnungen(wohnungen.data!)
     })
     setChangedWohnungen([])
   },[])
@@ -45,8 +45,7 @@ function WohnungenComponent() {
     })
     
     setTimeout(()=>dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
-      const convertedWohnungen = data.map((wohnung:any)=>toWohnungConverter(wohnung))
-      setAlleWohnungen(convertedWohnungen)
+      setAlleWohnungen(data.data!)
     }),400)
     setChangedWohnungen([])
     setIsSavable(false)
@@ -97,8 +96,8 @@ function WohnungenComponent() {
           handleDelete={(id)=>{
             dataFunctions[ClientStatus.online].wohnungen.delete(id)
             setTimeout(()=>{
-              dataFunctions[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-                setAlleWohnungen(data.map((item)=>toWohnungConverter(item)))
+              dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
+                setAlleWohnungen(data.data!)
               })
               setChangedWohnungen([])
             },300)

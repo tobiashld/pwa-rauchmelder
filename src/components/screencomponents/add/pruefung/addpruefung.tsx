@@ -22,8 +22,9 @@ function AddPruefung() {
     const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<Rauchmelder | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
     const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
-    const newSeriennrRef = useRef()
-    const newProdDatumRef = useRef()
+    const newSeriennrRef = useRef(null)
+    const newProdDatumRef = useRef(null)
+    const newMieterRef = useRef(null)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar()
@@ -214,6 +215,7 @@ function AddPruefung() {
                                     <div>
                                         {
                                             alleRauchmelder.filter(rauchmelder=>rauchmelder.id===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
+                                                let isTreppenhaus = rauchmelder.mieter.split(" ").filter(string=>string.toLocaleLowerCase()==="Treppenhaus".toLocaleLowerCase()).length >= 1
                                                 return (
                                                     <div className={styles.infotable}>
                                                             <div>
@@ -223,7 +225,7 @@ function AddPruefung() {
                                                             </div>
                                                             <div>
                                                                 <strong>
-                                                                Mieter
+                                                                    {!isTreppenhaus?"Mieter":""}
                                                                 </strong>
                                                             </div>
                                                             <div>
@@ -236,7 +238,7 @@ function AddPruefung() {
                                                                 {rauchmelder.seriennr}
                                                             </div>
                                                             <div>
-                                                                {rauchmelder.mieter}
+                                                                {!isTreppenhaus?<TextField ref={newMieterRef} size='small' id="add-pruefung-mieter" placeholder={rauchmelder.mieter}></TextField>:rauchmelder.mieter}
                                                             </div>
                                                             <div>
                                                                 {rauchmelder.objekt.name}
@@ -250,7 +252,8 @@ function AddPruefung() {
                                         <TextField
                                             fullWidth
                                             className={styles.anmerkung}
-                                            placeholder="Allgemeine Anmerkungen"
+                                            placeholder="Allgemeine Anmerkungen (Tausch etc.)"
+                                            id="allgemeine-anmerkungen"
                                             onChange={(event)=>{
                                                 let helpPruefung = structuredClone(currGeprRauchmelder)
                                                 helpPruefung!.anmerkungen = event.target.value

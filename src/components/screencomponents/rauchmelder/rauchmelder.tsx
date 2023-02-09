@@ -26,7 +26,7 @@ function RauchmelderComponent() {
         setAlleRauchmelder(data.data!)
     })
     dataFunctions[ClientStatus.online].objekte.get(undefined,(data)=>{
-      setAlleObjekte(data.data)
+      setAlleObjekte(data.data!)
     })
     
   },[])
@@ -45,6 +45,7 @@ function RauchmelderComponent() {
 
   if(rauchmelderQuery.isError || objekteQuery.isError || (rauchmelderQuery.data && rauchmelderQuery.data.error) || (objekteQuery.data && objekteQuery.data.error)){
     enqueueSnackbar("Laden Fehlgeschlagen!",{variant:"error"})
+    return <>Error</>
   }
 
   const handleSave = ()=>{
@@ -96,8 +97,8 @@ function RauchmelderComponent() {
           handleDelete={(id)=>{
             dataFunctions[ClientStatus.online].rauchmelder.delete(id)
             setTimeout(()=>{
-              dataFunctions[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-                setAlleRauchmelder(data.map((item)=>toRauchmelderConverter(item)))
+              dataFunctions[ClientStatus.online].objekte.get(undefined,data=>{
+                setAlleObjekte(data!.data!)
               })
               setChangedRauchmelder([])
             },300)

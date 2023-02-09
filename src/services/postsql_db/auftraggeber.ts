@@ -1,10 +1,10 @@
 
-import { Auftraggeber } from "../../types/allgemein"
+import { Auftraggeber, DBResponse, toAuftraggeberConverter } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
 
-async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Auftraggeber>)=>void):Promise<DBResponse<Auftraggeber>>{
   const url = dynamicurl + "/auftraggeber" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
   return fetch(url,{
     credentials: "include",
@@ -14,11 +14,17 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
     },
   }).then(response=>{
     return response.json()})
-    .then(obj=>{
-      if(obj && obj.data ){
-        if(cb)cb(obj.data)
+    .then((obj:DBResponse<Auftraggeber>)=>{
+      
+      if(obj.error)return obj
+      if(cb)cb({
+        ...obj,
+        data:obj.data!.map((item:any)=>toAuftraggeberConverter(item))
+      })
+      return {
+        ...obj,
+        data:obj.data!.map((item:any)=>toAuftraggeberConverter(item))
       }
-      return obj
     })
 }
 

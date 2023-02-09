@@ -1,8 +1,8 @@
-import { Objekt, toObjektConverter } from "../../types/allgemein"
+import { DBResponse, Objekt, toObjektConverter } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
-async function get(params?:{[key:string]:any},cb?:(data:any)=>void):Promise<{status:number,data:Objekt[],error?:string}>{
+async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Objekt>)=>void):Promise<DBResponse<Objekt>>{
     const url = dynamicurl + "/objekte" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
     return fetch(url,{
       credentials: "include",
@@ -11,15 +11,16 @@ async function get(params?:{[key:string]:any},cb?:(data:any)=>void):Promise<{sta
         'Content-Type': 'application/json'
       },
     }).then(response=>response.json())
-    .then(obj=>{
+    .then((obj:DBResponse<Objekt>)=>{
+      
+      if(obj.error)return obj
       if(cb)cb({
         ...obj,
-        data:obj.data.map((item:any)=>toObjektConverter(item))
+        data:obj.data!.map((item:any)=>toObjektConverter(item))
       })
-      if(obj.error)return obj
       return {
         ...obj,
-        data:obj.data.map((item:any)=>toObjektConverter(item))
+        data:obj.data!.map((item:any)=>toObjektConverter(item))
       }
     })
 }

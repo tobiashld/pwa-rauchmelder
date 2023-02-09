@@ -55,7 +55,7 @@ function ObjekteComponent() {
     <>
       <div className={styles.table}>
         <DataTable 
-          rows={[...data!.data]}
+          rows={[...data!.data!]}
           columns={['name','beschreibung']} 
           headline="Objekte" 
           editedElementIds={changedObjekte.map((objekt)=>objekt.id)}
@@ -63,7 +63,7 @@ function ObjekteComponent() {
             if(id === -1){
               
             }else{
-              let currObjekt = data!.data.slice().find((objekt)=>objekt.id === id)
+              let currObjekt = data!.data!.slice().find((objekt)=>objekt.id === id)
               let newObjekt = currObjekt?new Objekt(currObjekt.id,currObjekt.adresse,currObjekt.beschreibung,currObjekt.name,currObjekt.auftraggeberID):undefined
               if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
                 let alreadyChanged = changedObjekte.slice().find((objekt)=>objekt.id===id)

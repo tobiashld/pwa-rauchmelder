@@ -1,21 +1,27 @@
-import { Wohnung,  } from "../../types/allgemein"
+import { DBResponse, toWohnungConverter, Wohnung,  } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
 
-async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Wohnung>)=>void):Promise<DBResponse<Wohnung>>{
     const url = dynamicurl + "/wohnungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    fetch(url,{
+    return fetch(url,{
       credentials: "include",
       method:"GET",
       headers: {
         'Content-Type': 'application/json'
       },
-    }).then(response=>{
-      return response.json()})
-      .then(obj=>{
-        if(obj && obj.data){
-          if(cb)cb(obj.data)
+    })
+    .then(data=>data.json())
+    .then((response:DBResponse<Wohnung>)=>{
+      if(response.error)return response
+      if(cb)cb({
+        ...response,
+        data:response.data!.map((item:any)=>toWohnungConverter(item))
+      })
+      return {
+        ...response,
+        data:response.data!.map((item:any)=>toWohnungConverter(item))
       }
       })
 }

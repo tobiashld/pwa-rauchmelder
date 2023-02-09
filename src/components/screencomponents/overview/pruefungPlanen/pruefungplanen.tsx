@@ -22,8 +22,8 @@ function PruefungenPlanen() {
     const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
     const [pruefObjekte,setPruefObjekte] = useState<number[]>([])
     useEffect(()=>{
-        dataFunctions[ClientStatus.online].objekte.get(undefined,(data:any)=>{
-            setAlleObjekte(data.map((objekt:any)=>toObjektConverter(objekt)))
+        dataFunctions[ClientStatus.online].objekte.get(undefined,(data)=>{
+            setAlleObjekte(data.data!)
         })
     },[])
 

@@ -22,9 +22,8 @@ function AuftraggeberComponent() {
   const [reload,setReload] = useState(false)
 
   useEffect(()=>{
-    dataFunctions[clientStatus].auftraggeber.get(undefined,(data)=>{
-      const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
-      setAlleAuftraggeber(convertedAuftraggeber)
+    dataFunctions[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
+      setAlleAuftraggeber(data.data!)
       setReload(true)
     })
     setChangedAuftraggeber([])
@@ -53,8 +52,7 @@ function AuftraggeberComponent() {
     })
     
     setTimeout(()=>dataFunctions[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
-      const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
-      setAlleAuftraggeber(convertedAuftraggeber)
+      setAlleAuftraggeber(data.data!)
     }),400)
     setChangedAuftraggeber([])
     setIsSavable(false)
@@ -105,9 +103,8 @@ function AuftraggeberComponent() {
           }}
           handleDelete={(id)=>{
             dataFunctions[clientStatus].auftraggeber.delete(id).then((dataParam)=>{
-              setTimeout(()=>dataFunctions[clientStatus].auftraggeber.get(undefined,(data)=>{
-                const convertedAuftraggeber = data.map((auftraggeber:any)=>toAuftraggeberConverter(auftraggeber))
-                setAlleAuftraggeber(convertedAuftraggeber)
+              setTimeout(()=>dataFunctions[ClientStatus.online].auftraggeber.get(undefined,data=>{
+                setAlleAuftraggeber(data.data!)
               }),400)
               setReload(!reload)
             })
