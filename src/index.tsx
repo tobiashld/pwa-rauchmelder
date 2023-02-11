@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { SnackbarProvider } from 'notistack';
@@ -22,7 +23,7 @@ root.render(
         <CookiesProvider>
           <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal:"left",vertical:"top"}} disableWindowBlurListener preventDuplicate>
             <App status="online"/>
-            {/* <ReactQueryDevtools /> */}
+            <ReactQueryDevtools />
           </SnackbarProvider>
         </CookiesProvider>
       </React.StrictMode>
