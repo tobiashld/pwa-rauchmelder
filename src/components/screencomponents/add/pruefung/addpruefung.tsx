@@ -6,9 +6,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dataFunctions from '../../../../services/datafunctions'
 import { setPruefObjekt } from '../../../../store/slice'
 import { RootState, useAppDispatch } from '../../../../store/store'
-import {  DBResponse, GeprRauchmelder, Objekt, Pruefung, Rauchmelder,  toPruefungConverter, User } from '../../../../types/allgemein'
+import {  DBResponse, GeprRauchmelder, Objekt, Pruefung,  toPruefungConverter, User } from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
 import styles from './addpruefung.module.css'
+import { RauchmelderBeziehung } from '../../../../types/rauchmelder';
+import { useQuery } from 'react-query';
 
 function AddPruefung() {
     const clientStatus = useSelector((state:RootState)=>state.isOffline)
@@ -16,8 +18,9 @@ function AddPruefung() {
     const pruefObjektString = useSelector((state:RootState)=>state.currPruefobjekt)
     const [currPruefObjekt,setCurrPruefObjekt] = useState<Objekt | undefined>(pruefObjektString?JSON.parse(pruefObjektString):undefined)
     const [currPruefung,setCurrPruefung] = useState<Pruefung | undefined>(undefined)
-    const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<Rauchmelder | undefined>()
-    const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
+    const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<RauchmelderBeziehung | undefined>()
+    const [alleRauchmelder,setAlleRauchmelder] = useState<RauchmelderBeziehung[]>([])
+    const rauchmelderQuery = useQuery(["rauchmelder","objekt",currPruefObjekt?currPruefObjekt:-1],dataFunctions[ClientStatus.online].rauchmelder.getForObject)
     const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
     const newSeriennrRef = useRef(null)
     const newProdDatumRef = useRef(null)
@@ -42,9 +45,9 @@ function AddPruefung() {
     },[pruefObjektString])
 
     useEffect(()=>{
-        dataFunctions[ClientStatus.online].rauchmelder.get({"objektID":currPruefObjekt?currPruefObjekt.id:1},(data:DBResponse<Rauchmelder>)=>{
-            setAlleRauchmelder(data.data!)
-        })
+        // dataFunctions[ClientStatus.online].rauchmelder.getForObject(currPruefObjekt?currPruefObjekt.id:1,(data:DBResponse<RauchmelderBeziehung>)=>{
+        //     setAlleRauchmelder(data.data!)
+        // })
         if(id){
             dataFunctions[ClientStatus.online].pruefungen.get({"id":id},(prepData:any[])=>{
                 if(prepData.length > 0){
@@ -117,8 +120,8 @@ function AddPruefung() {
                                         MenuProps={MenuProps}
                                         renderValue={(value)=>{
                                             if(value=== "")return ""
-                                            let rauchmelder : Rauchmelder= JSON.parse(value)
-                                            return rauchmelder.mieter + " " + rauchmelder.raum
+                                            let rauchmelder : RauchmelderBeziehung= JSON.parse(value)
+                                            return rauchmelder.aktuellerRauchmelder!.seriennr + " " + rauchmelder.aktuellerRauchmelder!.raum
                                         }}
                                     >
                                         {
@@ -127,7 +130,7 @@ function AddPruefung() {
                                                     key={rauchmelder.id}
                                                     value={JSON.stringify(rauchmelder)}
                                                 >
-                                                    {rauchmelder.seriennr+ " "+rauchmelder.mieter + " "+ rauchmelder.raum }
+                                                    {rauchmelder.aktuellerRauchmelder!.seriennr+ " "+ rauchmelder.aktuellerRauchmelder!.raum }
                                                 </MenuItem>
                                         ))
                                         }
@@ -179,10 +182,10 @@ function AddPruefung() {
                                             setCurrGeprRauchmelder(rauchmelder)
                                         }}>
                                                 <div className={styles.rauchmeldercardTitle}>
-                                                {wholeRauchmelder?wholeRauchmelder.mieter + " "+ wholeRauchmelder.raum:rauchmelder.rauchmelderId }
+                                                {wholeRauchmelder?wholeRauchmelder.aktuellerRauchmelder!.raum:rauchmelder.rauchmelderId }
                                                 </div>
                                                 <div>
-                                                {wholeRauchmelder?wholeRauchmelder.seriennr:""}
+                                                {wholeRauchmelder?wholeRauchmelder.aktuellerRauchmelder!.seriennr:""}
                                                 </div>
             
                                         </div>)
@@ -212,7 +215,7 @@ function AddPruefung() {
                                     <div>
                                         {
                                             alleRauchmelder.filter(rauchmelder=>rauchmelder.id===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
-                                                let isTreppenhaus = rauchmelder.mieter.split(" ").filter(string=>string.toLocaleLowerCase()==="Treppenhaus".toLocaleLowerCase()).length >= 1
+                                                let isTreppenhaus = rauchmelder.wohnungsID === 5
                                                 return (
                                                     <div className={styles.infotable}>
                                                             <div>
@@ -232,13 +235,13 @@ function AddPruefung() {
                                                             </div>
             
                                                             <div>
-                                                                {rauchmelder.seriennr}
+                                                                {rauchmelder.aktuellerRauchmelder!.seriennr}
                                                             </div>
                                                             <div>
-                                                                {!isTreppenhaus?<TextField ref={newMieterRef} size='small' id="add-pruefung-mieter" placeholder={rauchmelder.mieter}></TextField>:rauchmelder.mieter}
+                                                                {!isTreppenhaus?<TextField ref={newMieterRef} size='small' id="add-pruefung-mieter" placeholder={rauchmelder.wohnung!.nachname}></TextField>:rauchmelder.wohnung!.nachname}
                                                             </div>
                                                             <div>
-                                                                {rauchmelder.objekt.name}
+                                                                {rauchmelder.wohnungsID}
                                                             </div>
                                                     </div>
                                                 )

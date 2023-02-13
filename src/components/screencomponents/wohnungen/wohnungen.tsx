@@ -18,7 +18,7 @@ function WohnungenComponent() {
   const [reload,setReload] = useState(false)
   useEffect(()=>{
     dataFunctions[ClientStatus.online].wohnungen.get(undefined,(wohnungen)=>{
-      setAlleWohnungen(wohnungen.data!)
+      // setAlleWohnungen(wohnungen.data!)
     })
     setChangedWohnungen([])
   },[])
@@ -34,17 +34,17 @@ function WohnungenComponent() {
   const handleSave = ()=>{
     changedWohnungen.forEach(wohnung=>{
       let error = undefined
-      dataFunctions[ClientStatus.online].wohnungen.change(wohnung,(data)=>{
-        //error if error is there
-        if(data && data.error)error = data.error
-      })
+      // dataFunctions[ClientStatus.online].wohnungen.change(wohnung,(data)=>{
+      //   //error if error is there
+      //   if(data && data.error)error = data.error
+      // })
       if(error){
         enqueueSnackbar(error,{variant:"error"})
       }
     })
     
     setTimeout(()=>dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
-      setAlleWohnungen(data.data!)
+      // setAlleWohnungen(data.data!)
     }),400)
     setChangedWohnungen([])
     setIsSavable(false)
@@ -96,7 +96,7 @@ function WohnungenComponent() {
             dataFunctions[ClientStatus.online].wohnungen.delete(id)
             setTimeout(()=>{
               dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
-                setAlleWohnungen(data.data!)
+                // setAlleWohnungen(data.data!)
               })
               setChangedWohnungen([])
             },300)

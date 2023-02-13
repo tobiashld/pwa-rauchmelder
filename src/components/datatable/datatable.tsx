@@ -1,9 +1,12 @@
 import React,{useEffect,useState} from 'react'
 import { BsArrowDown, BsArrowLeft, BsArrowRight, BsArrowUp } from 'react-icons/bs'
 import { RiDeleteBin5Line } from 'react-icons/ri'
+import HistoryIcon from '@mui/icons-material/History';
 import { getFittingInputsForKey, KeyType } from '../../services/helperfunctions'
 import Loadingspinner from '../loadingspinner/loadingspinner'
 import styles from './datatable.module.css'
+import dataFunctions from '../../services/datafunctions';
+import functions from '../../services/postsql_db/rauchmelder';
 
 function DataTable(props:{
   rows:any[]|undefined,
@@ -12,6 +15,7 @@ function DataTable(props:{
   handleEdit:(id:number,key:string,value:any)=>void,
   handleDelete:(id:number)=>void,editedElementIds?:number[],
   handleRowClick?:(id:number)=>void,
+  handleHistory?:(id:number)=>void,
   sort?:SortArgument[],
   options?:any[],
   disabledRows?:boolean
@@ -252,7 +256,7 @@ function DataTable(props:{
                         }
                       })
                     }
-                    <div className={styles.rowsegment+" "+styles.id + " "+styles.delete} onClick={(event)=>props&&props.handleDelete?props.handleDelete(item.id):undefined}><RiDeleteBin5Line /></div>
+                    <div className={styles.rowsegment+" "+styles.id + " "+styles.interactions} >{props.handleHistory?<HistoryIcon className={styles.history} onClick={(event)=>props.handleHistory!(item.id)} />:<></>}<RiDeleteBin5Line className={styles.delete} onClick={(event)=>props&&props.handleDelete?props.handleDelete(item.id):undefined}/></div>
                   </div>
                 )
               })

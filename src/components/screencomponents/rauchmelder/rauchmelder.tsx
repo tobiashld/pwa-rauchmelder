@@ -1,35 +1,28 @@
 import { useSnackbar } from 'notistack'
 import React,{useEffect,useState} from 'react'
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import dataFunctions from '../../../services/datafunctions'
-import {  Objekt, Rauchmelder,   } from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import DataTable from '../../datatable/datatable'
+import RauchmelderHistorienDialog from '../../dialogs/rauchmelderhistorienDialog/rauchmelderhistorienDialog'
 import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
+import { Rauchmelder } from '../../../types/rauchmelder'
 
 type RauchmelderChangeKeys = 'objekt'|'produktionsdatum'|'raum'|'seriennr'|'mieter'
 
 function RauchmelderComponent() {
-  const [alleRauchmelder,setAlleRauchmelder] = useState<Rauchmelder[]>([])
-  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
-  const [changedRauchmelder,setChangedRauchmelder] = useState<Rauchmelder[]>([])
+  const [changedRauchmelder,setChangedRauchmelder] = useState<RauchmelderBeziehung[]>([])
   const [isSavable,setIsSavable] = useState(false)
+  const [showHistoryDialog,setShowHistoryDialog] = useState(false)
+  const [historyid,setHistoryid] = useState(1)
   const {enqueueSnackbar} = useSnackbar()
   const rauchmelderQuery = useQuery('rauchmelder',()=>dataFunctions[ClientStatus.online].rauchmelder.get())
   const objekteQuery = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get())
-  useEffect(()=>{
-    dataFunctions[ClientStatus.online].rauchmelder.get(undefined,(data)=>{
-        setAlleRauchmelder(data.data!)
-    })
-    dataFunctions[ClientStatus.online].objekte.get(undefined,(data)=>{
-      setAlleObjekte(data.data!)
-    })
-    
-  },[])
-
+  const queryClient = useQueryClient()
+  
   useEffect(()=>{
     if(changedRauchmelder.length > 0){
       setIsSavable(true)
@@ -37,6 +30,17 @@ function RauchmelderComponent() {
       setIsSavable(false)
     }
   },[changedRauchmelder])
+
+  const clicktest=()=>{
+      dataFunctions[1].rauchmelder.switch({
+        produktionsdatum:new Date(2001,10,10),
+        seriennr:'80085',
+        raum:'penis',
+        isactive:true
+      },rauchmelderQuery.data!.data!.filter(value=>value.id===1)![0])
+  }
+
+  
 
   if(rauchmelderQuery.isLoading || objekteQuery.isLoading){
     return <div className={styles.table}><Loadingspinner size='Big' /></div>
@@ -53,10 +57,15 @@ function RauchmelderComponent() {
   return (
     <>
       <div className={styles.table}>
+        <RauchmelderHistorienDialog 
+          handleClose={(e:any)=>setShowHistoryDialog(false)} 
+          isShown={showHistoryDialog}
+          rauchmelderHistorienId={historyid}
+          />
         <DataTable 
-          rows={alleRauchmelder} 
-          columns={['id','objekt','produktionsdatum','raum','seriennr','mieter']} 
-          options={alleObjekte}
+          rows={rauchmelderQuery.data?.data.map((rauchmelderBz:RauchmelderBeziehung)=>rauchmelderBz.aktuellerRauchmelder)} 
+          columns={['id','produktionsdatum','raum','seriennr']} 
+          options={objekteQuery.data?.data!}
           headline="Rauchmelder" 
           editedElementIds={changedRauchmelder.map(rauchmelder=>{
             return rauchmelder.id
@@ -65,76 +74,79 @@ function RauchmelderComponent() {
             if(id === -1){
               
             }else{
-              let currRauchmelder = alleRauchmelder.slice().find((rauchmelder)=>rauchmelder.id === id)
-              let newRauchmelder = currRauchmelder?new Rauchmelder(currRauchmelder.id,currRauchmelder.objekt,currRauchmelder.produktionsdatum,currRauchmelder.raum,currRauchmelder.seriennr,currRauchmelder.letztePruefungsID,currRauchmelder.mieter):undefined
-              if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
-                let alreadyChanged = changedRauchmelder.slice().find((rauchmelder)=>rauchmelder.id===id)
-                if(alreadyChanged){
-                  let addChangedRauchmelder = changedRauchmelder.slice().map((kurzRauchmelder:Rauchmelder)=>{
-                    if(kurzRauchmelder.id === id){
-                      kurzRauchmelder[key as RauchmelderChangeKeys] = value
-                      return kurzRauchmelder
-                    }else{
-                      return kurzRauchmelder
-                    }
-                  })
-                  setChangedRauchmelder(addChangedRauchmelder)
-                }else{
-                  let addChangedObjek = changedRauchmelder.slice()
-                  addChangedObjek.push(newRauchmelder)
-                  setChangedRauchmelder(addChangedObjek)
-                }
+              // let currRauchmelder = alleRauchmelder.slice().find((rauchmelder)=>rauchmelder.id === id)
+              // // let newRauchmelder = currRauchmelder?{currRauchmelder.id,currRauchmelder.objekt,currRauchmelder.produktionsdatum,currRauchmelder.raum,currRauchmelder.seriennr,currRauchmelder.letztePruefungsID,currRauchmelder.mieter):undefined
+              // if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
+              //   let alreadyChanged = changedRauchmelder.slice().find((rauchmelder)=>rauchmelder.id===id)
+              //   if(alreadyChanged){
+              //     let addChangedRauchmelder = changedRauchmelder.slice().map((kurzRauchmelder:RauchmelderBeziehung)=>{
+              //       if(kurzRauchmelder.id === id){
+              //         // kurzRauchmelder[key as RauchmelderChangeKeys] = value
+              //         return kurzRauchmelder
+              //       }else{
+              //         return kurzRauchmelder
+              //       }
+              //     })
+              //     setChangedRauchmelder(addChangedRauchmelder)
+              //   }else{
+              //     let addChangedObjek = changedRauchmelder.slice()
+              //     addChangedObjek.push(newRauchmelder)
+              //     setChangedRauchmelder(addChangedObjek)
+              //   }
                 
-              }else if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() === value.toString() || value.toString() === "")){
-                let removeNotChangedObjek = changedRauchmelder.slice().filter((rauchmelder)=>rauchmelder.id!==id)
-                setChangedRauchmelder(removeNotChangedObjek)
-              }else{
-                //error
-              }
+              // }else if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() === value.toString() || value.toString() === "")){
+              //   let removeNotChangedObjek = changedRauchmelder.slice().filter((rauchmelder)=>rauchmelder.id!==id)
+              //   setChangedRauchmelder(removeNotChangedObjek)
+              // }else{
+              //   //error
+              // }
             }
+          }}
+          handleHistory={(id)=>{
+            setHistoryid(id)
+            setShowHistoryDialog(true)
           }}
           handleDelete={(id)=>{
             dataFunctions[ClientStatus.online].rauchmelder.delete(id)
+
             setTimeout(()=>{
-              dataFunctions[ClientStatus.online].objekte.get(undefined,data=>{
-                setAlleObjekte(data!.data!)
-              })
+              queryClient.invalidateQueries("rauchmelder")
               setChangedRauchmelder([])
             },300)
           }}
           sort={[
             {
               name:"hinzugefügt",
-              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>(a.id-b.id),
-              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>(b.id-a.id),
-            },
-            {
-              name:"mieter",
-              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>(a.mieter.localeCompare(b.mieter)),
-              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>(b.mieter.localeCompare(a.mieter)),
+              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>(a.id!-b.id!),
+              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>(b.id!-a.id!),
             },
             {
               name:"p.datum",
               functionAsc:(a:Rauchmelder,b:Rauchmelder)=>{
-                let aS = a.produktionsdatum.split(".").map(item=>Number(item))
-                let bS = b.produktionsdatum.split(".").map(item=>Number(item))
-                let aD = new Date(aS[2],aS[1],aS[0])
-                let bD = new Date(bS[2],bS[1],bS[0])
-                return aD.valueOf()-bD.valueOf()
+                let aS = a.produktionsdatum
+                let bS = b.produktionsdatum
+                return aS.valueOf()-bS.valueOf()
               },
               functionDesc:(a:Rauchmelder,b:Rauchmelder)=>{
-                let aS = a.produktionsdatum.split(".").map(item=>Number(item))
-                let bS = b.produktionsdatum.split(".").map(item=>Number(item))
-                let aD = new Date(aS[2],aS[1],aS[0])
-                let bD = new Date(bS[2],bS[1],bS[0])
-                return bD.valueOf()-aD.valueOf()
+                let aS = a.produktionsdatum
+                let bS = b.produktionsdatum
+                return bS.valueOf()-aS.valueOf()
               },
               
             },
+            {
+              name:"seriennr",
+              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>{
+                return (a.seriennr.localeCompare(b.seriennr))
+              },
+              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>{
+                return (b.seriennr.localeCompare(a.seriennr))
+              }
+            }
           ]}
         />
         <div className={styles.interactions}>
-          <AddButton routeParam='auftraggeber' />
+          <AddButton routeParam='auftraggeber' onClick={()=>clicktest()}/>
           <SaveButton onClick={handleSave} isShown={isSavable}/>
         </div>
       </div>

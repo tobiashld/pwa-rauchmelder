@@ -1,10 +1,12 @@
 import { JwtPayload } from "jwt-decode";
+import { RauchmelderOld } from "./rauchmelder";
 
 export interface DBResponse<T>{
   status:number,
-  data?:T[]
+  data?:T[] 
   error?:string
 }
+
 export class Auftraggeber{
     constructor(
       readonly id:number,
@@ -95,22 +97,9 @@ export const toObjektConverter = (
           data.auftraggeberID);
       }
 
-export class Rauchmelder{
-    prepForSave(): any {
-      throw new Error("Method not implemented.");
-    }
-    constructor(
-      readonly id:number,
-      public objekt:smallObjekt,
-      public produktionsdatum:string,
-      public raum:string,
-      public seriennr:string,
-      public letztePruefungsID:number,
-      public mieter:string
-    ){}
 
-    
-}
+
+
 export class GeprRauchmelder{
   constructor(
      readonly id:number,
@@ -153,10 +142,10 @@ export const toGeprRauchmelderConverter = (
       }
 export const toRauchmelderConverter = (
         data:any
-      ): Rauchmelder =>{
-        return new Rauchmelder(data.id,new smallObjekt(data.objektid,data.objektname),data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
+      ): RauchmelderOld =>{
+        return new RauchmelderOld(data.id,new smallObjekt(data.objektid,data.objektname),data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
       }
-class smallObjekt {
+export class smallObjekt {
   constructor(
     public id:number,
     public name:string, 
@@ -181,11 +170,7 @@ export class Wohnung{
     public mieter:string,
     ){}
 }
-export const toWohnungConverter = (
-        data:any
-      ): Wohnung =>{
-        return new Wohnung(data.id,data.objektID,data.etage,data.wohnungslage,data.haus,data.nachname);
-      }
+
 
 export class Pruefung{
   

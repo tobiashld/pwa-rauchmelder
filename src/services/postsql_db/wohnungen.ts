@@ -1,6 +1,6 @@
-import { DBResponse, toWohnungConverter, Wohnung,  } from "../../types/allgemein"
+import { DBResponse,  } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
-
+import { toWohnungConverter,Wohnung } from "../../types/wohnung";
 
 
 async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Wohnung>)=>void):Promise<DBResponse<Wohnung>>{
@@ -35,7 +35,7 @@ async function add(wohnung:Wohnung,cb?:(data:any)=>void){
     headers: {
       'Content-Type': 'application/json'
     },
-    body:JSON.stringify(wohnung.prepForSave())
+    body:JSON.stringify(wohnung)
   }).then(response=>{
     return response.json()})
     .then(obj=>{
@@ -53,7 +53,7 @@ async function change(wohnung:Wohnung,cb?:(data:any)=>void){
     headers: {
       'Content-Type': 'application/json'
     },
-    body:JSON.stringify(wohnung.prepForSave())
+    body:JSON.stringify(wohnung)
   }).then(response=>{
     return response.json()})
     .then(obj=>{

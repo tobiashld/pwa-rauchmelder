@@ -1,8 +1,9 @@
 import Dexie from "dexie";
-import { Auftraggeber, GeprRauchmelder, Objekt, Pruefung, Rauchmelder, Wohnung } from "../types/allgemein";
+import { Auftraggeber, GeprRauchmelder, Objekt, Pruefung, Wohnung } from "../types/allgemein";
+import { RauchmelderOld } from "../types/rauchmelder";
 
 export class MyAppDatabase extends Dexie {
-    rauchmelder!: Dexie.Table<Rauchmelder,number>;
+    rauchmelder!: Dexie.Table<RauchmelderOld,number>;
     wohnungen!:Dexie.Table<Wohnung,number>;
     auftraggeber!:Dexie.Table<Auftraggeber,number>;
     objekte!: Dexie.Table<Objekt,number>;
