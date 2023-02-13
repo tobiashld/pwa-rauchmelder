@@ -11,6 +11,7 @@ import { ClientStatus } from '../../../../types/statusenum'
 import styles from './addpruefung.module.css'
 import { RauchmelderBeziehung } from '../../../../types/rauchmelder';
 import { useQuery } from 'react-query';
+import Loadingspinner from '../../../loadingspinner/loadingspinner';
 
 function AddPruefung() {
     const clientStatus = useSelector((state:RootState)=>state.isOffline)
@@ -20,7 +21,7 @@ function AddPruefung() {
     const [currPruefung,setCurrPruefung] = useState<Pruefung | undefined>(undefined)
     const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<RauchmelderBeziehung | undefined>()
     const [alleRauchmelder,setAlleRauchmelder] = useState<RauchmelderBeziehung[]>([])
-    const rauchmelderQuery = useQuery(["rauchmelder","objekt",currPruefObjekt?currPruefObjekt:-1],dataFunctions[ClientStatus.online].rauchmelder.getForObject)
+    const rauchmelderQuery = useQuery(["rauchmelder","objekt",currPruefObjekt?currPruefObjekt.id:-1],dataFunctions[ClientStatus.online].rauchmelder.getForObject)
     const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
     const newSeriennrRef = useRef(null)
     const newProdDatumRef = useRef(null)
@@ -98,7 +99,11 @@ function AddPruefung() {
             }
         }
     }
-    
+    if(rauchmelderQuery.isLoading || !rauchmelderQuery.data || !rauchmelderQuery.data.data)return <Loadingspinner size='Big' />
+    if(rauchmelderQuery.isError){
+        enqueueSnackbar("Error in addpruefung component",{variant:"error"})
+        return <div>Error</div>
+    }
 
     return (
         <div className={styles.fullcell}>
@@ -119,20 +124,23 @@ function AddPruefung() {
                                         input={<OutlinedInput id="select-multiple-chip" label="Rauchmelder" />}
                                         MenuProps={MenuProps}
                                         renderValue={(value)=>{
+                                            console.log("value",value)
                                             if(value=== "")return ""
                                             let rauchmelder : RauchmelderBeziehung= JSON.parse(value)
                                             return rauchmelder.aktuellerRauchmelder!.seriennr + " " + rauchmelder.aktuellerRauchmelder!.raum
                                         }}
                                     >
                                         {
-                                        alleRauchmelder.filter(rauchmelder=>currPruefung?.rauchmelder.find(index=>index.rauchmelderId===rauchmelder.id)?false:true).map(rauchmelder=>(
+                                        rauchmelderQuery!.data!.data.filter(rauchmelder=>currPruefung?.rauchmelder.find(index=>index.rauchmelderId===rauchmelder.aktuelleHistorienID)?false:true).map(rauchmelder=>{
+                                            
+                                            return (
                                                 <MenuItem
-                                                    key={rauchmelder.id}
+                                                    key={rauchmelder.aktuelleHistorienID}
                                                     value={JSON.stringify(rauchmelder)}
                                                 >
                                                     {rauchmelder.aktuellerRauchmelder!.seriennr+ " "+ rauchmelder.aktuellerRauchmelder!.raum }
                                                 </MenuItem>
-                                        ))
+                                        )})
                                         }
             
                                     </Select>
@@ -176,7 +184,7 @@ function AddPruefung() {
                             {
                                 currPruefung?
                                 currPruefung.rauchmelder.map(rauchmelder=>{
-                                    let wholeRauchmelder = alleRauchmelder.find(item=>item.id === rauchmelder.rauchmelderId)
+                                    let wholeRauchmelder = rauchmelderQuery.data!.data!.find(item=>item.aktuelleHistorienID === rauchmelder.rauchmelderId)
                                     return (
                                         <div className={(currGeprRauchmelder && rauchmelder.rauchmelderId === currGeprRauchmelder!.rauchmelderId)?styles.rauchmeldercard + " "+styles.activeRauchmelder:styles.rauchmeldercard} onClick={(event)=>{
                                             setCurrGeprRauchmelder(rauchmelder)

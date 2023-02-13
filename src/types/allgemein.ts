@@ -151,25 +151,25 @@ export class smallObjekt {
     public name:string, 
   ){}
 }
-export class Wohnung{
-    prepForSave(): any {
-      return {
-        objektID:this.objektid,
-        etage:this.etage,
-        wohnungslage:this.lage,
-        haus:this.haus,
-        nachname:this.mieter,
-      }
-    }
-    constructor(
-    readonly id:number,
-    public objektid:number,
-    public etage:string,
-    public haus:string,
-    public lage:string,
-    public mieter:string,
-    ){}
-}
+// export class Wohnung{
+//     prepForSave(): any {
+//       return {
+//         objektID:this.objektid,
+//         etage:this.etage,
+//         wohnungslage:this.lage,
+//         haus:this.haus,
+//         nachname:this.nachname,
+//       }
+//     }
+//     constructor(
+//     readonly id:number,
+//     public objektid:number,
+//     public etage:string,
+//     public haus:string,
+//     public lage:string,
+//     public nachname:string,
+//     ){}
+// }
 
 
 export class Pruefung{

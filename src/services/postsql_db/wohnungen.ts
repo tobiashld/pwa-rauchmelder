@@ -36,11 +36,16 @@ async function add(wohnung:Wohnung,cb?:(data:any)=>void){
       'Content-Type': 'application/json'
     },
     body:JSON.stringify(wohnung)
-  }).then(response=>{
-    return response.json()})
-    .then(obj=>{
-      if(obj && obj.data){
-        if(cb)cb(obj.data)
+  }).then(data=>data.json())
+  .then((response:DBResponse<Wohnung>)=>{
+    if(response.error)return response
+    if(cb)cb({
+      ...response,
+      data:response.data!.map((item:any)=>toWohnungConverter(item))
+    })
+    return {
+      ...response,
+      data:response.data!.map((item:any)=>toWohnungConverter(item))
     }
     })
 }
@@ -54,11 +59,16 @@ async function change(wohnung:Wohnung,cb?:(data:any)=>void){
       'Content-Type': 'application/json'
     },
     body:JSON.stringify(wohnung)
-  }).then(response=>{
-    return response.json()})
-    .then(obj=>{
-      if(obj && obj.data){
-        if(cb)cb(obj.data)
+  }).then(data=>data.json())
+  .then((response:DBResponse<Wohnung>)=>{
+    if(response.error)return response
+    if(cb)cb({
+      ...response,
+      data:response.data!.map((item:any)=>toWohnungConverter(item))
+    })
+    return {
+      ...response,
+      data:response.data!.map((item:any)=>toWohnungConverter(item))
     }
     })
 }
@@ -70,11 +80,16 @@ async function deleteW(id:number,cb?:(data:any)=>void){
     headers: {
       'Content-Type': 'application/json'
     },
-  }).then(response=>{
-    return response.json()})
-    .then(obj=>{
-      if(obj && obj.data){
-        if(cb)cb(obj.data)
+  }).then(data=>data.json())
+  .then((response:DBResponse<Wohnung>)=>{
+    if(response.error)return response
+    if(cb)cb({
+      ...response,
+      data:response.data!.map((item:any)=>toWohnungConverter(item))
+    })
+    return {
+      ...response,
+      data:response.data!.map((item:any)=>toWohnungConverter(item))
     }
     })
 }

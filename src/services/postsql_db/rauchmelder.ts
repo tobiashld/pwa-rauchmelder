@@ -27,7 +27,8 @@ async function get(params?:{[key:string]:any},cb?:(data:DBResponse<RauchmelderBe
       })
 }
 async function getForObject(queryKey:any,cb?:(data:DBResponse<RauchmelderBeziehung>)=>void):Promise<{status:number,data:RauchmelderBeziehung[],error?:string}>{
-    const url = dynamicurl + "/rauchmelder/objekt/" + queryKey
+
+    const url = dynamicurl + "/rauchmelder/objekt/" + queryKey.queryKey[2]
     return fetch(url,{
       credentials: "include",
       method:"GET",
@@ -39,12 +40,12 @@ async function getForObject(queryKey:any,cb?:(data:DBResponse<RauchmelderBeziehu
       .then(obj=>{
         if(cb)cb({
           ...obj,
-          data:obj.data.map((item:any)=>toRauchmelderConverter(item))
+          data:obj.data.map((item:any)=>toRauchmelderBzConverter(item))
         })
         if(obj.error)return obj
         return {
           ...obj,
-          data:obj.data.map((item:any)=>toRauchmelderConverter(item))
+          data:obj.data.map((item:any)=>toRauchmelderBzConverter(item))
         }
       })
 }

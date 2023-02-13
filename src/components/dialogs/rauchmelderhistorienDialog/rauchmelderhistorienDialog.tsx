@@ -7,6 +7,7 @@ import Loadingspinner from '../../loadingspinner/loadingspinner';
 import { Rauchmelder,  } from '../../../types/rauchmelder';
 import { dateOptions } from '../../../services/globals';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import styles from './rauchmelderhistorienDialog.module.css'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -62,43 +63,30 @@ const RauchmelderHistorienDialog = (props:{rauchmelderHistorienId:number,isShown
     </BootstrapDialogTitle>
     <DialogContent dividers >
         
-        {historienquery.isLoading?<div style={{alignSelf:'center'}}><Loadingspinner size='Big' /></div>:
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <Paper sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection:'row',
-        gap:2,
-        flexWrap: 'wrap',
-        listStyle: 'none',
-        p: 1,
-        m: 0,
-      }}
-      component="ul" >
+        {historienquery.isLoading || !historienquery.data || !historienquery.data.data?<div style={{alignSelf:'center'}}><Loadingspinner size='Big' /></div>:
+    <>
+        <div className={styles.chipbox}>
 
         
-            <Chip
+            {historienquery.data!.data![0].wohnung.etage && historienquery.data!.data![0].wohnung.etage!== '-'?<Chip 
                 key={0}
-                label={historienquery.data.data[0].wohnung.etage + historienquery.data.data[0].wohnung.wohnungslage }
-                />
-            <Chip 
+                label={historienquery.data!.data![0].wohnung.etage}
+                />:<></>}
+            {historienquery.data!.data![0].wohnung.wohnungslage && historienquery.data!.data![0].wohnung.wohnungslage!== '-' && historienquery.data!.data![0].wohnung.wohnungslage!== ' '?<Chip 
                 key={1}
-                label={"test"}
-                />
-            <Chip 
-                label={"test"}
-                />
-            <Chip 
-                label={"test"}
-                />
-            <Chip 
-                label={"test"}
-                />
-            <Chip 
-                label={"test"}
-                />
-                </Paper>
-        <Divider />
+                label={historienquery.data!.data![0].wohnung.wohnungslage}
+                />:<></>}
+
+            {historienquery.data!.data![0].wohnung.haus && historienquery.data!.data![0].wohnung.haus!== '-'?<Chip 
+                key={2}
+                label={historienquery.data!.data![0].wohnung.haus}
+                />:<></>}
+            {historienquery.data!.data![0].wohnung.nachname && historienquery.data!.data![0].wohnung.nachname!== '-'?<Chip 
+                key={3}
+                label={historienquery.data!.data![0].wohnung.nachname}
+                />:<></>}
+                </div>
+                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -168,7 +156,7 @@ const RauchmelderHistorienDialog = (props:{rauchmelderHistorienId:number,isShown
           </TableBody>
         </Table>
       </TableContainer>
-      </Paper>}
+      </Paper></>}
         
     
     </DialogContent>

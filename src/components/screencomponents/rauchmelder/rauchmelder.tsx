@@ -9,7 +9,7 @@ import RauchmelderHistorienDialog from '../../dialogs/rauchmelderhistorienDialog
 import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
-import { Rauchmelder } from '../../../types/rauchmelder'
+import { RauchmelderI, RauchmelderBeziehung } from '../../../types/rauchmelder'
 
 type RauchmelderChangeKeys = 'objekt'|'produktionsdatum'|'raum'|'seriennr'|'mieter'
 
@@ -33,10 +33,13 @@ function RauchmelderComponent() {
 
   const clicktest=()=>{
       dataFunctions[1].rauchmelder.switch({
-        produktionsdatum:new Date(2001,10,10),
-        seriennr:'80085',
-        raum:'penis',
-        isactive:true
+        produktionsdatum: new Date(2001, 10, 10),
+        seriennr: '80085',
+        raum: 'penis',
+        isactive: true,
+        speichernOnline: function (): void {
+          throw new Error('Function not implemented.')
+        }
       },rauchmelderQuery.data!.data!.filter(value=>value.id===1)![0])
   }
 
@@ -117,17 +120,17 @@ function RauchmelderComponent() {
           sort={[
             {
               name:"hinzugefügt",
-              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>(a.id!-b.id!),
-              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>(b.id!-a.id!),
+              functionAsc:(a:RauchmelderI,b:RauchmelderI)=>(a.id!-b.id!),
+              functionDesc:(a:RauchmelderI,b:RauchmelderI)=>(b.id!-a.id!),
             },
             {
               name:"p.datum",
-              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>{
+              functionAsc:(a:RauchmelderI,b:RauchmelderI)=>{
                 let aS = a.produktionsdatum
                 let bS = b.produktionsdatum
                 return aS.valueOf()-bS.valueOf()
               },
-              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>{
+              functionDesc:(a:RauchmelderI,b:RauchmelderI)=>{
                 let aS = a.produktionsdatum
                 let bS = b.produktionsdatum
                 return bS.valueOf()-aS.valueOf()
@@ -136,10 +139,10 @@ function RauchmelderComponent() {
             },
             {
               name:"seriennr",
-              functionAsc:(a:Rauchmelder,b:Rauchmelder)=>{
+              functionAsc:(a:RauchmelderI,b:RauchmelderI)=>{
                 return (a.seriennr.localeCompare(b.seriennr))
               },
-              functionDesc:(a:Rauchmelder,b:Rauchmelder)=>{
+              functionDesc:(a:RauchmelderI,b:RauchmelderI)=>{
                 return (b.seriennr.localeCompare(a.seriennr))
               }
             }

@@ -75,14 +75,15 @@ export interface RauchmelderHistorie{
 
 export class RauchmelderHistorie implements RauchmelderHistorie{
     constructor(
-        public rauchmelderHistorie:Rauchmelder[]
+        public rauchmelderHistorie:Rauchmelder[],
+        public wohnung:Wohnung,
     ){}
 }
 
 export function toRauchmelderHistorienConverter(data:any){
     return new RauchmelderHistorie(
-        data.rauchmelder.rauchmelderHistorie.map((item:any)=>toRauchmelderConverter(item),
-        toWohnungConverter(data.wohnungen))
+        data.rauchmelder.rauchmelderHistorie.map((item:any)=>toRauchmelderConverter(item)),
+        toWohnungConverter(data.rauchmelder.wohnungen)
     )
 
 }
@@ -105,7 +106,7 @@ export function toRauchmelderBzConverter(data:any){
        data.id,
        data.aktuelleHistorienID,
        data.wohnungsID,
-       toWohnungConverter(data.wohnungen),
-       toRauchmelderConverter(data.aktuellerRauchmelder)
+       data.wohnungen?toWohnungConverter(data.wohnungen):undefined,
+       data.aktuellerRauchmelder?toRauchmelderConverter(data.aktuellerRauchmelder):undefined
     )
 }
