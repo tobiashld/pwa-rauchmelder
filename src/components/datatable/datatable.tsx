@@ -5,8 +5,6 @@ import HistoryIcon from '@mui/icons-material/History';
 import { getFittingInputsForKey, KeyType } from '../../services/helperfunctions'
 import Loadingspinner from '../loadingspinner/loadingspinner'
 import styles from './datatable.module.css'
-import dataFunctions from '../../services/datafunctions';
-import functions from '../../services/postsql_db/rauchmelder';
 
 function DataTable(props:{
   rows:any[]|undefined,
