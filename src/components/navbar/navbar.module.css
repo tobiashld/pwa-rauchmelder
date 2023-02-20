@@ -1,16 +1,15 @@
 .container{
     background-color: #01161E;
     color:#EFF6E0;
-    height:100%;
+    height:100vh;
     display: flex;
     z-index: 100;
     flex-direction: column;
     justify-content: center;
-    transform:translateX(-100%);
     box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
-    transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1),width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .widthcontroller{
+    position: relative;
     grid-area: sidebar;
     transition:width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -19,10 +18,12 @@
     transition:width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .navactive{
-    transform:translateX(0);
+    transform:translateX(0) !important;
     transition:transform 1s cubic-bezier(0.165,0.84,0.44,1);
 }
 .links{
+    flex:1;
+    justify-content: center;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -93,13 +94,31 @@
     background-color: lightgray;
 }
 .auth{
-    position: absolute;
+    justify-self: flex-end;
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    flex-direction: column;
+    gap:10px;
     padding:10px;
-    bottom:10px;
-    left:50%;
-    transform:translateX(-50%)
+}
+.auth>*{
+    height:3em;
+    width: 80%;
+    justify-content: space-between;
+    padding:3px;
+    box-sizing: border-box;
+    border-radius: 25px;
+}
+.auth>*:nth-child(2):hover{
+    background-color: rgb(54, 62, 88);
+}
+
+.auth>*:nth-child(2){
+    background-color: rgb(44, 51, 73);
+
+    cursor: pointer;
+    justify-content: center;
+    gap:20px
 }
 .menuIcon{
     align-items: center;
@@ -111,6 +130,26 @@
     position: absolute;
     z-index:100;
 }
+.logo>img{
+    height:auto;
+    max-width: 60%;
+}
+.logo{
+    height:200px;
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.moreButton{
+    color:white
+}
+.logout{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: large;
+}
 
 
    
@@ -118,16 +157,29 @@
     .backbutton{
         color:#EFF6E0
     }
+    .logo>img{
+        max-width: 40%;
+
+    }
+    .logo{
+        height:200px
+    }
     .offlineSlider{
         color:#EFF6E0
     }
     .widthcontroller{
-        width:0;
-        transition:none;
+        position: absolute;
+        top:0;
+        height:100vh;
+        width:0vw;
+        z-index: 300;
+        left:0;
+        
+    
     }
     .fullwidth{
-        width:0;
-        transition:none
+        width:100vw;
+        
     }
     .bmcontainer{
         z-index: 1000;
@@ -139,6 +191,11 @@
         color:rgb(206, 206, 206) !important
     }
     .container{
+        transform:translateX(-100%);
+        width:100vw;
+        overflow:hidden;
+        transition:transform 1s cubic-bezier(0.165,0.84,0.44,1);
+
     }
     .burgermenu,
     .burgermenu::after,

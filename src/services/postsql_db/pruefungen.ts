@@ -1,24 +1,30 @@
 
-import { prepPruefung, Pruefung } from "../../types/allgemein"
+import { DBResponse, prepPruefung, Pruefung, toPruefungConverter } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
 
-async function get(params?:{[key:string]:any},cb?:(data:any)=>void){
+async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Pruefung>)=>void):Promise<DBResponse<Pruefung>>{
     const url = dynamicurl + "/pruefungen" + (params?"?".concat(Object.keys(params!).map(key=>`${key}=${params![key]}`).join("&")):"")
-    fetch(url,{
+    return fetch(url,{
       credentials: "include",
       method:"GET",
       headers: {
         'Content-Type': 'application/json'
       },
-    }).then(response=>{
-      return response.json()})
-      .then(obj=>{
-        if(obj && obj.data){
-          if(cb)cb(obj.data)
-      }
+    }).then(response=>response.json())
+    .then((obj:DBResponse<Pruefung>)=>{
+      console.log(obj)
+      if(obj.error)return obj
+      if(cb)cb({
+        ...obj,
+        data:obj.data!.map((item:any)=>toPruefungConverter(item))
       })
+      return {
+        ...obj,
+        data:obj.data!.map((item:any)=>toPruefungConverter(item))
+      }
+    })
 }
 async function add(pruefung:Pruefung,cb?:(data:any)=>void){
   const url = dynamicurl + "/pruefungen"

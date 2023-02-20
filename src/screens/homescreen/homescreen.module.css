@@ -17,3 +17,12 @@
         "sidebar    content";
     box-sizing: border-box;
 }
+
+@media only screen and (max-width:800px){
+    .anwendung{
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "navbar"
+            "content";
+    }
+}

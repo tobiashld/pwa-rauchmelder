@@ -1,10 +1,12 @@
 import { JwtPayload } from "jwt-decode";
+import { RauchmelderOld } from "./rauchmelder";
 
 export interface DBResponse<T>{
   status:number,
-  data?:T[]
+  data?:T[] 
   error?:string
 }
+
 export class Auftraggeber{
     constructor(
       readonly id:number,
@@ -95,22 +97,9 @@ export const toObjektConverter = (
           data.auftraggeberID);
       }
 
-export class Rauchmelder{
-    prepForSave(): any {
-      throw new Error("Method not implemented.");
-    }
-    constructor(
-      readonly id:number,
-      public objekt:smallObjekt,
-      public produktionsdatum:string,
-      public raum:string,
-      public seriennr:string,
-      public letztePruefungsID:number,
-      public mieter:string
-    ){}
 
-    
-}
+
+
 export class GeprRauchmelder{
   constructor(
      readonly id:number,
@@ -153,39 +142,35 @@ export const toGeprRauchmelderConverter = (
       }
 export const toRauchmelderConverter = (
         data:any
-      ): Rauchmelder =>{
-        return new Rauchmelder(data.id,new smallObjekt(data.objektid,data.objektname),data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
+      ): RauchmelderOld =>{
+        return new RauchmelderOld(data.id,new smallObjekt(data.objektid,data.objektname),data.produktionsdatum,data.raum,data.seriennr,data.letztePruefungsID,data.mieter);
       }
-class smallObjekt {
+export class smallObjekt {
   constructor(
     public id:number,
     public name:string, 
   ){}
 }
-export class Wohnung{
-    prepForSave(): any {
-      return {
-        objektID:this.objektid,
-        etage:this.etage,
-        wohnungslage:this.lage,
-        haus:this.haus,
-        nachname:this.mieter,
-      }
-    }
-    constructor(
-    readonly id:number,
-    public objektid:number,
-    public etage:string,
-    public haus:string,
-    public lage:string,
-    public mieter:string,
-    ){}
-}
-export const toWohnungConverter = (
-        data:any
-      ): Wohnung =>{
-        return new Wohnung(data.id,data.objektID,data.etage,data.wohnungslage,data.haus,data.nachname);
-      }
+// export class Wohnung{
+//     prepForSave(): any {
+//       return {
+//         objektID:this.objektid,
+//         etage:this.etage,
+//         wohnungslage:this.lage,
+//         haus:this.haus,
+//         nachname:this.nachname,
+//       }
+//     }
+//     constructor(
+//     readonly id:number,
+//     public objektid:number,
+//     public etage:string,
+//     public haus:string,
+//     public lage:string,
+//     public nachname:string,
+//     ){}
+// }
+
 
 export class Pruefung{
   
@@ -194,9 +179,9 @@ export class Pruefung{
     constructor(
       readonly id:number,
       public timestamp:string,
-      public user:User,
-      public objekt:Objekt,
-      public rauchmelder:GeprRauchmelder[]
+      public rauchmelder:GeprRauchmelder[],
+      public objekt?:Objekt,
+      public user?:User,
     ){}
 
     
@@ -204,7 +189,7 @@ export class Pruefung{
 
 export const prepPruefung=(pruefung:Pruefung) =>{
   return {
-    objektid:pruefung.objekt.id,
+    objektid:pruefung.objekt?.id,
     rauchmelder:pruefung.rauchmelder.map(rauchmelder=>prepGeprRauchmelder(rauchmelder))
   }
 }
@@ -230,12 +215,13 @@ export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
 export const toPruefungConverter = (
         data:any
       ): Pruefung =>{
+        console.log(data)
         return new Pruefung(
           data.id,
           data.timestamp,
-          new User(data.user.id,data.user.username),
-          new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
           (data.rauchmelder.length > 0)?data.rauchmelder.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):[],
+          new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
+          new User(data.user.id,data.user.username),
           
           );
       }

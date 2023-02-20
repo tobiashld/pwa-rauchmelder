@@ -1,33 +1,27 @@
 .gesamtContainer{
     overflow:hidden;
+    width: calc(100% - 60px);
+    height:calc(100% - 50px - 60px);
     display: flex;
     flex-direction: column;
+    margin:20px;
     padding:10px;
     border-radius: 10px;
     background-color: white;
     box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
 }
-.paddingcontainer{
-    padding:20px;
-    
+.interactions{
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    display: flex;
+    flex-direction: row;
+    gap:15px;
+    z-index:3;
 }
 .delete{
     z-index:2;
 
-}
-.history{
-
-}
-.history:hover{
-    color:rgb(96, 162, 219);
-    cursor:pointer
-}
-.interactions{
-    display: flex;
-    gap:5px;
-}
-.interactions>*{
-    font-size:1.2em
 }
 .delete:hover{
     color:red;
@@ -104,11 +98,8 @@
 }
 .id{
     width:70px;
-    
+
     flex:1;
-}
-.adresse{
-    flex:3
 }
 .sortSection{
     width: fit-content;
@@ -150,32 +141,19 @@
     min-height:40px;
     transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-
-.datarowelement input{
-    background-color: transparent;
-}
-.datarowelement:hover input,
-.datarowelement:hover select{
-    background-color: rgb(232, 232, 232);
-}
-
-.datarowelement>*{
-    
-}
-.datarowelement:nth-child(even){
-    background-color: rgba(209, 209, 209, 0.894);
-}
 .datarowelement:hover{
     background-color: rgba(198, 198, 198, 0.894);
     transition:background 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-.edited{
-    background-color: rgb(236, 220, 43) !important;
+.datarowelement input{
+    background-color: transparent;
 }
-.datarowelement:hover.clickable{
-    cursor: pointer;
+.datarowelement:hover input{
+    background-color: rgb(232, 232, 232);
 }
-
+.datarowelement>*{
+   
+}
 @media only screen and (max-width:600px){
     .gesamtContainer{
         overflow:hidden;

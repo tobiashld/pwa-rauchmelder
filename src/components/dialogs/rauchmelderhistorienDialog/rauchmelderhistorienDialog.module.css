@@ -1,0 +1,18 @@
+.center{
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    grid-template-rows: repeat(auto-fill, 50px);
+    place-items: center;
+    row-gap: .5em;
+}
+.chipbox{
+    display: flex;
+    flex-wrap: wrap;
+    padding:1em;
+    gap:15px;
+}
+.chipbox>*{
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    font-size:small;
+    outline:1px solid rgba(0, 0, 0, 0.1)
+}

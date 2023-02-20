@@ -1,4 +1,4 @@
-import {  Auftraggeber, DBResponse, GeprRauchmelder, Pruefung, Rauchmelder,   } from "../types/allgemein"
+import {  Auftraggeber, DBResponse, GeprRauchmelder, Pruefung,   } from "../types/allgemein"
 import { ClientStatus } from "../types/statusenum"
 import auftraggeber from "./postsql_db/auftraggeber"
 import user from "./postsql_db/user"
@@ -7,6 +7,7 @@ import wohnungen from "./postsql_db/wohnungen"
 import { db } from "./myappdatabase"
 import rauchmelder from "./postsql_db/rauchmelder"
 import pruefungen from "./postsql_db/pruefungen"
+import { RauchmelderBeziehung } from "../types/rauchmelder"
 
 const dataFunctions = {
     [ClientStatus.offline]:{
@@ -16,9 +17,9 @@ const dataFunctions = {
                 //Pruefung an sich speichern
                 db.table("pruefungen").add({
                     id:0,
-                    objektID:pruefung.objekt.id,
-                    userID:pruefung.user.id,
-                    timestamp:"jetzt"
+                    objektID:pruefung.objekt?.id,
+                    timestamp:"jetzt",
+                    userID:pruefung.user?.id,
                 }).then((value)=>{
                     console.log(value)
                     db.table("pruefungenListe").bulkAdd(pruefung.rauchmelder)
@@ -28,7 +29,7 @@ const dataFunctions = {
             deletePruefung:(pruefung:Pruefung)=>db.table("pruefungen").delete(pruefung.id)
         },
         rauchmelder:{
-            get:(props:{[key:string]:number}|undefined,cb?:(data:DBResponse<Rauchmelder>)=>void)=>{
+            get:(props:{[key:string]:number}|undefined,cb?:(data:DBResponse<RauchmelderBeziehung>)=>void)=>{
                 if(props){
                     db.table("rauchmelder").filter((rauchmelder)=>rauchmelder[Object.keys(props)[0]]===props[Object.keys(props)[0]]).toArray().then(data=>{
                         if(cb){
@@ -94,8 +95,11 @@ const dataFunctions = {
         rauchmelder:{
             get:rauchmelder.get,
             create:rauchmelder.add,
+            getForObject:rauchmelder.getForObject,
             change:rauchmelder.change,
-            delete:rauchmelder.deleteR
+            delete:rauchmelder.deleteR,
+            getHistory:rauchmelder.getHistory,
+            switch:rauchmelder.switchRauchmelder
         },
         user:{
             get:user.get,
