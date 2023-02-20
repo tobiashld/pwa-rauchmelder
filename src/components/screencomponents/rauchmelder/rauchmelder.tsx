@@ -11,7 +11,6 @@ import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
 import { RauchmelderI, RauchmelderBeziehung } from '../../../types/rauchmelder'
 
-type RauchmelderChangeKeys = 'objekt'|'produktionsdatum'|'raum'|'seriennr'|'mieter'
 
 function RauchmelderComponent() {
   const [changedRauchmelder,setChangedRauchmelder] = useState<RauchmelderBeziehung[]>([])
@@ -31,17 +30,7 @@ function RauchmelderComponent() {
     }
   },[changedRauchmelder])
 
-  const clicktest=()=>{
-      dataFunctions[1].rauchmelder.switch({
-        produktionsdatum: new Date(2001, 10, 10),
-        seriennr: '80085',
-        raum: 'penis',
-        isactive: true,
-        speichernOnline: function (): void {
-          throw new Error('Function not implemented.')
-        }
-      },rauchmelderQuery.data!.data!.filter(value=>value.id===1)![0])
-  }
+ 
 
   
 
@@ -149,7 +138,7 @@ function RauchmelderComponent() {
           ]}
         />
         <div className={styles.interactions}>
-          <AddButton routeParam='auftraggeber' onClick={()=>clicktest()}/>
+          <AddButton routeParam='rauchmelder' />
           <SaveButton onClick={handleSave} isShown={isSavable}/>
         </div>
       </div>

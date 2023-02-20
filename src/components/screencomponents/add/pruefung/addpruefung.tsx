@@ -1,80 +1,57 @@
-import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent,  TextField } from '@mui/material'
+import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, Select, Tab,  Tabs,  TextField } from '@mui/material'
 import { useSnackbar } from 'notistack'
-import React, { useEffect,  useRef,  useState } from 'react'
+import React, {  useRef,  useState } from 'react'
 import PlaylistAddSharpIcon from '@mui/icons-material/PlaylistAddSharp';import { useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import dataFunctions from '../../../../services/datafunctions'
-import { setPruefObjekt } from '../../../../store/slice'
-import { RootState, useAppDispatch } from '../../../../store/store'
-import {  DBResponse, GeprRauchmelder, Objekt, Pruefung,  toPruefungConverter, User } from '../../../../types/allgemein'
+import { RootState } from '../../../../store/store'
+import {  GeprRauchmelder,  Pruefung} from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
+import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
+import PersonIcon from '@mui/icons-material/Person';
 import styles from './addpruefung.module.css'
 import { RauchmelderBeziehung } from '../../../../types/rauchmelder';
 import { useQuery } from 'react-query';
 import Loadingspinner from '../../../loadingspinner/loadingspinner';
+import { DatePicker } from '@mui/x-date-pickers';
 
 function AddPruefung() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const clientStatus = useSelector((state:RootState)=>state.isOffline)
+    // const [autofillvalue,setAutofillvalue] = useState("")
     const [currGeprRauchmelder,setCurrGeprRauchmelder] = useState<GeprRauchmelder | undefined>()
-    const pruefObjektString = useSelector((state:RootState)=>state.currPruefobjekt)
-    const [currPruefObjekt,setCurrPruefObjekt] = useState<Objekt | undefined>(pruefObjektString?JSON.parse(pruefObjektString):undefined)
-    const [currPruefung,setCurrPruefung] = useState<Pruefung | undefined>(undefined)
+    const [page,setPage] = useState(0)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [searchParams, setSearchParams] = useSearchParams()
+    const { id } = useParams()
+    const currPruefObjektParam = Number.parseInt(id?id:"0")===-1&&searchParams.get("pruefObjekt")?searchParams.get("pruefObjekt"):undefined
+    const currPruefObjektQuery = useQuery(["objekt",currPruefObjektParam],()=>dataFunctions[1].objekte.get({"id":currPruefObjektParam}),{enabled:currPruefObjektParam?true:false})
+    const [currPruefung,setCurrPruefung] = useState<Pruefung| undefined>(new Pruefung(-1,"now",[],currPruefObjektQuery.data?.data?.at(0),undefined))
     const [currSelectedRauchmelder,setCurrSelectedRauchmelder] = useState<RauchmelderBeziehung | undefined>()
-    const [alleRauchmelder,setAlleRauchmelder] = useState<RauchmelderBeziehung[]>([])
-    const rauchmelderQuery = useQuery(["rauchmelder","objekt",currPruefObjekt?currPruefObjekt.id:-1],dataFunctions[ClientStatus.online].rauchmelder.getForObject)
+    const rauchmelderQuery = useQuery(["objekt",currPruefObjektParam?currPruefObjektParam:currPruefung?.objekt?.id?currPruefung?.objekt?.id:-1,"rauchmelder"],dataFunctions[ClientStatus.online].rauchmelder.getForObject)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const pruefungQuery = useQuery(["pruefung",id],()=>dataFunctions[1].pruefungen.get({"id":id}),{enabled:id !== "-1"?true:false,onSuccess:(data)=>{
+        
+            setCurrPruefung(data?.data?.at(0))
+    
+    }})
     const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
     const newSeriennrRef = useRef(null)
-    const newProdDatumRef = useRef(null)
+    const [newProdDatum,setNewProdDatum] = useState("")
     const newMieterRef = useRef(null)
-    const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar()
-    const { id } = useParams()
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-        PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-        },
-    };
+    
 
-    useEffect(()=>{
-        setCurrPruefObjekt(pruefObjektString?JSON.parse(pruefObjektString):undefined)
-    },[pruefObjektString])
 
-    useEffect(()=>{
-        // dataFunctions[ClientStatus.online].rauchmelder.getForObject(currPruefObjekt?currPruefObjekt.id:1,(data:DBResponse<RauchmelderBeziehung>)=>{
-        //     setAlleRauchmelder(data.data!)
-        // })
-        if(id){
-            dataFunctions[ClientStatus.online].pruefungen.get({"id":id},(prepData:any[])=>{
-                if(prepData.length > 0){
-                    
-                    let helpPruefung = prepData.map(pruefung=>toPruefungConverter(pruefung))[0]
-                    setCurrPruefung(helpPruefung)
-                    if(!currPruefObjekt || currPruefObjekt.id !== helpPruefung.objekt.id){
-                        dispatch(setPruefObjekt({pruefObjekt:JSON.stringify(helpPruefung.objekt)}))
-                    }
+    
 
-                }else{
-                    //TODO error werfen oder anzeigen
-                }
-                //nur für linter
-                
-            })
-        }else{
-            setCurrPruefung(new Pruefung(0,"",new User(0,"admin"),currPruefObjekt!,[]))
-            // data[ClientStatus.online].objekte.get(undefined,(data:any[])=>{
-            //     setAllePruefObjekte(data.map(objekt=>toObjektConverter(objekt)))
-            // })
-        }
-    },[dispatch, id, currPruefObjekt, clientStatus])
+    // if(pruefungQuery.isSuccess){
+    //     setCurrPruefung(toPruefungConverter(pruefungQuery.data?.data?[0]?pruefungQuery.data.data[0]:new Pruefung(-1,"",)))
+    // }
 
-    const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode)=>{
-        setCurrSelectedRauchmelder(JSON.parse(event.target.value))
+    const handleChange = (event:any, value:any, reason:any, details:any)=>{
+        setCurrSelectedRauchmelder(value)
     }
     const handleSave = ()=>{
         if(currPruefung){
@@ -111,9 +88,25 @@ function AddPruefung() {
                 <div className={styles.outerbox}>
                     <div className={styles.rauchmelderbox} >
                         <div className={styles.rauchmelderboxInside}>
-            
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs variant='fullWidth' value={page} onChange={(event:any,newNumber:any)=>setPage(newNumber)} aria-label="basic tabs example">
+                                <Tab icon={<HolidayVillageIcon />} label="Objekt" id="pruefungen-tab-0" aria-controls="pruefungen-tab-0" />
+                                <Tab icon={<PersonIcon />} label="Mieter" id="pruefungen-tab-1" aria-controls="pruefungen-tab-1" />
+                            </Tabs>
+                        </Box>
+                            <div hidden={page!==0} className={styles.gesamtuebersicht}>
                             <div className={styles.rauchmeldercard + " " + styles.addcard}>
-                                <FormControl fullWidth>
+                            <Autocomplete
+                                id="pruefung-rauchmelder-select"
+                                value={currSelectedRauchmelder}
+                                onChange={handleChange}
+                                options={rauchmelderQuery!.data!.data.filter(rauchmelder=>currPruefung?.rauchmelder.find(index=>index.rauchmelderId===rauchmelder.aktuelleHistorienID)?false:true)}
+                                groupBy={(option) => `${option.wohnung?.nachname}`}
+                                getOptionLabel={(option) => option.aktuellerRauchmelder?.seriennr + " "+option.aktuellerRauchmelder?.raum}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Rauchmelder" />}
+                                />
+                                {/* <FormControl fullWidth>
                                     <InputLabel id="Rauchmelder">Rauchmelder</InputLabel>
                                     <Select
                                         labelId="Rauchmelder"
@@ -124,7 +117,6 @@ function AddPruefung() {
                                         input={<OutlinedInput id="select-multiple-chip" label="Rauchmelder" />}
                                         MenuProps={MenuProps}
                                         renderValue={(value)=>{
-                                            console.log("value",value)
                                             if(value=== "")return ""
                                             let rauchmelder : RauchmelderBeziehung= JSON.parse(value)
                                             return rauchmelder.aktuellerRauchmelder!.seriennr + " " + rauchmelder.aktuellerRauchmelder!.raum
@@ -144,22 +136,28 @@ function AddPruefung() {
                                         }
             
                                     </Select>
-                                </FormControl>
+                                </FormControl> */}
                                 <IconButton
                                     className={styles.addbutton}
                                     size='medium'
                                     onClick={()=>{
                                         if(!currSelectedRauchmelder)return
-                                        if(currPruefung?.rauchmelder.find(item=>item.rauchmelderId===currSelectedRauchmelder.id)){
+                                        if(currPruefung?.rauchmelder.find((item:GeprRauchmelder)=>item.rauchmelderId===currSelectedRauchmelder.aktuelleHistorienID)){
                                             enqueueSnackbar("Dieser Rauchmelder ist bereits geprüft!",{variant:"warning"})
                                             return
                                         }
                                         let geprRauchmelder = new GeprRauchmelder(0,currSelectedRauchmelder.id,0,true,true,true,true,true,true,true,true,"","","now",currPruefung?.id)
                                         let newGeprRauchmelderList = (currPruefung && currPruefung.rauchmelder)?currPruefung?.rauchmelder.slice():[]
                                         newGeprRauchmelderList.push(geprRauchmelder)
-                                        let helperPruefung = new Pruefung(currPruefung!.id,currPruefung!.timestamp,currPruefung!.user,currPruefung!.objekt,newGeprRauchmelderList)
                                         setCurrGeprRauchmelder(geprRauchmelder)
-                                        setCurrPruefung(helperPruefung)
+                                        console.log(currPruefung)
+                                        setCurrPruefung({
+                                            ...currPruefung,
+                                            id:currPruefung?.id?currPruefung.id:-1,
+                                            timestamp:currPruefung?.timestamp?currPruefung.timestamp:"",
+                                            rauchmelder:currPruefung?.rauchmelder?[...currPruefung?.rauchmelder,geprRauchmelder]:[geprRauchmelder]
+                                        })
+                                        console.log(currPruefung)
                                         setCurrSelectedRauchmelder(undefined)
                                     }}
                                 >
@@ -180,39 +178,44 @@ function AddPruefung() {
                                     setCurrSelectedRauchmelder(undefined)
                                 }}/> */}
                             </div>
+                            
+                            
                             <div className={styles.rauchmelderliste}>
                             {
-                                currPruefung?
-                                currPruefung.rauchmelder.map(rauchmelder=>{
-                                    let wholeRauchmelder = rauchmelderQuery.data!.data!.find(item=>item.aktuelleHistorienID === rauchmelder.rauchmelderId)
+
+                                currPruefung?.rauchmelder.map(rauchmelder=>{
+                                    let rauchmelderBz = rauchmelderQuery.data!.data!.find(item=>item.aktuelleHistorienID === rauchmelder.rauchmelderId)
+                                    console.log(rauchmelderBz)
                                     return (
                                         <div className={(currGeprRauchmelder && rauchmelder.rauchmelderId === currGeprRauchmelder!.rauchmelderId)?styles.rauchmeldercard + " "+styles.activeRauchmelder:styles.rauchmeldercard} onClick={(event)=>{
                                             setCurrGeprRauchmelder(rauchmelder)
                                         }}>
                                                 <div className={styles.rauchmeldercardTitle}>
-                                                {wholeRauchmelder?wholeRauchmelder.aktuellerRauchmelder!.raum:rauchmelder.rauchmelderId }
+                                                {rauchmelderBz?rauchmelderBz.aktuellerRauchmelder!.raum:rauchmelder.rauchmelderId }
                                                 </div>
                                                 <div>
-                                                {wholeRauchmelder?wholeRauchmelder.aktuellerRauchmelder!.seriennr:""}
+                                                {rauchmelderBz?rauchmelderBz.aktuellerRauchmelder!.seriennr:"abgelöst"}
                                                 </div>
             
                                         </div>)
                                 })
-                                :
-                                <></>
                             }
             
                             </div>
-                            {
-                                currPruefung?currPruefung?.rauchmelder.length > 0?
+                           </div>
+                             <div hidden={page!==1}>
+                            Test
+                            </div>
+                            {currPruefung?currPruefung?.rauchmelder.length > 0?
                                 <div className={styles.saveinteractions}>
-                                    <Button color='success' variant='contained' onClick={handleSave} disabled={id?true:false}>Prüfung abschließen</Button>
+                                    <Button fullWidth color='success' variant='contained' onClick={handleSave} disabled={currPruefung.rauchmelder.length<=0}>Prüfung abschließen</Button>
                                 </div>
-                                :false
-                                :false
-                            }
-            
+                                :<></>:<></>}
                         </div>
+
+                        
+                        
+                        
                     </div>
                     <div className={styles.pruefungsbox}>
                         <div className={styles.pruefungboxInside}>
@@ -222,8 +225,8 @@ function AddPruefung() {
                                 <div className={styles.pruefungsinhalt}>
                                     <div>
                                         {
-                                            alleRauchmelder.filter(rauchmelder=>rauchmelder.id===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
-                                                let isTreppenhaus = rauchmelder.wohnungsID === 5
+                                            rauchmelderQuery.data.data.filter(rauchmelder=>rauchmelder.aktuelleHistorienID===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
+                                                let isTreppenhaus = rauchmelder.wohnung?.id === 5
                                                 return (
                                                     <div className={styles.infotable}>
                                                             <div>
@@ -246,10 +249,10 @@ function AddPruefung() {
                                                                 {rauchmelder.aktuellerRauchmelder!.seriennr}
                                                             </div>
                                                             <div>
-                                                                {!isTreppenhaus?<TextField ref={newMieterRef} size='small' id="add-pruefung-mieter" placeholder={rauchmelder.wohnung!.nachname}></TextField>:rauchmelder.wohnung!.nachname}
+                                                                {!isTreppenhaus?<TextField ref={newMieterRef} size='small' id="add-pruefung-mieter" placeholder={rauchmelder.wohnung?.nachname}></TextField>:rauchmelder.wohnung!.nachname}
                                                             </div>
                                                             <div>
-                                                                {rauchmelder.wohnungsID}
+                                                                {rauchmelder.wohnung?.objekt?.name?rauchmelder.wohnung.objekt.name:""}
                                                             </div>
                                                     </div>
                                                 )
@@ -327,9 +330,9 @@ function AddPruefung() {
                                                         let helpPruefung = structuredClone(currGeprRauchmelder)
                                                         helpPruefung!.grund = Number.parseInt(event.target.value)
                                                         setCurrGeprRauchmelder(helpPruefung)
-                                                        console.log(currSelectedRauchmelder,"rauchmelder")
                                                         if(helpPruefung!.grund === 2 ){
                                                             setShowNewRauchmelder(true)
+                                                            console.log("BLABLA")
                                                         }else{
                                                             setShowNewRauchmelder(false)
                                                         }
@@ -345,17 +348,22 @@ function AddPruefung() {
                                             </FormControl>
                                         </div>
                                         {
-                                            showNewRauchmelder && !id?
+                                            showNewRauchmelder && Number.parseInt(id?id:"0") === -1?
                                             <div className={styles.newRauchmelderDiv}>
                                                 <TextField
                                                     placeholder="Neue Seriennr"
                                                     className={styles.newSeriennr+" "+styles.input}
                                                     inputRef={newSeriennrRef}
                                                 />
-                                                <TextField
-                                                    placeholder="Produktionsdatum"
+                                                <DatePicker 
+                                                    label="Produktionsdatum"
+                                                    value={newProdDatum}
+                                                    inputFormat="DD/MM/yyyy"
+                                                    onChange={(newValue)=>{
+                                                        setNewProdDatum(newValue?newValue:"")
+                                                    }}
+                                                    renderInput={(params)=><TextField {...params} />}
                                                     className={styles.newProddatum+" "+styles.input}
-                                                    inputRef={newProdDatumRef}
                                                 />
                                             </div>:
                                             <></>
@@ -383,38 +391,38 @@ function AddPruefung() {
             
                             </div>
                             {
-                                currGeprRauchmelder?
-                                <div className={styles.interactions}>
-                                    <Button color="error" variant="contained" onClick={(event)=>{
-                                        let newGeprRauchmelderList = currPruefung?.rauchmelder.slice()
-                                        if(newGeprRauchmelderList){
-                                            let filteredList = newGeprRauchmelderList.filter(item=>item.rauchmelderId!==currGeprRauchmelder.rauchmelderId)
-                                            let helperPruefung = new Pruefung(currPruefung!.id,currPruefung!.timestamp,currPruefung!.user,currPruefung!.objekt,filteredList)
-                                            setCurrGeprRauchmelder(undefined)
-                                            setCurrPruefung(helperPruefung)
-                                            setCurrSelectedRauchmelder(undefined)
-                                        }
-                                    }} disableElevation>Rauchmelder löschen</Button>
-                                    <Button color="success" variant="contained" disableElevation onClick={(event)=>{
-                                        let newPruefung = structuredClone(currPruefung)
-                                        let newGeprRauchmelderList = newPruefung?.rauchmelder
-                                        if(newGeprRauchmelderList){
-                                            let filteredList = newGeprRauchmelderList.map(item=>{
-                                                if(item.rauchmelderId===currGeprRauchmelder.rauchmelderId){
-                                                    return currGeprRauchmelder
-                                                }else{
-                                                    return item
-                                                }
-                                            })
-                                            let helperPruefung = newPruefung
-                                            helperPruefung!.rauchmelder = filteredList
-                                            setCurrPruefung(helperPruefung)
-                                            setCurrSelectedRauchmelder(undefined)
-                                        }
-                                    }}>Rauchmelder Speichern</Button>
-                                </div>
-                                :
-                                <></>
+                                // currGeprRauchmelder?
+                                // <div className={styles.interactions}>
+                                //     <Button color="error" variant="contained" onClick={(event)=>{
+                                //         let newGeprRauchmelderList = currPruefung?.rauchmelder.slice()
+                                //         if(newGeprRauchmelderList){
+                                //             let filteredList = newGeprRauchmelderList.filter(item=>item.rauchmelderId!==currGeprRauchmelder.rauchmelderId)
+                                //             let helperPruefung = new Pruefung(currPruefung!.id,currPruefung!.timestamp,filteredList,currPruefung!.objekt,currPruefung!.user)
+                                //             setCurrGeprRauchmelder(undefined)
+                                //             setCurrPruefung(helperPruefung)
+                                //             setCurrSelectedRauchmelder(undefined)
+                                //         }
+                                //     }} disableElevation>Rauchmelder löschen</Button>
+                                //     <Button color="success" variant="contained" disableElevation onClick={(event)=>{
+                                //         let newPruefung = structuredClone(currPruefung)
+                                //         let newGeprRauchmelderList = newPruefung?.rauchmelder
+                                //         if(newGeprRauchmelderList){
+                                //             let filteredList = newGeprRauchmelderList.map(item=>{
+                                //                 if(item.rauchmelderId===currGeprRauchmelder.rauchmelderId){
+                                //                     return currGeprRauchmelder
+                                //                 }else{
+                                //                     return item
+                                //                 }
+                                //             })
+                                //             let helperPruefung = newPruefung
+                                //             helperPruefung!.rauchmelder = filteredList
+                                //             setCurrPruefung(helperPruefung)
+                                //             setCurrSelectedRauchmelder(undefined)
+                                //         }
+                                //     }}>Rauchmelder Speichern</Button>
+                                // </div>
+                                // :
+                                // <></>
                             }
             
                         </div>

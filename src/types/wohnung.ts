@@ -1,3 +1,5 @@
+import { Objekt, toObjektConverter } from "./allgemein"
+
 export interface Wohnung{
     id?:number,
     objektID:number,
@@ -5,7 +7,8 @@ export interface Wohnung{
     wohnungslage:'V'|'H'|'L'|'R'|'-'|'VL'|'VR'|'HL'|'HR'|'M'|'MM'|' '
     haus:'Haupthaus'|'Anbau'|'-'
     vorname:string
-    nachname:string
+    nachname:string,
+    objekt?:Objekt
 }
 export class Wohnung implements Wohnung{
     constructor(
@@ -16,6 +19,7 @@ export class Wohnung implements Wohnung{
         public vorname:string,
         public nachname:string,
         public id?:number,
+        public objekt?:Objekt
 
     ){
 
@@ -24,5 +28,5 @@ export class Wohnung implements Wohnung{
 export const toWohnungConverter = (
     data:any
   ): Wohnung =>{
-    return new Wohnung(data.objektID,data.etage,data.wohnungslage,data.haus,data.vorname,data.nachname,data.id);
+    return new Wohnung(data.objektID,data.etage,data.wohnungslage,data.haus,data.vorname,data.nachname,data.id?data.id:undefined,data.objekt?toObjektConverter(data.objekt):undefined);
   }

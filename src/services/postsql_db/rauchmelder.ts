@@ -1,5 +1,5 @@
-import { DBResponse, toRauchmelderConverter,  } from "../../types/allgemein"
-import { Rauchmelder, RauchmelderBeziehung, RauchmelderHistorie, toRauchmelderBzConverter,toRauchmelderConverter as toRauchmelderNewConverter, toRauchmelderHistorienConverter } from "../../types/rauchmelder";
+import { DBResponse,   } from "../../types/allgemein"
+import { Rauchmelder, RauchmelderBeziehung, RauchmelderHistorie,  toRauchmelderBzConverter, toRauchmelderHistorienConverter } from "../../types/rauchmelder";
 import { dynamicurl } from "../globals";
 
 
@@ -28,7 +28,7 @@ async function get(params?:{[key:string]:any},cb?:(data:DBResponse<RauchmelderBe
 }
 async function getForObject(queryKey:any,cb?:(data:DBResponse<RauchmelderBeziehung>)=>void):Promise<{status:number,data:RauchmelderBeziehung[],error?:string}>{
 
-    const url = dynamicurl + "/rauchmelder/objekt/" + queryKey.queryKey[2]
+    const url = dynamicurl + "/rauchmelder/objekt/" + queryKey.queryKey[1]
     return fetch(url,{
       credentials: "include",
       method:"GET",

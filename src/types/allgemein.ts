@@ -179,9 +179,9 @@ export class Pruefung{
     constructor(
       readonly id:number,
       public timestamp:string,
-      public user:User,
-      public objekt:Objekt,
-      public rauchmelder:GeprRauchmelder[]
+      public rauchmelder:GeprRauchmelder[],
+      public objekt?:Objekt,
+      public user?:User,
     ){}
 
     
@@ -189,7 +189,7 @@ export class Pruefung{
 
 export const prepPruefung=(pruefung:Pruefung) =>{
   return {
-    objektid:pruefung.objekt.id,
+    objektid:pruefung.objekt?.id,
     rauchmelder:pruefung.rauchmelder.map(rauchmelder=>prepGeprRauchmelder(rauchmelder))
   }
 }
@@ -215,12 +215,13 @@ export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
 export const toPruefungConverter = (
         data:any
       ): Pruefung =>{
+        console.log(data)
         return new Pruefung(
           data.id,
           data.timestamp,
-          new User(data.user.id,data.user.username),
-          new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
           (data.rauchmelder.length > 0)?data.rauchmelder.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):[],
+          new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
+          new User(data.user.id,data.user.username),
           
           );
       }

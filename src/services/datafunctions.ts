@@ -17,9 +17,9 @@ const dataFunctions = {
                 //Pruefung an sich speichern
                 db.table("pruefungen").add({
                     id:0,
-                    objektID:pruefung.objekt.id,
-                    userID:pruefung.user.id,
-                    timestamp:"jetzt"
+                    objektID:pruefung.objekt?.id,
+                    timestamp:"jetzt",
+                    userID:pruefung.user?.id,
                 }).then((value)=>{
                     console.log(value)
                     db.table("pruefungenListe").bulkAdd(pruefung.rauchmelder)

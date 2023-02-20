@@ -2,10 +2,24 @@
     display:grid;
     height:100%;
     grid-template-columns: repeat(2,1fr);
-    grid-template-rows: repeat(2,1fr);
+    grid-template-rows: 70px 1fr 1fr;
+    grid-template-areas: 
+        "title title"
+        "overview1 overview2"
+        "overview3 overview4";
     overflow-y:auto;
     overflow-x: hidden;
 
+}
+.welcomeMessage{
+    padding:20px;
+    font-weight:400;
+    font-size:xx-large;
+    grid-area: title;
+    box-sizing: border-box;
+}
+.welcomeMessage>div{
+    font-size: medium;
 }
 .overviewelement{
     margin:20px;

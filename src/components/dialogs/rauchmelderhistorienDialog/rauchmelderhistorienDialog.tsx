@@ -1,4 +1,4 @@
-import { Chip, Dialog, DialogContent, DialogTitle, Divider, IconButton, ListItem, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Chip, Dialog, DialogContent, DialogTitle, IconButton, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import React from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import { useQuery } from 'react-query';
@@ -6,7 +6,7 @@ import dataFunctions from '../../../services/datafunctions';
 import Loadingspinner from '../../loadingspinner/loadingspinner';
 import { Rauchmelder,  } from '../../../types/rauchmelder';
 import { dateOptions } from '../../../services/globals';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import styles from './rauchmelderhistorienDialog.module.css'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -49,7 +49,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 
 const RauchmelderHistorienDialog = (props:{rauchmelderHistorienId:number,isShown:boolean,handleClose:any})=>{
-    const historienquery = useQuery(["rauchmelder","historie",props.rauchmelderHistorienId],()=>dataFunctions[1].rauchmelder.getHistory(props.rauchmelderHistorienId))
+    const historienquery = useQuery(["rauchmelder","historie",props.rauchmelderHistorienId],()=>dataFunctions[1].rauchmelder.getHistory(props.rauchmelderHistorienId),{enabled:props.isShown})
     
     return <BootstrapDialog
     fullWidth
@@ -98,33 +98,34 @@ const RauchmelderHistorienDialog = (props:{rauchmelderHistorienId:number,isShown
                   Raum
                 </TableCell>
                 <TableCell
-                  key={"test"}
+                  key={"test1"}
                   align={'center'}
                 >
                   Seriennr
                 </TableCell>
                 <TableCell
-                  key={"test"}
+                  key={"test2"}
                   align={'center'}
                 >
                   Produziert
                 </TableCell>
                 <TableCell
-                  key={"test"}
+                  key={"test3"}
                   align={'center'}
                 >
-                  Inbetrieb
+                  Inbetrieb am
                 </TableCell>
                 <TableCell
-                  key={"test"}
+                  key={"test4"}
                   align={'center'}
                 >
-                  Ersetzt
+                  Ersetzt am
                 </TableCell>
                 <TableCell
-                  key={"test"}
+                  key={"test5"}
                   align={'center'}
                 >
+                    Aktueller
                 </TableCell>
             </TableRow>
           </TableHead>
@@ -148,7 +149,7 @@ const RauchmelderHistorienDialog = (props:{rauchmelderHistorienId:number,isShown
                         {rauchmelder.outOfOrderAt?.toLocaleDateString("de-DE",dateOptions)}
                     </TableCell>
                     <TableCell key={""} align={"center"}>
-                        {rauchmelder.isactive?<ModeEditIcon />:<></>}
+                        {rauchmelder.isactive?<VisibilityIcon />:<></>}
                     </TableCell>
                   </TableRow>
                 );

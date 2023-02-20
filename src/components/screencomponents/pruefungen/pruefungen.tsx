@@ -1,25 +1,28 @@
 import {  FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
+import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
+import { useQuery, useQueryClient, UseQueryResult } from 'react-query'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import dataFunctions from '../../../services/datafunctions'
-import { setPruefObjekt } from '../../../store/slice'
-import { RootState, useAppDispatch } from '../../../store/store'
-import { Objekt, Pruefung,toPruefungConverter } from '../../../types/allgemein'
+import { RootState } from '../../../store/store'
+import { DBResponse, Objekt, Pruefung,} from '../../../types/allgemein'
 import { ClientStatus } from '../../../types/statusenum'
 import AddButton from '../../addbutton/addbutton'
 import Button from '../../button/button'
 import DataTable from '../../datatable/datatable'
+import Loadingspinner from '../../loadingspinner/loadingspinner'
 import styles from './pruefungen.module.css'
 
 function PruefungenComponent() {
   const clientStatus = useSelector((state:RootState)=>state.isOffline)
-  const [allePruefungen,setAllePruefungen] = useState<Pruefung[]>([])
-  const [alleObjekte,setAlleObjekte] = useState<Objekt[]>([])
+  const pruefungenQuery : UseQueryResult<DBResponse<Pruefung>> = useQuery("pruefungen",()=>dataFunctions[1].pruefungen.get())
+  const objekteQuery = useQuery("objekte",()=>dataFunctions[1].objekte.get())
   const [currPruefObjekt,setCurrPruefObjekt] = useState<Objekt>()
   const [showDialog,setShowDialog] = useState(false)
+  const queryClient = useQueryClient()
+  const {enqueueSnackbar} = useSnackbar()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -31,27 +34,37 @@ function PruefungenComponent() {
     },
   };
   useEffect(()=>{
-    if(clientStatus){
-      dataFunctions[ClientStatus.online].pruefungen.get(undefined,(pruefungen:any[])=>{
-        setAllePruefungen(pruefungen.map(item=>toPruefungConverter(item)))
-      })
+    // if(clientStatus){
+    //   dataFunctions[ClientStatus.online].pruefungen.get(undefined,(pruefungen:any[])=>{
+    //     setAllePruefungen(pruefungen.map(item=>toPruefungConverter(item)))
+    //   })
       
-    }
-    console.log(clientStatus)
-    dataFunctions[clientStatus].objekte.get(undefined,(objekte:any)=>{
-      setAlleObjekte(objekte.data)
-    })
-  },[clientStatus])
+    // }
+    // console.log(clientStatus)
+    // dataFunctions[clientStatus].objekte.get(undefined,(objekte:any)=>{
+    //   setAlleObjekte(objekte.data)
+    // })
+  })
 
 
   const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode)=>{
     setCurrPruefObjekt(JSON.parse(event.target.value))
   }
   const handleNewPruefung = ()=>{
-    dispatch(setPruefObjekt({pruefObjekt:JSON.stringify(currPruefObjekt)}))
-    navigate("/pruefungen/add")
+    if(currPruefObjekt){
+      navigate("/pruefungen/-1?pruefObjekt="+currPruefObjekt?.id)
+    }else{
+      enqueueSnackbar("Bitte wählen Sie ein Prüfobjekt",{variant:"warning"})
+    }
   }
+  
 
+  if(objekteQuery.isLoading || pruefungenQuery.isLoading || !objekteQuery.data || !pruefungenQuery.data){
+    return <Loadingspinner size='Big' />
+  }
+  if(objekteQuery.isError || pruefungenQuery.isError){
+    return <>Error</>
+  }
 
   return (
     <>
@@ -59,19 +72,21 @@ function PruefungenComponent() {
         
         {
           clientStatus?
-          <DataTable rows={allePruefungen} 
+          <DataTable 
+            rows={pruefungenQuery.data.data!} 
             columns={['id','timestamp','user','objekt']} 
             headline="Prüfungen" 
-            options={alleObjekte}
+            options={objekteQuery.data!.data!}
             disabledRows={true}
             handleEdit={(id)=>{}}
-            handleRowClick={(id)=>navigate("/pruefungen/add/"+id)}
+            handleRowClick={(id)=>navigate("/pruefungen/"+id)}
             handleDelete={(id)=>{
               dataFunctions[ClientStatus.online].pruefungen.delete(id)
               setTimeout(()=>{
-                dataFunctions[ClientStatus.online].pruefungen.get(undefined,(data:any[])=>{
-                  setAllePruefungen(data.map((item)=>toPruefungConverter(item)))
-                })
+                queryClient.invalidateQueries("pruefungen")
+                // dataFunctions[ClientStatus.online].pruefungen.get(undefined,(data:any[])=>{
+                //   setAllePruefungen(data.map((item)=>toPruefungConverter(item)))
+                // })
               },300)
             }}
             sort={[
@@ -131,7 +146,7 @@ function PruefungenComponent() {
                 MenuProps={MenuProps}
               >
                 {
-                  alleObjekte.map(objekt=>(
+                  objekteQuery.data.data?.map(objekt=>(
                           <MenuItem
                               key={objekt.id}
                               value={JSON.stringify(objekt)}
@@ -151,7 +166,7 @@ function PruefungenComponent() {
           </div>:<></>
           }
           
-          <AddButton  routeParam='/pruefungen/add' onClick={()=>setShowDialog(!showDialog)} />
+          <AddButton  routeParam='/pruefungen/-1' onClick={()=>setShowDialog(!showDialog)} />
           
           
         </div>

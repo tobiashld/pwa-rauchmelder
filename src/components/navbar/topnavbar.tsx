@@ -21,13 +21,15 @@ import useWindowDimensions from '../../hooks/useWindowDimensions';
 const breadcrumbNameMap: { [key: string]: string } = {
   '/pruefungen': 'Prüfungen',
   '/rauchmelder': 'Rauchmelder',
+  '/rauchmelder/add': 'Hinzufügen',
   '/wohnungen': 'Wohnungen',
   '/objekte': 'Objekte',
   '/auftraggeber': 'Auftraggeber',
   '/auftraggeber/add':'Hinzufügen',
   '/pruefungen/':'Prüfungen',
-  '/pruefungen/add':'Hinzufügen',
-  '/profile':'Einstellungen'
+  '/pruefungen/-1':'Hinzufügen',
+  '/profile':'Profil',
+  '/settings':'Einstellungen'
 };
 
 
@@ -97,7 +99,7 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
 
                 return last ? (
                   <Typography className={styles.lastBreadcrumb} color="text.primary" key={to}>
-                    {breadcrumbNameMap[to]}
+                    {breadcrumbNameMap[to]?breadcrumbNameMap[to]:value}
                   </Typography>
                 ) : (
                   <LinkRouter underline="hover" color="inherit" to={to} key={to}>

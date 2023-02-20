@@ -10,7 +10,6 @@ import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './wohnungen.module.css'
 
-type WohnungChangeKeys = 'etage'|'haus'|'lage'|'mieter'
 
 function WohnungenComponent() {
   const wohnungenQuery = useQuery(["wohnungen"],()=>dataFunctions[1].wohnungen.get())
