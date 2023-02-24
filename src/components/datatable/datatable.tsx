@@ -1,20 +1,24 @@
 import React,{useEffect,useState} from 'react'
 import { BsArrowDown, BsArrowLeft, BsArrowRight, BsArrowUp } from 'react-icons/bs'
 import { RiDeleteBin5Line } from 'react-icons/ri'
-import HistoryIcon from '@mui/icons-material/History';
 import { getFittingInputsForKey, KeyType } from '../../services/helperfunctions'
 import Loadingspinner from '../loadingspinner/loadingspinner'
 import styles from './datatable.module.css'
+import {Scrollbars} from 'react-custom-scrollbars-2'
+import { Divider, Typography } from '@mui/material';
+import useWindowDimensions from '../../hooks/useWindowDimensions';
 
-function DataTable(props:{
-  rows:any[]|undefined,
-  columns:string[],
+function DataTable<T>(props:{
+  rows:T[]|undefined,
+  columns:{
+    title:string,
+    render:(obj:T)=>JSX.Element,
+  }[],
   headline:string,
-  handleEdit:(id:number,key:string,value:any)=>void,
-  handleDelete:(id:number)=>void,editedElementIds?:number[],
+  editedElementIds?:number[],
   handleRowClick?:(id:number)=>void,
   handleHistory?:(id:number)=>void,
-  sort?:SortArgument[],
+  sort?:SortArgument<T>[],
   options?:any[],
   disabledRows?:boolean
 }) {
@@ -23,6 +27,7 @@ function DataTable(props:{
   const [currMaxIndex, setMaxIndex] = useState(0)
   const [currOverflow,setCurrOverflow] = useState(0)
   const [activeSortIndex,setActiveSortIndex] = useState(0)
+  const { width } = useWindowDimensions()
   const [activeSortDirection,setActiveSortDirection] = useState(true) // true -> asc, false -> desc
 
   useEffect(()=>{
@@ -174,7 +179,7 @@ function DataTable(props:{
     </>)
   }
 
-  const getSortDirection = (sortarg:SortArgument)=>{
+  const getSortDirection = (sortarg:SortArgument<T>)=>{
     if(activeSortDirection){
       return sortarg.functionAsc
     }else{
@@ -202,7 +207,8 @@ function DataTable(props:{
                     setActiveSortIndex(index)
                   }
                 }}>
-                    {activeSortIndex === index? activeSortDirection?<BsArrowDown />:<BsArrowUp />:<></>}
+                    
+                    {activeSortIndex === index?<BsArrowDown className={styles.sortindicator + " " +(activeSortDirection?styles.downarrow:styles.uparrow)}></BsArrowDown>:<></>}
                     {sort.name}
                 </div>
                 )
@@ -222,54 +228,75 @@ function DataTable(props:{
             <></>
           }
         </div>
-        <div className={styles.actualTable}>
-          <div className={styles.columns}>{props.columns.map((column,index)=>{
-            if(column === 'id')return <></>
-            return (
-            <div key={index} className={styles.columnsegment+ (column === "id"?" "+styles.id:column ==="adresse"?" "+styles.adresse:"")}>{column}</div>)
+        {
+          width > 800?
+        <div className={styles.actualTable} style={{display:'grid',gridTemplateAreas:`'tablehead' 'tablebody'`,gridTemplateRows:'50px 1fr'}}>
+          <div className={styles.tableHead} style={{gridArea:'tablehead',display:'grid',gridTemplateColumns:`repeat(${props.columns.length},1fr)`}} >
+            {props.columns.map(column=>{
+              return (
+                <div className={styles.tableHeadCell}>
+                  <Typography variant={"h6"}>
+                  {column.title}
+                  </Typography>
+                </div>
+              )
             })}
-            <div className={styles.columnsegment+ " "+styles.id}></div>
           </div>
-          <div className={styles.dataRow}>
+          <Scrollbars 
+            className={styles.scroll}
+            
+          >
+            
+            <div 
+              className={styles.tableBody}
+              style={{display:'grid',gridTemplateColumns:`repeat(${props.columns.length},1fr)`,gridArea:'tablebody',gridTemplateRows:`repeat(${props.rows!.slice(currIndex * 100,currIndex < (currMaxIndex)?(currIndex+1)*100-1:currIndex*100+currOverflow).length},40px)`}}
+            >
             {
               props.rows!
-                .sort(props.sort && props.sort[activeSortIndex]?getSortDirection(props.sort[activeSortIndex]):(value)=>value)
+                .sort(props.sort && props.sort[activeSortIndex]?getSortDirection(props.sort[activeSortIndex]):(a,b)=>1)
                 .slice(currIndex * 100,currIndex < (currMaxIndex)?(currIndex+1)*100-1:currIndex*100+currOverflow)
-                .map((item,index)=>{
+                .map((item,index,array)=>{
                 return (
-                  <div key={index} className={(props.editedElementIds && props.editedElementIds.find((id)=>id===item.id!))?styles.datarowelement+' datarow'+index+" "+styles.edited+  " "+(props.handleRowClick?styles.clickable:"") :styles.datarowelement+' datarow'+index +  " "+ (props.handleRowClick?styles.clickable:"")} onClick={()=>props.handleRowClick?props.handleRowClick(item.id!):undefined}>
-                    {
-                      props.columns.map((key,smallIndex)=>{
-                        if(key==='id')return <></>
-                        if(Object.keys(item).find(itemkey=>itemkey===key)){
-                          return (<div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:key ==="adresse"?" "+styles.adresse:"")}>{getFittingInputsForKey(key as KeyType,item[key],(event,zusatz)=>{
-                            if(zusatz){
-                              props.handleEdit(item.id?item.id:-1,key+"."+zusatz,event.currentTarget.value)
-                            }else{
-                              props.handleEdit(item.id?item.id:-1,key,event.currentTarget.value)
-                            }
-                          },props.options?props.options:undefined,props.disabledRows?props.disabledRows:undefined)}</div>)
-                        }else{
-                          return <div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:"")}></div>
-                        }
-                      })
-                    }
-                    <div className={styles.rowsegment+" "+styles.id + " "+styles.interactions} >{props.handleHistory?<HistoryIcon className={styles.history} onClick={(event)=>props.handleHistory!(item.id)} />:<></>}<RiDeleteBin5Line className={styles.delete} onClick={(event)=>props&&props.handleDelete?props.handleDelete(item.id):undefined}/></div>
+                  <div className={styles.gridrow}>
+                    {props.columns.map(column=>{
+                    return column.render(item)})}
                   </div>
+                  // <div key={index} className={(props.editedElementIds && props.editedElementIds.find((id)=>id===item.id!))?styles.datarowelement+' datarow'+index+" "+styles.edited+  " "+(props.handleRowClick?styles.clickable:"") :styles.datarowelement+' datarow'+index +  " "+ (props.handleRowClick?styles.clickable:"")} onClick={()=>props.handleRowClick?props.handleRowClick(item.id!):undefined}>
+                  //   {
+                  //     props.columns.map((key,smallIndex)=>{
+                  //       if(key==='id')return <></>
+                  //       if(Object.keys(item).find(itemkey=>itemkey===key)){
+                  //         return (<div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:key ==="adresse"?" "+styles.adresse:"")}>{getFittingInputsForKey(key as KeyType,item[key],(event,zusatz)=>{
+                  //           if(zusatz){
+                  //             props.handleEdit(item.id?item.id:-1,key+"."+zusatz,event.currentTarget.value)
+                  //           }else{
+                  //             props.handleEdit(item.id?item.id:-1,key,event.currentTarget.value)
+                  //           }
+                  //         },props.options?props.options:undefined,props.disabledRows?props.disabledRows:undefined)}</div>)
+                  //       }else{
+                  //         return <div key={smallIndex} className={styles.rowsegment+ (key === "id"?" "+styles.id:"")}></div>
+                  //       }
+                  //     })
+                  //   }
+                  //   <div className={styles.rowsegment+" "+styles.id + " "+styles.interactions} >{props.handleHistory?<HistoryIcon className={styles.history} onClick={(event)=>props.handleHistory!(item.id)} />:<></>}<RiDeleteBin5Line className={styles.delete} onClick={(event)=>props&&props.handleDelete?props.handleDelete(item.id):undefined}/></div>
+                  // </div>
                 )
               })
             }
-          </div>
-        </div>
+            </div>
+          </Scrollbars>
+        </div>:<>
+        </>
+        }
       </div>
       </div>
   )
 }
-export interface SortArgument 
+export interface SortArgument<T> 
   {
     name:string,
-    functionAsc:(a:any,b:any)=>number,
-    functionDesc:(a:any,b:any)=>number
+    functionAsc:(a:T,b:T)=>number,
+    functionDesc:(a:T,b:T)=>number
   }
 
 

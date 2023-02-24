@@ -51,48 +51,74 @@ function ObjekteComponent() {
   return (
     <>
       <div className={styles.table}>
-        <DataTable 
-          rows={[...data!.data!]}
-          columns={['name','beschreibung']} 
+        <DataTable<Objekt>
+          rows={data?.data}
+          columns={[
+            {
+              title:"Name",
+              render:(obj)=>{
+                return (
+                  <div>{obj.name}</div>
+                )
+              }
+            },
+            {
+              title:"Beschreibung",
+              render:(obj)=>{
+                return (
+                  <div>{obj.beschreibung}</div>
+                )
+              }
+            },
+            {
+              title:"",
+              render:(obj)=>{
+                return (
+                  <div>delete usw</div>
+                )
+              }
+            },
+
+            ]} 
           headline="Objekte" 
           editedElementIds={changedObjekte.map((objekt)=>objekt.id)}
-          handleEdit={(id,key,value)=>{
-            if(id === -1){
+          // handleEdit={(id,key,value)=>{
+          //   if(id === -1){
               
-            }else{
-              let currObjekt = data!.data!.slice().find((objekt)=>objekt.id === id)
-              let newObjekt = currObjekt?new Objekt(currObjekt.id,currObjekt.adresse,currObjekt.beschreibung,currObjekt.name,currObjekt.auftraggeberID):undefined
-              if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
-                let alreadyChanged = changedObjekte.slice().find((objekt)=>objekt.id===id)
-                if(alreadyChanged){
-                  let addChangedObjekt = changedObjekte.slice().map((kurzObjekt:Objekt)=>{
-                    if(kurzObjekt.id === id){
-                      kurzObjekt[key as ObjektChangeKeys] = value
-                      return kurzObjekt
-                    }else{
-                      return kurzObjekt
-                    }
-                  })
-                  setChangedObjekte(addChangedObjekt)
-                }else{
-                  let addChangedObjek = changedObjekte.slice()
-                  addChangedObjek.push(newObjekt)
-                  setChangedObjekte(addChangedObjek)
-                }
+          //   }else{
+          //     let currObjekt = data!.data!.slice().find((objekt)=>objekt.id === id)
+          //     let newObjekt = currObjekt?new Objekt(currObjekt.id,currObjekt.adresse,currObjekt.beschreibung,currObjekt.name,currObjekt.auftraggeberID):undefined
+          //     if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
+          //       let alreadyChanged = changedObjekte.slice().find((objekt)=>objekt.id===id)
+          //       if(alreadyChanged){
+          //         let addChangedObjekt = changedObjekte.slice().map((kurzObjekt:Objekt)=>{
+          //           if(kurzObjekt.id === id){
+          //             kurzObjekt[key as ObjektChangeKeys] = value
+          //             return kurzObjekt
+          //           }else{
+          //             return kurzObjekt
+          //           }
+          //         })
+          //         setChangedObjekte(addChangedObjekt)
+          //       }else{
+          //         let addChangedObjek = changedObjekte.slice()
+          //         addChangedObjek.push(newObjekt)
+          //         setChangedObjekte(addChangedObjek)
+          //       }
                 
-              }else if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() === value.toString() || value.toString() === "")){
-                let removeNotChangedObjek = changedObjekte.slice().filter((objekt)=>objekt.id!==id)
-                setChangedObjekte(removeNotChangedObjek)
-              }else{
-                //error
-              }
-            }
-          }}
-          handleDelete={(id)=>{
-            mutate.mutate(id)
-            setTimeout(()=>queryClient.invalidateQueries("objekte"),200)
-            setChangedObjekte([])
-          }}
+          //     }else if(newObjekt && (newObjekt[key as ObjektChangeKeys]!.toString() === value.toString() || value.toString() === "")){
+          //       let removeNotChangedObjek = changedObjekte.slice().filter((objekt)=>objekt.id!==id)
+          //       setChangedObjekte(removeNotChangedObjek)
+          //     }else{
+          //       //error
+          //     }
+          //   }
+          // }}
+          // handleDelete={(id)=>{
+          //   mutate.mutate(id)
+          //   setTimeout(()=>queryClient.invalidateQueries("objekte"),200)
+          //   setChangedObjekte([])
+          // }}
           sort={[
             {
               name:"hinzugefügt",

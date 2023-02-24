@@ -1,4 +1,5 @@
-import {  FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
+import { Delete, Edit } from '@mui/icons-material'
+import {  FormControl, InputLabel, ListItemIcon, Menu, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query'
@@ -13,6 +14,8 @@ import Button from '../../button/button'
 import DataTable from '../../datatable/datatable'
 import Loadingspinner from '../../loadingspinner/loadingspinner'
 import styles from './pruefungen.module.css'
+import HistoryIcon from '@mui/icons-material/History';
+
 
 function PruefungenComponent() {
   const clientStatus = useSelector((state:RootState)=>state.isOffline)
@@ -22,6 +25,11 @@ function PruefungenComponent() {
   const [showDialog,setShowDialog] = useState(false)
   const queryClient = useQueryClient()
   const {enqueueSnackbar} = useSnackbar()
+  const [editPruefungsId,setEditPruefungsId] = useState(-1)
+  const [contextMenu, setContextMenu] = React.useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
   const navigate = useNavigate()
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -45,6 +53,28 @@ function PruefungenComponent() {
     //   setAlleObjekte(objekte.data)
     // })
   })
+
+  const handleContextMenu = (event: React.MouseEvent,obj:Pruefung) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+          // Other native context menus might behave different.
+          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+          null,
+    );
+    setEditPruefungsId(obj.id?obj.id:-1)
+    // setHistoryid(obj.id?obj.id:-1)
+    
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
 
 
   const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode)=>{
@@ -72,23 +102,37 @@ function PruefungenComponent() {
         
         {
           clientStatus?
-          <DataTable 
+          <DataTable<Pruefung> 
             rows={pruefungenQuery.data.data!} 
-            columns={['id','timestamp','user','objekt']} 
+            columns={[{
+              title:"Durchgeführt am",
+              render:(obj)=>{
+                return (
+                  <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.timestamp}</div>
+                )
+              },
+              
+            },
+            {
+              title:"Objekt",
+              render:(obj)=>{
+                return (
+                  <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.objekt?.name}</div>
+                )
+              },
+            },
+            ]} 
             headline="Prüfungen" 
-            options={objekteQuery.data!.data!}
             disabledRows={true}
-            handleEdit={(id)=>{}}
-            handleRowClick={(id)=>navigate("/pruefungen/"+id)}
-            handleDelete={(id)=>{
-              dataFunctions[ClientStatus.online].pruefungen.delete(id)
-              setTimeout(()=>{
-                queryClient.invalidateQueries("pruefungen")
-                // dataFunctions[ClientStatus.online].pruefungen.get(undefined,(data:any[])=>{
-                //   setAllePruefungen(data.map((item)=>toPruefungConverter(item)))
-                // })
-              },300)
-            }}
+            // handleDelete={(id)=>{
+            //   dataFunctions[ClientStatus.online].pruefungen.delete(id)
+            //   setTimeout(()=>{
+            //     queryClient.invalidateQueries("pruefungen")
+            //     // dataFunctions[ClientStatus.online].pruefungen.get(undefined,(data:any[])=>{
+            //     //   setAllePruefungen(data.map((item)=>toPruefungConverter(item)))
+            //     // })
+            //   },300)
+            // }}
             sort={[
               {
                 name:"hinzugefügt",
@@ -146,7 +190,7 @@ function PruefungenComponent() {
                 MenuProps={MenuProps}
               >
                 {
-                  objekteQuery.data.data?.map(objekt=>(
+                  objekteQuery.data.data?.map((objekt:any)=>(
                           <MenuItem
                               key={objekt.id}
                               value={JSON.stringify(objekt)}
@@ -165,6 +209,22 @@ function PruefungenComponent() {
             />
           </div>:<></>
           }
+          <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={()=>{
+          setContextMenu(null);
+          navigate("/pruefungen/"+editPruefungsId)
+        }}><ListItemIcon><Edit /></ListItemIcon>Bearbeiten</MenuItem>
+        <MenuItem onClick={handleClose} style={{color:'red'}}><ListItemIcon><Delete htmlColor='red' /></ListItemIcon>Löschen</MenuItem>
+      </Menu>
           
           <AddButton  routeParam='/pruefungen/-1' onClick={()=>setShowDialog(!showDialog)} />
           

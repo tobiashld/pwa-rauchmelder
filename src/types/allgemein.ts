@@ -215,7 +215,6 @@ export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
 export const toPruefungConverter = (
         data:any
       ): Pruefung =>{
-        console.log(data)
         return new Pruefung(
           data.id,
           data.timestamp,

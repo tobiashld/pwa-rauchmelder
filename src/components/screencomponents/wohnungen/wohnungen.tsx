@@ -58,14 +58,63 @@ function WohnungenComponent() {
   return (
     <>
       <div className={styles.table}>
-        <DataTable 
-          rows={wohnungenQuery.data!.data!} 
-          columns={['id','etage','wohnungslage','haus','nachname']} 
+        <DataTable<Wohnung> 
+          rows={wohnungenQuery.data?.data} 
+          columns={[
+            {
+              title:"Etage",
+              render:(obj)=>{
+                return <div>
+                  {obj.etage}
+                </div>
+              }
+            },
+            {
+              title:"Lage",
+              render:(obj)=>{
+                return <div>
+                  {obj.wohnungslage}
+                </div>
+              }
+            },
+            {
+              title:"Haus",
+              render:(obj)=>{
+                return <div>
+                  {obj.haus}
+                </div>
+              }
+            },
+            {
+              title:"Vorname",
+              render:(obj)=>{
+                return <div>
+                  {obj.vorname}
+                </div>
+              }
+            },
+            {
+              title:"Nachname",
+              render:(obj)=>{
+                return <div>
+                  {obj.nachname}
+                </div>
+              }
+            },
+            {
+              title:"",
+              render:(obj)=>{
+                return <div>
+                  delete
+                </div>
+              }
+            },
+          ]} 
           headline="Wohnungen" 
-          handleEdit={(id,key,value)=>{
-            if(id === -1){
+          // handleEdit={(id,key,value)=>{
+          //   if(id === -1){
               
-            }else{
+          //   }else{
             //   let currWohnung = alleWohnungen.slice().find((wohnung)=>wohnung.id === id)
             //   let newWohnung = currWohnung?new Wohnung(currWohnung.id,currWohnung.objektid,currWohnung.etage,currWohnung.haus,currWohnung.lage,currWohnung.mieter):undefined
             //   if(newWohnung && (newWohnung[key as WohnungChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
@@ -93,17 +142,17 @@ function WohnungenComponent() {
             //     //error
             //   }
             // }
-          }}}
+          // }}}
           editedElementIds={changedWohnungen.map(wohnung=>wohnung.id!)}
-          handleDelete={(id)=>{
-            dataFunctions[ClientStatus.online].wohnungen.delete(id)
-            setTimeout(()=>{
-              dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
-                // setAlleWohnungen(data.data!)
-              })
-              setChangedWohnungen([])
-            },300)
-          }}
+          // handleDelete={(id)=>{
+          //   dataFunctions[ClientStatus.online].wohnungen.delete(id)
+          //   setTimeout(()=>{
+          //     dataFunctions[ClientStatus.online].wohnungen.get(undefined,(data)=>{
+          //       // setAlleWohnungen(data.data!)
+          //     })
+          //     setChangedWohnungen([])
+          //   },300)
+          // }}
             sort={[
               {
                 name:"hinzugefügt",

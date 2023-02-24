@@ -1,13 +1,15 @@
 import React, {  useState } from 'react'
-import { Breadcrumbs, Link, LinkProps, Switch, Typography, } from '@mui/material';
+import { Avatar,Box,IconButton,Menu,MenuItem,Breadcrumbs, Divider, Link, LinkProps, Switch, Typography, Tooltip, ListItemIcon, Badge, } from '@mui/material';
 import { BsArrowLeft } from 'react-icons/bs'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
 import { useNavigate } from 'react-router-dom'
 import styles from './navbar.module.css'
 import { ClientStatus } from '../../types/statusenum';
 import {HiStatusOffline, HiStatusOnline} from 'react-icons/hi'
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store/store';
-import { setOfflineMode } from '../../store/slice';
+import { logout, setOfflineMode } from '../../store/slice';
 import dataFunctions from '../../services/datafunctions';
 import Loadingspinner from '../loadingspinner/loadingspinner';
 import {
@@ -15,6 +17,12 @@ import {
   useLocation,
 } from 'react-router-dom';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
+import { BiLogOut } from 'react-icons/bi';
+import { useSnackbar } from 'notistack';
+import { AlternateEmail, Notifications, Password, Settings } from '@mui/icons-material';
+import ChangeEmailDialog from '../dialogs/changeEmailDialog/changeEmailDialog';
+import ChangePasswordDialog from '../dialogs/changePasswordDialog/changePasswordDialog';
+import Chat from '../chat/chat';
 
 
 
@@ -31,36 +39,60 @@ const breadcrumbNameMap: { [key: string]: string } = {
   '/profile':'Profil',
   '/settings':'Einstellungen'
 };
+function stringToColor(string: string) {
+  let hash = 0;
+  let i;
 
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = '#';
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+function stringAvatar(name: string) {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+  };
+}
 
 
 function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
-  const clientStatus = useSelector((state:RootState)=>state.isOffline)
   const {width} = useWindowDimensions()
-  const [isLoading,setIsLoading] = useState(false)
   const [menueOpen,setMenueOpen] = useState(true)
   const location = useLocation();
+  const username = useSelector((state:RootState)=>state.username)
+  const dispatch = useAppDispatch()
   const pathnames = location.pathname.split('/').filter((x) => x);
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
- 
-
-  const handleSwitchChange = (event:any,checked:boolean)=>{
-    if(checked){
-      setIsLoading(true)
-      
-      dataFunctions[ClientStatus.online].prepareOffline(()=>{
-        
-        dispatch(setOfflineMode({isOffline:ClientStatus.offline}))
-        setTimeout(()=>{
-          setIsLoading(false)
-        },500)
-    })
-    }else{
-      dispatch(setOfflineMode({isOffline:ClientStatus.online}))
+  const { enqueueSnackbar } = useSnackbar()
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const [showEmailDialog,setShowEmailDialog] = useState(false)
+  const [showPasswordDialog,setShowPasswordDialog] = useState(false)
+  const [showChat,setShowChat] = useState(false)
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (event:any,link:string) => {
+    setAnchorEl(null);
+    if(link && link !== ""){
+      navigate("/"+link)
     }
+  };
 
-  }
+  
 
 
 
@@ -88,7 +120,7 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
         <div className={styles.backbutton} onClick={()=>navigate(-1)}>
               <BsArrowLeft />
         </div>
-        <div>
+        <div className={styles.breadcrumbDiv}>
         <Breadcrumbs className={styles.breadcrumbs} aria-label="breadcrumb">
               <LinkRouter underline="hover" color="inherit" to="/">
                 Home
@@ -109,20 +141,118 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
               })}
             </Breadcrumbs>
         </div>
-        {
-          isLoading?
-          <div className={styles.offlineSlider}>
-            <Loadingspinner size='Small' />
-          </div>
-          :
-          <div className={styles.offlineSlider}>
-            <HiStatusOnline />
-            <Switch onChange={handleSwitchChange} 
-              defaultChecked={clientStatus?false:true}
-            />
-            <HiStatusOffline />
-          </div>
-        }
+        <Divider variant="middle" orientation='vertical' flexItem/>
+        <Box className={styles.logoutTest} display={"flex"} flexDirection={"row"} alignItems={"center"}>
+                <Tooltip title={"Nachrichten"}>
+                  <IconButton className={styles.iconbutton}>
+                    <Badge badgeContent={4} color="error">
+                      <Notifications />
+                    </Badge>
+                    <Chat isShown={showChat} onClose={()=>setShowChat(false)} />
+                  </IconButton>
+                </Tooltip>
+                
+                <div className={styles.userInfo}>
+                <h5>{username}</h5>
+                <Typography variant={"caption"} >Martin Herhold Sud</Typography>
+                </div>
+                <Menu
+                  id="account-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={(event)=>handleClose(event,"")}
+                  MenuListProps={{
+                    'aria-labelledby': 'account-button',
+                  }}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: 'visible',
+                      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                      mt: 1.5,
+                      '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  <MenuItem className={styles.menueitem} onClick={(event)=>handleClose(event,"profile")}>
+                    <ListItemIcon>
+                      <Avatar {...stringAvatar(username && username.length > 2 && username !== "0"?username:"Test mann")}>{username && username.length > 2?username.slice(0,2):undefined}</Avatar>
+                    </ListItemIcon>
+                    Account
+                  </MenuItem>
+                  <MenuItem className={styles.menueitem} onClick={(event)=>{
+                    setAnchorEl(null);
+                    setShowEmailDialog(true)
+                  }}>
+                    <ListItemIcon>
+                      <AlternateEmail fontSize='small'></AlternateEmail>
+                    </ListItemIcon>
+                    Email ändern
+                  </MenuItem>
+                  <MenuItem className={styles.menueitem} onClick={(event)=>{
+                    setAnchorEl(null);
+                    setShowPasswordDialog(true)
+                  }}>
+                    <ListItemIcon>
+                      <Password fontSize="small"></Password>
+                    </ListItemIcon>
+                    Passwort ändern
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem className={styles.menueitem} onClick={(event)=>handleClose(event,"settings")}>
+                    <ListItemIcon>
+                      <Settings fontSize='small' />
+                    </ListItemIcon>
+                    Einstellungen
+                  </MenuItem>
+                  <MenuItem 
+                    className={styles.logoutmenuoption+" "+styles.menueitem}
+
+                    onClick={()=>{
+                      enqueueSnackbar("Erfolgreich ausgeloggt!",{variant:"success"})
+                      dispatch(logout())
+                    }}
+                  >
+                    <ListItemIcon>
+                      <BiLogOut className={styles.logoutmenuoption}/>
+                    </ListItemIcon>
+                    Log Out
+                  </MenuItem>
+                  
+                  {/* <MenuItem onClick={(event)=>handleClose(event,"logout")}>Logout</MenuItem> */}
+                </Menu>
+                <Tooltip title="Account">
+                  <IconButton className={styles.iconbutton} size='small' 
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}>  
+                    <Avatar {...stringAvatar(username && username.length > 2 && username !== "0"?username:"Test mann")}>{username && username.length > 2?username.slice(0,2):undefined}</Avatar>
+                  </IconButton>
+                </Tooltip>
+                
+              </Box>
+              <ChangeEmailDialog isShown={showEmailDialog} handleClose={()=>setShowEmailDialog(false)}/>
+              <ChangePasswordDialog isShown={showPasswordDialog} handleClose={()=>setShowPasswordDialog(false)}/>
         
     </div>
   )

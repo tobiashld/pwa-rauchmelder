@@ -110,7 +110,10 @@
   place-items: center;
 }
 
+.rcs-inner-handle{
+  
 
+}
 @media only screen and (min-width:1450px) {
   .adressDiv{
     flex-direction: row;

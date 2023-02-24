@@ -9,7 +9,11 @@ import RauchmelderHistorienDialog from '../../dialogs/rauchmelderhistorienDialog
 import Loadingspinner from '../../loadingspinner/loadingspinner'
 import SaveButton from '../../savebutton/savebutton'
 import styles from './rauchmelder.module.css'
-import { RauchmelderI, RauchmelderBeziehung } from '../../../types/rauchmelder'
+import { RauchmelderI, RauchmelderBeziehung, Rauchmelder } from '../../../types/rauchmelder'
+import { ListItemIcon, Menu, MenuItem } from '@mui/material'
+import HistoryIcon from '@mui/icons-material/History';
+import { Delete, Edit } from '@mui/icons-material'
+
 
 
 function RauchmelderComponent() {
@@ -21,6 +25,31 @@ function RauchmelderComponent() {
   const rauchmelderQuery = useQuery('rauchmelder',()=>dataFunctions[ClientStatus.online].rauchmelder.get())
   const objekteQuery = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get())
   const queryClient = useQueryClient()
+  const [contextMenu, setContextMenu] = React.useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
+
+  const handleContextMenu = (event: React.MouseEvent,obj:Rauchmelder) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+          // Other native context menus might behave different.
+          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+          null,
+    );
+    setHistoryid(obj.id?obj.id:-1)
+    
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
   
   useEffect(()=>{
     if(changedRauchmelder.length > 0){
@@ -54,18 +83,35 @@ function RauchmelderComponent() {
           isShown={showHistoryDialog}
           rauchmelderHistorienId={historyid}
           />
-        <DataTable 
-          rows={rauchmelderQuery.data?.data.map((rauchmelderBz:RauchmelderBeziehung)=>rauchmelderBz.aktuellerRauchmelder)} 
-          columns={['id','produktionsdatum','raum','seriennr']} 
-          options={objekteQuery.data?.data!}
+        <DataTable<Rauchmelder>
+          rows={rauchmelderQuery.data?.data.map((rauchmelderBz:RauchmelderBeziehung)=>rauchmelderBz.aktuellerRauchmelder!)} 
+          columns={[
+            {
+              title:"Produktionsdatum",
+              render:(obj)=>{
+                return (<div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.produktionsdatum.toLocaleDateString()}</div>)
+              }
+            },
+            {
+              title:"raum",
+              render:(obj)=>{
+                return (<div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.raum}</div>)
+              }
+            },
+            {
+              title:"seriennr",
+              render:(obj)=>{
+                return (<div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.seriennr}</div>)
+              }
+            },
+            
+            ]} 
+          options={objekteQuery.data?.data}
           headline="Rauchmelder" 
-          editedElementIds={changedRauchmelder.map(rauchmelder=>{
-            return rauchmelder.id
-          })}
-          handleEdit={(id,key,value)=>{
-            if(id === -1){
+          // handleEdit={(id,key,value)=>{
+          //   if(id === -1){
               
-            }else{
+          //   }else{
               // let currRauchmelder = alleRauchmelder.slice().find((rauchmelder)=>rauchmelder.id === id)
               // // let newRauchmelder = currRauchmelder?{currRauchmelder.id,currRauchmelder.objekt,currRauchmelder.produktionsdatum,currRauchmelder.raum,currRauchmelder.seriennr,currRauchmelder.letztePruefungsID,currRauchmelder.mieter):undefined
               // if(newRauchmelder && (newRauchmelder[key as RauchmelderChangeKeys]!.toString() !== value.toString() && value.toString() !== "")){
@@ -92,20 +138,20 @@ function RauchmelderComponent() {
               // }else{
               //   //error
               // }
-            }
-          }}
-          handleHistory={(id)=>{
-            setHistoryid(id)
-            setShowHistoryDialog(true)
-          }}
-          handleDelete={(id)=>{
-            dataFunctions[ClientStatus.online].rauchmelder.delete(id)
+            // }
+          // }}
+          // handleHistory={(id)=>{
+          //   setHistoryid(id)
+          //   setShowHistoryDialog(true)
+          // }}
+          // handleDelete={(id)=>{
+          //   dataFunctions[ClientStatus.online].rauchmelder.delete(id)
 
-            setTimeout(()=>{
-              queryClient.invalidateQueries("rauchmelder")
-              setChangedRauchmelder([])
-            },300)
-          }}
+          //   setTimeout(()=>{
+          //     queryClient.invalidateQueries("rauchmelder")
+          //     setChangedRauchmelder([])
+          //   },300)
+          // }}
           sort={[
             {
               name:"hinzugefügt",
@@ -137,6 +183,23 @@ function RauchmelderComponent() {
             }
           ]}
         />
+        <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={(event)=>{
+          setContextMenu(null)
+          setShowHistoryDialog(true)
+        }}><ListItemIcon><HistoryIcon /></ListItemIcon>Historie </MenuItem>
+        <MenuItem onClick={handleClose}><ListItemIcon><Edit /></ListItemIcon>Bearbeiten</MenuItem>
+        <MenuItem onClick={handleClose} style={{color:'red'}}><ListItemIcon><Delete htmlColor='red' /></ListItemIcon>Löschen</MenuItem>
+      </Menu>
         <div className={styles.interactions}>
           <AddButton routeParam='rauchmelder' />
           <SaveButton onClick={handleSave} isShown={isSavable}/>

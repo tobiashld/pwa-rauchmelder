@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, Select, Tab,  Tabs,  TextField } from '@mui/material'
+import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, Select, Tab,  Tabs,  TextField } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import React, {  useRef,  useState } from 'react'
 import PlaylistAddSharpIcon from '@mui/icons-material/PlaylistAddSharp';import { useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ import { RauchmelderBeziehung } from '../../../../types/rauchmelder';
 import { useQuery } from 'react-query';
 import Loadingspinner from '../../../loadingspinner/loadingspinner';
 import { DatePicker } from '@mui/x-date-pickers';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 function AddPruefung() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -179,13 +180,13 @@ function AddPruefung() {
                                 }}/> */}
                             </div>
                             
+                            <Divider variant="middle" className={styles.divider}/>
                             
-                            <div className={styles.rauchmelderliste}>
+                            <Scrollbars className={styles.rauchmelderliste}>
                             {
 
                                 currPruefung?.rauchmelder.map(rauchmelder=>{
                                     let rauchmelderBz = rauchmelderQuery.data!.data!.find(item=>item.aktuelleHistorienID === rauchmelder.rauchmelderId)
-                                    console.log(rauchmelderBz)
                                     return (
                                         <div className={(currGeprRauchmelder && rauchmelder.rauchmelderId === currGeprRauchmelder!.rauchmelderId)?styles.rauchmeldercard + " "+styles.activeRauchmelder:styles.rauchmeldercard} onClick={(event)=>{
                                             setCurrGeprRauchmelder(rauchmelder)
@@ -200,8 +201,7 @@ function AddPruefung() {
                                         </div>)
                                 })
                             }
-            
-                            </div>
+                            </Scrollbars>
                            </div>
                              <div hidden={page!==1}>
                             Test
@@ -222,8 +222,9 @@ function AddPruefung() {
                             <div className={styles.actualPruefung}>
                             {
                                 currGeprRauchmelder?
-                                <div className={styles.pruefungsinhalt}>
-                                    <div>
+                                <Scrollbars >
+                                    <div className={styles.pruefungsinhalt}>
+                                    <div >
                                         {
                                             rauchmelderQuery.data.data.filter(rauchmelder=>rauchmelder.aktuelleHistorienID===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
                                                 let isTreppenhaus = rauchmelder.wohnung?.id === 5
@@ -341,7 +342,7 @@ function AddPruefung() {
             
                                                             <MenuItem value="0">Erstinbetriebnahme</MenuItem>
                                                             <MenuItem value="1">Inspektion / Wartung</MenuItem>
-                                                            <MenuItem value="2">Erstinbetriebnahme + Ausgetauscht</MenuItem>
+                                                            <MenuItem value="2">Ausgetauscht + Erstinbetriebnahme</MenuItem>
             
             
                                                 </Select>
@@ -371,7 +372,7 @@ function AddPruefung() {
             
                                         <div>
                                             <TextField
-                                                placeholder='Prüfungsrelevante Anmerkungen'
+                                                placeholder='Prüfungsrelevante Anmerkungen (Grund fürs Nicht-Bestehen etc.)'
                                                 value={currGeprRauchmelder.anmerkungenZwei}
                                                 fullWidth
                                                 onChange={(event)=>{
@@ -383,8 +384,8 @@ function AddPruefung() {
                                             />
                                         </div>
                                     </div>
-                                </div>
-            
+                                    </div>
+                                </Scrollbars>
                                 :
                                 <></>
                             }

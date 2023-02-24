@@ -3,6 +3,7 @@
     overflow:auto;
     display: flex;
     flex-direction: column;
+    z-index: 51;
 }
 .anwendung{
     display: grid;
@@ -10,8 +11,9 @@
     height:100vh;
     max-height:100vh;
     max-width: 100vw;;
+    
     grid-template-columns: clamp(200px,25vw,300px) 1fr;
-    grid-template-rows: 75px 1fr;
+    grid-template-rows: 80px 1fr;
     grid-template-areas:
         "sidebar    navbar"
         "sidebar    content";
