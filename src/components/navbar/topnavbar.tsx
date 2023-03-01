@@ -1,4 +1,4 @@
-import React, {  useState } from 'react'
+import React, {  useCallback, useRef, useState } from 'react'
 import { Avatar,Box,IconButton,Menu,MenuItem,Breadcrumbs, Divider, Link, LinkProps, Switch, Typography, Tooltip, ListItemIcon, Badge, } from '@mui/material';
 import { BsArrowLeft } from 'react-icons/bs'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -23,6 +23,10 @@ import { AlternateEmail, Notifications, Password, Settings } from '@mui/icons-ma
 import ChangeEmailDialog from '../dialogs/changeEmailDialog/changeEmailDialog';
 import ChangePasswordDialog from '../dialogs/changePasswordDialog/changePasswordDialog';
 import Chat from '../chat/chat';
+import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
+import { dynamicwsurl } from '../../services/globals';
+import { Chat as Chatclass, Message } from '../../types/message';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 
 
@@ -72,6 +76,10 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
   const {width} = useWindowDimensions()
   const [menueOpen,setMenueOpen] = useState(true)
   const location = useLocation();
+  const [userUUID,setUserUUID] = React.useState<string | undefined>(undefined)
+  const [chats,setChats] = useState<Chatclass[]>()
+  const [messages,setMessages] = React.useState<Message[]>([])
+  const [messageCount, setMessageCount] = useState<number>(0)
   const username = useSelector((state:RootState)=>state.username)
   const dispatch = useAppDispatch()
   const pathnames = location.pathname.split('/').filter((x) => x);
@@ -79,9 +87,11 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
   const { enqueueSnackbar } = useSnackbar()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const scrollbarRef = useRef<Scrollbars>(null)
   const [showEmailDialog,setShowEmailDialog] = useState(false)
   const [showPasswordDialog,setShowPasswordDialog] = useState(false)
   const [showChat,setShowChat] = useState(false)
+  
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -92,7 +102,70 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
     }
   };
 
-  
+  const {sendMessage,lastMessage} = useWebSocket(dynamicwsurl+"/chat")
+
+
+    const handleClickSendMessage = useCallback((text:string,pchat:Chatclass|undefined) => { 
+      setChats(prev=>prev?.map(chat=>{
+        console.log(chat,"chatiteration")
+        if(!pchat)return chat
+        if(chat.id === pchat.id){
+          if(chat.nachrichten){
+            console.log("passenden chat gefunden")
+            chat.nachrichten = [...chat.nachrichten,new Message(text,chat?.id,userUUID,{username:username?username:"ERROR",email:"test"},true)]
+            console.log("nachricht angefügt",chat)
+          }else{
+            chat.nachrichten = [new Message(text,chat?.id,userUUID,{username:username?username:"ERROR",email:"test"},true)]
+          }
+        }
+        return chat
+      }))
+      console.log(chats,"chats after update")
+      sendMessage(JSON.stringify({chat:pchat?.id,message:text,from:userUUID}))
+      
+    }, [sendMessage, userUUID, username]);
+
+    React.useEffect(()=>{
+      if (lastMessage !== null) {
+          const {stage,data,chats} = JSON.parse(lastMessage.data)
+          if(stage === 1){
+              setUserUUID(data)
+              setChats(chats)
+          }else{
+              setMessageCount(prev=>prev+1)
+              console.log("times1")
+              setChats(prev=>prev?.map(chat=>{
+                if(chat.id === data.chat){
+                  if(chat.nachrichten){
+                    chat.nachrichten = [...chat.nachrichten, new Message(data.nachricht,data.chat,undefined,{username:data.user.username,email:data.user.email},false)]
+                  }else{
+                    chat.nachrichten = [new Message(data.nachricht,data.chat,undefined,{username:data.user.username,email:data.user.email},false)]
+                  }
+                }
+                return chat
+              }))
+              // setMessages((prev) => prev.concat(new Message(data,false,false)));
+          }
+        }
+     
+  },[lastMessage,setMessages])
+
+  React.useEffect(()=>{
+      
+      if(showChat){
+        setTimeout(()=>scrollbarRef.current?.scrollToBottom(),500)
+        
+      }else{
+        setMessageCount(0)
+      }
+  },[showChat])
+
+  React.useEffect(()=>{
+    let test = 0
+    messages.forEach(message=>test+=(message.seen?0:1))
+    setMessageCount(test)
+    setTimeout(()=>scrollbarRef.current?.scrollToBottom(),300)
+  },[messages])
 
 
 
@@ -143,14 +216,20 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
         </div>
         <Divider variant="middle" orientation='vertical' flexItem/>
         <Box className={styles.logoutTest} display={"flex"} flexDirection={"row"} alignItems={"center"}>
+              <div style={{position:'relative'}}>
                 <Tooltip title={"Nachrichten"}>
-                  <IconButton className={styles.iconbutton}>
-                    <Badge badgeContent={4} color="error">
+                  <IconButton className={styles.iconbutton} onClick={()=>{setShowChat(prev=>!prev)}}>
+                    <Badge badgeContent={messageCount?messageCount:undefined} color="error">
                       <Notifications />
                     </Badge>
-                    <Chat isShown={showChat} onClose={()=>setShowChat(false)} />
                   </IconButton>
                 </Tooltip>
+                <Chat chats={chats} useruuid={userUUID} isShown={showChat} onClose={()=>setShowChat(false)} messages={messages} sendMessage={(message,chat)=>{
+                  if(message)handleClickSendMessage(message,chat)
+                  }} 
+                  scrollbarRef={scrollbarRef}  
+                />
+              </div>
                 
                 <div className={styles.userInfo}>
                 <h5>{username}</h5>

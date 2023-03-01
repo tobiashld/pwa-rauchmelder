@@ -9,6 +9,7 @@ import { ClientStatus } from '../../types/statusenum';
 import { useSnackbar } from 'notistack'
 import { Checkbox,  FormControlLabel, InputAdornment, TextField } from '@mui/material';
 import {  Visibility, VisibilityOff } from '@mui/icons-material';
+import secureLocalStorage from 'react-secure-storage'
 
 function SignInScreen() {
   const usernameRef = React.createRef<HTMLInputElement>();

@@ -1,5 +1,5 @@
 
-import { DBResponse, prepPruefung, Pruefung, toPruefungConverter } from "../../types/allgemein"
+import { DBResponse,  Pruefung, toPruefungConverter } from "../../types/allgemein"
 import { dynamicurl } from "../globals";
 
 
@@ -26,6 +26,7 @@ async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Pruefung>)=>v
       }
     })
 }
+
 async function add(pruefung:Pruefung,cb?:(data:any)=>void){
   const url = dynamicurl + "/pruefungen"
   fetch(url,{
@@ -34,7 +35,7 @@ async function add(pruefung:Pruefung,cb?:(data:any)=>void){
     headers: {
       'Content-Type': 'application/json'
     },
-    body:JSON.stringify(prepPruefung(pruefung))
+    // body:JSON.stringify(prepPruefung(pruefung))
   }).then(response=>{
     return response.json()})
     .then(obj=>{
@@ -51,7 +52,7 @@ async function change(pruefung:Pruefung,cb?:(data:any)=>void){
     headers: {
       'Content-Type': 'application/json'
     },
-    body:JSON.stringify(prepPruefung(pruefung))
+    // body:JSON.stringify(prepPruefung(pruefung))
   }).then(response=>{
     return response.json()})
     .then(obj=>{

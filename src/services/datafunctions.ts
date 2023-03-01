@@ -107,6 +107,7 @@ const dataFunctions = {
             change:user.change,
             delete:user.deleteU,
             login:user.login,
+            logout:user.logout,
             changepw:user.changepw
         },
         auftraggeber:{

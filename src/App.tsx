@@ -10,6 +10,7 @@ import data from './services/datafunctions';
 import { login, logout } from './store/slice';
 import { useSnackbar } from 'notistack';
 import Loadingspinner from './components/loadingspinner/loadingspinner';
+import secureLocalStorage from 'react-secure-storage'
 
 
 
@@ -23,8 +24,10 @@ function App(props:{status:'online'|'offline'}) {
   
     data[ClientStatus.online].user.get(undefined,(data:any)=>{
       console.log(data)
-      if(!data || (data.error && data.status !== 401)){
-        enqueueSnackbar(data?data.error:"Backend ist nich erreichbar",{variant:"error"})
+      if(data.error){
+        if(data.status !== 479){
+          enqueueSnackbar(data?data.error:"Backend ist nich erreichbar",{variant:"error"})
+        }
         dispatch(logout())
       }else if(data && data.status < 300 && data.status >= 200 && data.data){
         enqueueSnackbar("Automatisch angemeldet",{variant:"success"})

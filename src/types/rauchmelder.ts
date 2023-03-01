@@ -82,7 +82,7 @@ export class RauchmelderHistorie implements RauchmelderHistorie{
 
 export function toRauchmelderHistorienConverter(data:any){
     return new RauchmelderHistorie(
-        data.rauchmelder.rauchmelderHistorie.map((item:any)=>toRauchmelderConverter(item)),
+        data.rauchmelder.rauchmelderhistorie.map((item:any)=>toRauchmelderConverter(item)),
         toWohnungConverter(data.rauchmelder.wohnungen)
     )
 

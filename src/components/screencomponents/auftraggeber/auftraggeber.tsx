@@ -9,9 +9,10 @@ import SaveButton from '../../savebutton/savebutton'
 import { useSnackbar } from 'notistack'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
-import { Autocomplete, Box, Grid, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Grid, ListItemIcon, Menu, MenuItem, TextField, Typography } from '@mui/material'
 import { GeoDaten } from '../../../types/geodaten'
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { Delete, Edit } from '@mui/icons-material'
 
 type AuftraggeberChangeKeys = 'adresse' | 'email' | 'name' | 'telefon';
 
@@ -24,8 +25,35 @@ function AuftraggeberComponent() {
   const loaded = React.useRef(false);
   const [changedAuftraggeber,setChangedAuftraggeber] = useState<Auftraggeber[]>([])
   const [isSavable,setIsSavable] = useState(false);
+  const [auftraggeberid,setAuftraggeberid] = useState(-1)
   const {enqueueSnackbar} = useSnackbar()
   const [reload,setReload] = useState(false)
+
+  const [contextMenu, setContextMenu] = React.useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
+
+  const handleContextMenu = (event: React.MouseEvent,obj:Auftraggeber) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+          // Other native context menus might behave different.
+          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+          null,
+    );
+    setAuftraggeberid(obj.id?obj.id:-1)
+    
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
 
   useEffect(()=>{
     dataFunctions[ClientStatus.online].auftraggeber.get(undefined,(data)=>{
@@ -73,31 +101,31 @@ function AuftraggeberComponent() {
             {
               title:"Addresse",
               render:(obj)=>{
-                return <div>{obj.adresse.toString()}</div>
+                return <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.adresse.toString()}</div>
               }
             },
             {
               title:"Email",
               render:(obj)=>{
-                return <div>{obj.email}</div>
+                return <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.email}</div>
               }
             },
             {
               title:"name",
               render:(obj)=>{
-                return <div>{obj.name}</div>
+                return <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.name}</div>
               }
             },
             {
               title:"Telefon",
               render:(obj)=>{
-                return <div>{obj.telefon}</div>
+                return <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.telefon}</div>
               }
             },
             {
               title:"",
               render:(obj)=>{
-                return <div>delete</div>
+                return <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>delete</div>
               }
             },
             ]} 
@@ -162,6 +190,20 @@ function AuftraggeberComponent() {
 
           />
       </div>
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        
+        <MenuItem onClick={handleClose}><ListItemIcon><Edit /></ListItemIcon>Bearbeiten</MenuItem>
+        <MenuItem onClick={handleClose} style={{color:'red'}}><ListItemIcon><Delete htmlColor='red' /></ListItemIcon>Löschen</MenuItem>
+      </Menu>
       <div className={styles.interactions}>
         <AddButton routeParam='auftraggeber' />
         <SaveButton onClick={handleSave} isShown={isSavable}/>

@@ -79,9 +79,10 @@ async function getHistory(rauchmelderhistorienid:number):Promise<DBResponse<Rauc
       return response.json()})
       .then(obj=>{
         if(obj.error)return obj
+        console.log(obj)
         return {
           ...obj,
-          data:obj.data.map((item:any)=>toRauchmelderHistorienConverter(item))
+          data:obj.data?.map((item:any)=>toRauchmelderHistorienConverter(item))
         }
       })
 }

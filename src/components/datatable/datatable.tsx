@@ -209,7 +209,7 @@ function DataTable<T>(props:{
                 }}>
                     
                     {activeSortIndex === index?<BsArrowDown className={styles.sortindicator + " " +(activeSortDirection?styles.downarrow:styles.uparrow)}></BsArrowDown>:<></>}
-                    {sort.name}
+                    <span>{sort.name}</span>
                 </div>
                 )
               })}

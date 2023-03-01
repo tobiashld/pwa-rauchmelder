@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import dataFunctions from '../services/datafunctions'
 import { Error, ErrorType } from '../types/errortype'
 import { ClientStatus } from '../types/statusenum'
 
@@ -43,6 +44,7 @@ export const slice = createSlice({
         })
     },
     logout(state){
+        dataFunctions[1].user.logout()
         return ({
             ...state,
             username:undefined,

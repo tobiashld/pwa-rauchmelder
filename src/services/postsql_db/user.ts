@@ -89,6 +89,22 @@ function login(username:string,password:string,cb?:(obj:any)=>void) {
       }
       })    
 }
+async function logout(cb?:(obj:any)=>void) {
+  const url = dynamicurl + "/logout"
+  return fetch(url,{
+    credentials: "include",
+    method:"POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response=>{
+    return response.json()})
+    .then(obj=>{
+      if(obj && obj){
+        if(cb)cb(obj)
+    }
+    })    
+}
 function changepw(password:string,cb?:(obj:any)=>void) {
     const url = dynamicurl + "/changepw"
     fetch(url,{
@@ -118,7 +134,8 @@ const functions = {
     add,
     deleteU,
     login,
-    changepw
+    changepw,
+    logout
     
 }
 

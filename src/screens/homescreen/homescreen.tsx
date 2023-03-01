@@ -73,6 +73,7 @@ function HomeScreen(props:{clientstatus:ClientStatus}) {
             <Route path="/add/:element" element={<Add />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/pwa-rauchmelder" element={<Navigate replace to="/" />} />
+            <Route path="*" element={<OverviewComponent />} />
           </Routes>
           </LocalizationProvider>
         </div>

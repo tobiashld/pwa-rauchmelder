@@ -1,5 +1,5 @@
 import { JwtPayload } from "jwt-decode";
-import { RauchmelderOld } from "./rauchmelder";
+import { RauchmelderHistorie, RauchmelderOld, toRauchmelderHistorienConverter } from "./rauchmelder";
 
 export interface DBResponse<T>{
   status:number,
@@ -103,7 +103,7 @@ export const toObjektConverter = (
 export class GeprRauchmelder{
   constructor(
      readonly id:number,
-     readonly rauchmelderId:number,
+     public rauchmelderId:number,
      public grund:number,
      public  baulichUnveraendert:boolean,
      public  hindernisseUmgebung:boolean,
@@ -115,8 +115,7 @@ export class GeprRauchmelder{
      public batterieGut:boolean,
      public anmerkungen:string,
      public anmerkungenZwei:string,
-     public timestamp?:string,
-     public pruefungsId?:number,
+     public rauchmelderhistorie?:RauchmelderHistorie,
   ){}
 
 }
@@ -126,7 +125,7 @@ export const toGeprRauchmelderConverter = (
       ): GeprRauchmelder => {
         return new GeprRauchmelder(
           data.id,
-          data.rauchmelderId,
+          data.rauchmelderID,
           data.grund,
           data.baulichUnveraendert,
           data.hindernisseUmgebung,
@@ -138,6 +137,7 @@ export const toGeprRauchmelderConverter = (
           data.batterieGut,
           data.anmerkungen,
           data.anmerkungenZwei,
+          data.rauchmelderhistorie?toRauchmelderHistorienConverter(data.rauchmelderhistorie):undefined,
         )
       }
 export const toRauchmelderConverter = (
@@ -187,30 +187,30 @@ export class Pruefung{
     
 }
 
-export const prepPruefung=(pruefung:Pruefung) =>{
-  return {
-    objektid:pruefung.objekt?.id,
-    rauchmelder:pruefung.rauchmelder.map(rauchmelder=>prepGeprRauchmelder(rauchmelder))
-  }
-}
-export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
-  return {
-    id:geprRauchmelder.rauchmelderId,
-    selberRaum: geprRauchmelder.selberRaum,
-    baulichUnveraendert: geprRauchmelder.baulichUnveraendert,
-    hindernisseUmgebung: geprRauchmelder.hindernisseUmgebung,
-    relevanteBeschaedigung: geprRauchmelder.relevanteBeschaedigung,
-    oeffnungenFrei: geprRauchmelder.oeffnungenFrei,
-    warnmelderGereinigt: geprRauchmelder.warnmelderGereinigt,
-    pruefungErfolgreich: geprRauchmelder.pruefungErfolgreich,
-    batterieGut: geprRauchmelder.batterieGut,
-    timestamp:"12.11.2022 22:27",
-    grund: geprRauchmelder.grund,
-    anmerkungen: geprRauchmelder.anmerkungen,
-    anmerkungenZwei: geprRauchmelder.anmerkungenZwei,
-    pruefungsId:!geprRauchmelder.pruefungsId || geprRauchmelder.pruefungsId === 0?undefined:geprRauchmelder.pruefungsId
-  }
-}
+// export const prepPruefung=(pruefung:Pruefung) =>{
+//   return {
+//     objektid:pruefung.objekt?.id,
+//     rauchmelder:pruefung.rauchmelder.map(rauchmelder=>prepGeprRauchmelder(rauchmelder))
+//   }
+// }
+// export const prepGeprRauchmelder=(geprRauchmelder:GeprRauchmelder)=>{
+//   return {
+//     id:geprRauchmelder.rauchmelderId,
+//     selberRaum: geprRauchmelder.selberRaum,
+//     baulichUnveraendert: geprRauchmelder.baulichUnveraendert,
+//     hindernisseUmgebung: geprRauchmelder.hindernisseUmgebung,
+//     relevanteBeschaedigung: geprRauchmelder.relevanteBeschaedigung,
+//     oeffnungenFrei: geprRauchmelder.oeffnungenFrei,
+//     warnmelderGereinigt: geprRauchmelder.warnmelderGereinigt,
+//     pruefungErfolgreich: geprRauchmelder.pruefungErfolgreich,
+//     batterieGut: geprRauchmelder.batterieGut,
+//     timestamp:"12.11.2022 22:27",
+//     grund: geprRauchmelder.grund,
+//     anmerkungen: geprRauchmelder.anmerkungen,
+//     anmerkungenZwei: geprRauchmelder.anmerkungenZwei,
+//     pruefungsId:!geprRauchmelder.pruefungsId || geprRauchmelder.pruefungsId === 0?undefined:geprRauchmelder.pruefungsId
+//   }
+// }
 
 export const toPruefungConverter = (
         data:any
@@ -218,7 +218,7 @@ export const toPruefungConverter = (
         return new Pruefung(
           data.id,
           data.timestamp,
-          (data.rauchmelder.length > 0)?data.rauchmelder.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):[],
+          (data.rauchmelder.length > 0)?data.pruefungenListe.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):[],
           new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
           new User(data.user.id,data.user.username),
           

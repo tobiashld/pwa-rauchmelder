@@ -32,9 +32,7 @@ function AddPruefung() {
     const rauchmelderQuery = useQuery(["objekt",currPruefObjektParam?currPruefObjektParam:currPruefung?.objekt?.id?currPruefung?.objekt?.id:-1,"rauchmelder"],dataFunctions[ClientStatus.online].rauchmelder.getForObject)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pruefungQuery = useQuery(["pruefung",id],()=>dataFunctions[1].pruefungen.get({"id":id}),{enabled:id !== "-1"?true:false,onSuccess:(data)=>{
-        
             setCurrPruefung(data?.data?.at(0))
-    
     }})
     const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
     const newSeriennrRef = useRef(null)
@@ -147,7 +145,7 @@ function AddPruefung() {
                                             enqueueSnackbar("Dieser Rauchmelder ist bereits geprüft!",{variant:"warning"})
                                             return
                                         }
-                                        let geprRauchmelder = new GeprRauchmelder(0,currSelectedRauchmelder.id,0,true,true,true,true,true,true,true,true,"","","now",currPruefung?.id)
+                                        let geprRauchmelder = new GeprRauchmelder(0,currSelectedRauchmelder.id,0,true,true,true,true,true,true,true,true,"","")
                                         let newGeprRauchmelderList = (currPruefung && currPruefung.rauchmelder)?currPruefung?.rauchmelder.slice():[]
                                         newGeprRauchmelderList.push(geprRauchmelder)
                                         setCurrGeprRauchmelder(geprRauchmelder)
