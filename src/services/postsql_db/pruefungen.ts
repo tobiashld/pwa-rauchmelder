@@ -14,7 +14,6 @@ async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Pruefung>)=>v
       },
     }).then(response=>response.json())
     .then((obj:DBResponse<Pruefung>)=>{
-      console.log(obj)
       if(obj.error)return obj
       if(cb)cb({
         ...obj,
@@ -22,7 +21,7 @@ async function get(params?:{[key:string]:any},cb?:(data:DBResponse<Pruefung>)=>v
       })
       return {
         ...obj,
-        data:obj.data!.map((item:any)=>toPruefungConverter(item))
+        data:obj.data!.map((item:any)=>{return toPruefungConverter(item)})
       }
     })
 }

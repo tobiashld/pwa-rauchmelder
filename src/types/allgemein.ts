@@ -1,5 +1,5 @@
 import { JwtPayload } from "jwt-decode";
-import { RauchmelderHistorie, RauchmelderOld, toRauchmelderHistorienConverter } from "./rauchmelder";
+import { RauchmelderHistorie, RauchmelderOld, toRauchmelderBzConverter, toRauchmelderHistorienConverter ,toRauchmelderConverter as toNewRauchmelderConverter, Rauchmelder} from "./rauchmelder";
 
 export interface DBResponse<T>{
   status:number,
@@ -32,6 +32,7 @@ export class Auftraggeber{
       return this.name + "\n" + this.adresse.toString()
     }
 }
+
 export const toAuftraggeberConverter = (
         data:any
       ): Auftraggeber => {
@@ -46,7 +47,7 @@ export class User{
         throw new Error("Method not implemented.");
     }
     constructor(
-      readonly id:number,
+      readonly id:string,
       readonly username:string,
     ){}
     dump(){
@@ -59,7 +60,8 @@ export class User{
 export const toUserConverter =(
         data:any
       ): User =>{
-        return new User(data[0].user_id,data[0].username);
+        if(data && data.length ===0)return new User(data[0].user_id,data[0].username);
+        else return new User(data,"Fehler")
       }
 
 export class Objekt{
@@ -88,12 +90,11 @@ export class Objekt{
 export const toObjektConverter = (
        data:any
       ): Objekt =>{
-        
         return new Objekt(
           data.id,
           new Adresse(data.hausnummer,data.ort,data.plz,data.straße),
           data.beschreibung,
-          data.objekt,
+          data.objekt?data.objekt:data.name?data.name:undefined,
           data.auftraggeberID);
       }
 
@@ -115,7 +116,7 @@ export class GeprRauchmelder{
      public batterieGut:boolean,
      public anmerkungen:string,
      public anmerkungenZwei:string,
-     public rauchmelderhistorie?:RauchmelderHistorie,
+     public rauchmelderhistorie?:Rauchmelder,
   ){}
 
 }
@@ -137,7 +138,7 @@ export const toGeprRauchmelderConverter = (
           data.batterieGut,
           data.anmerkungen,
           data.anmerkungenZwei,
-          data.rauchmelderhistorie?toRauchmelderHistorienConverter(data.rauchmelderhistorie):undefined,
+          data.rauchmelderhistorie?toNewRauchmelderConverter(data.rauchmelderhistorie):undefined,
         )
       }
 export const toRauchmelderConverter = (
@@ -215,14 +216,18 @@ export class Pruefung{
 export const toPruefungConverter = (
         data:any
       ): Pruefung =>{
-        return new Pruefung(
-          data.id,
-          data.timestamp,
-          (data.rauchmelder.length > 0)?data.pruefungenListe.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):[],
-          new Objekt(data.objekt.id,new Adresse(data.objekt.hausnummer,data.objekt.ort,data.objekt.plz,data.objekt.straße),data.objekt.beschreibung,data.objekt.name),
-          new User(data.user.id,data.user.username),
-          
-          );
+        try{
+          return new Pruefung(
+            data.id,
+            data.timestamp,
+            (data.rauchmelder && data.rauchmelder.length > 0)?data.rauchmelder.map((geprRauchmelder:any)=>toGeprRauchmelderConverter(geprRauchmelder)):(data.pruefungenListe && data.pruefungenListe.length > 0)?data.pruefungenListe.map((geprRauchmelder:any)=>{return toGeprRauchmelderConverter(geprRauchmelder)}):[],
+            toObjektConverter(data.objekt),
+            data.user?toUserConverter(data.user):data.user_id?toUserConverter(data.user_id):undefined,
+            );
+        }catch(e:any){
+          throw e
+        }
+        
       }
 
 

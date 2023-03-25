@@ -1,4 +1,6 @@
 
+import { Delete, Edit } from '@mui/icons-material'
+import { ListItemIcon, Menu, MenuItem } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import React,{useState,useEffect} from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -18,6 +20,10 @@ function ObjekteComponent() {
   const [changedObjekte,setChangedObjekte] = useState<Objekt[]>([])
   const [isSavable,setIsSavable] = useState(false)
   const {enqueueSnackbar} = useSnackbar()
+  const [contextMenu, setContextMenu] = React.useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
   const {data,isError,isLoading} = useQuery('objekte',()=>dataFunctions[ClientStatus.online].objekte.get(),{
     
   })
@@ -33,20 +39,35 @@ function ObjekteComponent() {
     }
   },[changedObjekte])
 
-  if(isLoading){
-    return <Loadingspinner size='Big' />
-  }
 
   if(isError || (data && data.error)){
     enqueueSnackbar("Laden der Objekte Fehlgeschlagen!",{variant:"error"})
   }
 
 
-
+  const handleContextMenu = (event: React.MouseEvent,obj:Objekt) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+          // Other native context menus might behave different.
+          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+          null,
+    );
+    
+  };
   
 
   const handleSave = ()=>{
   }
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
 
   return (
     <>
@@ -58,7 +79,7 @@ function ObjekteComponent() {
               title:"Name",
               render:(obj)=>{
                 return (
-                  <div>{obj.name}</div>
+                  <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.name}</div>
                 )
               }
             },
@@ -66,7 +87,7 @@ function ObjekteComponent() {
               title:"Beschreibung",
               render:(obj)=>{
                 return (
-                  <div>{obj.beschreibung}</div>
+                  <div onContextMenuCapture={(event)=>handleContextMenu(event,obj)}>{obj.beschreibung}</div>
                 )
               }
             },
@@ -133,6 +154,21 @@ function ObjekteComponent() {
           ]}
         />
       </div>
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={()=>{
+          setContextMenu(null);
+        }}><ListItemIcon><Edit /></ListItemIcon>Bearbeiten</MenuItem>
+        <MenuItem onClick={handleClose} style={{color:'red'}}><ListItemIcon><Delete htmlColor='red' /></ListItemIcon>Löschen</MenuItem>
+      </Menu>
       <div className={styles.interactions}>
         <AddButton routeParam='auftraggeber' />
         <SaveButton onClick={handleSave} isShown={isSavable}/>

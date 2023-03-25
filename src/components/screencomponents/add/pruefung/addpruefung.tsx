@@ -5,7 +5,7 @@ import PlaylistAddSharpIcon from '@mui/icons-material/PlaylistAddSharp';import {
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import dataFunctions from '../../../../services/datafunctions'
 import { RootState } from '../../../../store/store'
-import {  GeprRauchmelder,  Pruefung} from '../../../../types/allgemein'
+import {  GeprRauchmelder,  Pruefung, toPruefungConverter} from '../../../../types/allgemein'
 import { ClientStatus } from '../../../../types/statusenum'
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
 import PersonIcon from '@mui/icons-material/Person';
@@ -20,6 +20,7 @@ function AddPruefung() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const clientStatus = useSelector((state:RootState)=>state.isOffline)
     // const [autofillvalue,setAutofillvalue] = useState("")
+    const [changedMieter,setChangedMieter] = useState<{[key:number]:string}>({})
     const [currGeprRauchmelder,setCurrGeprRauchmelder] = useState<GeprRauchmelder | undefined>()
     const [page,setPage] = useState(0)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,12 +38,21 @@ function AddPruefung() {
     const [showNewRauchmelder,setShowNewRauchmelder] = useState(false)
     const newSeriennrRef = useRef(null)
     const [newProdDatum,setNewProdDatum] = useState("")
-    const newMieterRef = useRef(null)
+    const [currMieterName,setCurrMieterName] = useState("")
     const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar()
     
 
-
+    React.useEffect(()=>{
+        let currRauchmelderBz = rauchmelderQuery.data?.data.filter(rauchmelder=>rauchmelder.aktuelleHistorienID===currGeprRauchmelder?.rauchmelderId)
+        if(currRauchmelderBz && currRauchmelderBz.length === 1){
+            let wohnungsId = currRauchmelderBz.at(0)?.wohnungsID
+            setCurrMieterName(wohnungsId && changedMieter[wohnungsId]?changedMieter[wohnungsId]:"")
+        }else{
+            setCurrMieterName("")
+        }
+        
+    },[currGeprRauchmelder])
     
 
     // if(pruefungQuery.isSuccess){
@@ -87,13 +97,8 @@ function AddPruefung() {
                 <div className={styles.outerbox}>
                     <div className={styles.rauchmelderbox} >
                         <div className={styles.rauchmelderboxInside}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <Tabs variant='fullWidth' value={page} onChange={(event:any,newNumber:any)=>setPage(newNumber)} aria-label="basic tabs example">
-                                <Tab icon={<HolidayVillageIcon />} label="Objekt" id="pruefungen-tab-0" aria-controls="pruefungen-tab-0" />
-                                <Tab icon={<PersonIcon />} label="Mieter" id="pruefungen-tab-1" aria-controls="pruefungen-tab-1" />
-                            </Tabs>
-                        </Box>
-                            <div hidden={page!==0} className={styles.gesamtuebersicht}>
+                        
+                            <div className={styles.gesamtuebersicht}>
                             <div className={styles.rauchmeldercard + " " + styles.addcard}>
                             <Autocomplete
                                 id="pruefung-rauchmelder-select"
@@ -149,14 +154,12 @@ function AddPruefung() {
                                         let newGeprRauchmelderList = (currPruefung && currPruefung.rauchmelder)?currPruefung?.rauchmelder.slice():[]
                                         newGeprRauchmelderList.push(geprRauchmelder)
                                         setCurrGeprRauchmelder(geprRauchmelder)
-                                        console.log(currPruefung)
                                         setCurrPruefung({
                                             ...currPruefung,
                                             id:currPruefung?.id?currPruefung.id:-1,
                                             timestamp:currPruefung?.timestamp?currPruefung.timestamp:"",
                                             rauchmelder:currPruefung?.rauchmelder?[...currPruefung?.rauchmelder,geprRauchmelder]:[geprRauchmelder]
                                         })
-                                        console.log(currPruefung)
                                         setCurrSelectedRauchmelder(undefined)
                                     }}
                                 >
@@ -182,7 +185,7 @@ function AddPruefung() {
                             
                             <Scrollbars className={styles.rauchmelderliste}>
                             {
-
+                                currPruefung?
                                 currPruefung?.rauchmelder.map(rauchmelder=>{
                                     let rauchmelderBz = rauchmelderQuery.data!.data!.find(item=>item.aktuelleHistorienID === rauchmelder.rauchmelderId)
                                     return (
@@ -197,14 +200,15 @@ function AddPruefung() {
                                                 </div>
             
                                         </div>)
-                                })
+                                }):
+                                <Loadingspinner size="Big" />
                             }
                             </Scrollbars>
                            </div>
                              <div hidden={page!==1}>
                             Test
                             </div>
-                            {currPruefung?currPruefung?.rauchmelder.length > 0?
+                            {currPruefung?currPruefung?.rauchmelder.length > 0 && Number.parseInt(id?id:"0") === -1?
                                 <div className={styles.saveinteractions}>
                                     <Button fullWidth color='success' variant='contained' onClick={handleSave} disabled={currPruefung.rauchmelder.length<=0}>Prüfung abschließen</Button>
                                 </div>
@@ -226,6 +230,7 @@ function AddPruefung() {
                                         {
                                             rauchmelderQuery.data.data.filter(rauchmelder=>rauchmelder.aktuelleHistorienID===currGeprRauchmelder.rauchmelderId).map(rauchmelder=>{
                                                 let isTreppenhaus = rauchmelder.wohnung?.id === 5
+                                                let isChangedMieter = rauchmelder.wohnung?.id && !isTreppenhaus && changedMieter[rauchmelder.wohnung.id]?changedMieter[rauchmelder.wohnung.id]:undefined
                                                 return (
                                                     <div className={styles.infotable}>
                                                             <div>
@@ -235,24 +240,36 @@ function AddPruefung() {
                                                             </div>
                                                             <div>
                                                                 <strong>
-                                                                    {!isTreppenhaus?"Mieter":""}
+                                                                    {!isTreppenhaus?"Mieter Nachname":""}
                                                                 </strong>
                                                             </div>
-                                                            <div>
-                                                                <strong>
-                                                                Objekt
-                                                                </strong>
-                                                            </div>
+                                                            
             
                                                             <div>
                                                                 {rauchmelder.aktuellerRauchmelder!.seriennr}
                                                             </div>
                                                             <div>
-                                                                {!isTreppenhaus?<TextField ref={newMieterRef} size='small' id="add-pruefung-mieter" placeholder={rauchmelder.wohnung?.nachname}></TextField>:rauchmelder.wohnung!.nachname}
+                                                                {!isTreppenhaus?<TextField value={currMieterName} size='small' id="add-pruefung-mieter" placeholder={isChangedMieter?isChangedMieter:rauchmelder.wohnung?.nachname}
+                                                                onChange={(event)=>{
+                                                                    setCurrMieterName(event.target.value?event.target.value:"")
+                                                                    if(event.currentTarget.value && event.currentTarget.value !== ""){
+                                                                        
+                                                                        setChangedMieter(prev=>{
+                                                                            let copy = {...prev}
+                                                                            prev[rauchmelder.wohnungsID] = event.target.value
+                                                                            return copy
+                                                                        })
+                                                                    }else if(event.target.value === ""){
+                                                                        setChangedMieter(prev=>{
+                                                                            let copy = {...prev}
+                                                                            delete copy[rauchmelder.wohnungsID]
+                                                                            return copy
+                                                                        })
+                                                                    }
+                                                                }}
+                                                                ></TextField>:rauchmelder.wohnung!.nachname}
                                                             </div>
-                                                            <div>
-                                                                {rauchmelder.wohnung?.objekt?.name?rauchmelder.wohnung.objekt.name:""}
-                                                            </div>
+                                                            
                                                     </div>
                                                 )
                                             })
@@ -331,7 +348,6 @@ function AddPruefung() {
                                                         setCurrGeprRauchmelder(helpPruefung)
                                                         if(helpPruefung!.grund === 2 ){
                                                             setShowNewRauchmelder(true)
-                                                            console.log("BLABLA")
                                                         }else{
                                                             setShowNewRauchmelder(false)
                                                         }

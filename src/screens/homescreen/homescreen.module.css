@@ -1,6 +1,5 @@
 .activeElement{
     grid-area: content;
-    overflow:auto;
     display: flex;
     flex-direction: column;
     z-index: 51;

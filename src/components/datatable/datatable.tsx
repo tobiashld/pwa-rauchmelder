@@ -13,6 +13,13 @@ function DataTable<T>(props:{
   columns:{
     title:string,
     render:(obj:T)=>JSX.Element,
+    filter?:{
+      func:(obj:T)=>T|undefined,
+      render:(
+        changeFilterState:(filterfunc:(obj:T)=>T|undefined,filterValue:any,columnTitle:string)=>void,
+        filterfunc:(obj:T)=>T|undefined
+        )=>JSX.Element
+    }
   }[],
   headline:string,
   editedElementIds?:number[],
@@ -22,7 +29,10 @@ function DataTable<T>(props:{
   options?:any[],
   disabledRows?:boolean
 }) {
-  
+  const [currFilter,setCurrFilter] = useState<({
+    func:  (obj:T)=>T|undefined,
+    value:any
+  })[]>([])
   const [currIndex, setCurrIndex] = useState(0)
   const [currMaxIndex, setMaxIndex] = useState(0)
   const [currOverflow,setCurrOverflow] = useState(0)
@@ -208,7 +218,10 @@ function DataTable<T>(props:{
                   }
                 }}>
                     
-                    {activeSortIndex === index?<BsArrowDown className={styles.sortindicator + " " +(activeSortDirection?styles.downarrow:styles.uparrow)}></BsArrowDown>:<></>}
+                    <span className={styles.sortarrow}>
+                      {/* {activeSortIndex === index?<BsArrowDown className={styles.sortindicator + " " +(activeSortDirection?styles.downarrow:styles.uparrow)}></BsArrowDown>:<></>} */}
+                      <BsArrowDown className={styles.sortindicator + " " +(activeSortDirection?styles.downarrow:styles.uparrow)}></BsArrowDown>
+                    </span>
                     <span>{sort.name}</span>
                 </div>
                 )
@@ -236,7 +249,22 @@ function DataTable<T>(props:{
               return (
                 <div className={styles.tableHeadCell}>
                   <Typography variant={"h6"}>
-                  {column.title}
+                    {
+                      // column.filter?
+                      //     column.filter.render((obj:T,filterValue:any)=>{
+                      //       if(filterValue){
+                      //         setCurrFilter([...currFilter,{func:}])
+                      //       }else{
+                      //         let aktAktiv = currFilter.findIndex(func=>func.func===column.filter!.func)
+                      //         if(aktAktiv !== -1){
+                      //           setCurrFilter(prev=>prev.filter((value,index)=>index!==aktAktiv?value:undefined))
+                      //         }
+                      //       }
+                      //     },column.filter.func)
+                      //     :
+                          column.title
+                    }
+                  {/* {column.title} */}
                   </Typography>
                 </div>
               )
@@ -253,6 +281,14 @@ function DataTable<T>(props:{
             >
             {
               props.rows!
+                .filter((obj:T)=>{
+                  let retValue = undefined
+                  if(currFilter.length <= 0)return obj
+                  for(let filter of currFilter){
+                    retValue = filter.func(obj)
+                  }
+                  return retValue
+                })
                 .sort(props.sort && props.sort[activeSortIndex]?getSortDirection(props.sort[activeSortIndex]):(a,b)=>1)
                 .slice(currIndex * 100,currIndex < (currMaxIndex)?(currIndex+1)*100-1:currIndex*100+currOverflow)
                 .map((item,index,array)=>{

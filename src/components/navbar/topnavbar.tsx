@@ -217,7 +217,10 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
         <Divider variant="middle" orientation='vertical' flexItem/>
         <Box className={styles.logoutTest} display={"flex"} flexDirection={"row"} alignItems={"center"}>
               <div style={{position:'relative'}}>
-                <Tooltip title={"Nachrichten"}>
+                {
+                // TODO funktionierenden Chat und funktionierenden Support der komplett an mein admin account geht
+                }
+                {/* <Tooltip title={"Nachrichten"}>
                   <IconButton className={styles.iconbutton} onClick={()=>{setShowChat(prev=>!prev)}}>
                     <Badge badgeContent={messageCount?messageCount:undefined} color="error">
                       <Notifications />
@@ -228,7 +231,7 @@ function TopNavBar(props:{isShown:boolean,onMenuChange:()=>void}) {
                   if(message)handleClickSendMessage(message,chat)
                   }} 
                   scrollbarRef={scrollbarRef}  
-                />
+                /> */}
               </div>
                 
                 <div className={styles.userInfo}>

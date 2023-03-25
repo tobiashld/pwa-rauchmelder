@@ -90,7 +90,9 @@ function PruefungenComponent() {
   
 
   if(objekteQuery.isLoading || pruefungenQuery.isLoading || !objekteQuery.data || !pruefungenQuery.data){
-    return <Loadingspinner size='Big' />
+    return <div className={styles.loadingspinner}>
+      <Loadingspinner size='Big' />
+      </div>
   }
   if(objekteQuery.isError || pruefungenQuery.isError){
     return <>Error</>
