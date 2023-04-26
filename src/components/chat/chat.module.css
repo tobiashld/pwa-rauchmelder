@@ -1,0 +1,53 @@
+.chatWrapper{
+    
+    overflow: hidden;
+    display: grid;
+    grid-template-areas:
+        "header"
+        "divider1"
+        "chat"
+        "divider2"
+        "interactions";
+    grid-template-rows: 50px 5px 1fr 5px 85px;
+    
+    width:300px;
+    height:500px;
+    border-radius: 15px;
+    box-shadow:0px 0px 10px 2px rgba(0,0,0,0.2);
+    background-color: white;
+    
+}
+.test{
+    display:flex;
+    justify-content:flex-end;
+    flex-direction:column;
+}
+.completeChatWrapper{
+    display: flex;
+    flex-direction: row;
+    height:500px;
+}
+.inactive{
+    display: none;
+}
+.zindex{
+    z-index: 1001 !important;
+}
+.outerWrapper{
+    z-index: 0;
+    position: absolute;
+    bottom:0;
+   
+    transform: translate(-90%,100%);
+    transition: all 500ms ease
+}
+
+.interactions{
+    grid-area: interactions;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+    background-color: white;
+    width:100%;
+}

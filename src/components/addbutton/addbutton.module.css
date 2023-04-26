@@ -1,18 +1,29 @@
-.container{
-    
-    font-size: 40px;
-    height:40px;
-    aspect-ratio: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding:5px;
-    width:auto;
-    border-radius: 50%;
-    background-color: #01161E;
-    color:#EFF6E0
+.container {
+	font-size: 40px;
+	height: 40px;
+	aspect-ratio: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 5px;
+	width: auto;
+	border-radius: 50%;
+	background-color: #01161e;
+	color: #eff6e0;
 }
-.container:hover{
-    cursor: pointer;
-    background-color: #053346fb;
+.container:hover {
+	cursor: pointer;
+	background-color: #053346fb;
+}
+.box {
+	display: flex;
+	align-items: center;
+}
+.box:hover .text {
+	max-width: 8em;
+}
+.text {
+	overflow: hidden;
+	max-width: 0;
+	transition: max-width 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }

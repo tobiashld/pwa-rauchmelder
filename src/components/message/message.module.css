@@ -1,0 +1,33 @@
+.outer{
+    width: 100%;
+    height:auto;
+    padding:10px;
+    display: flex;
+}
+.bubble{
+    width: 70%;
+    border-radius: 15px;
+    padding:10px;
+    padding-bottom:20px;
+    position:relative;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.outgoing{
+    background-color: rgb(253, 253, 253);
+    border-bottom-right-radius: 0px;
+}
+.incoming{
+    border-bottom-left-radius: 0px;
+    background-color: rgb(233, 233, 233);
+}
+.new::after{
+    content:"";
+    height:15px;
+    width:15px;
+    border-radius: 50%;
+    background-color: red;
+    position:absolute;
+    top:0;
+    right:0;
+}
+
