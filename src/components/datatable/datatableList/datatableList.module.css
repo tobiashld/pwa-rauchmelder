@@ -1,0 +1,64 @@
+.history:hover {
+	color: rgb(96, 162, 219);
+	cursor: pointer;
+}
+.gridrow {
+	position: relative;
+	display: flex;
+	overflow: hidden;
+	padding: 5px;
+	margin: 5px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.1);
+}
+.gridrow::before {
+	content: "";
+	position: absolute;
+	height: 70%;
+	margin-left: -20px;
+	border-radius: 10px;
+	width: 11px;
+	top: 50%;
+	transform: translateY(-50%);
+	transition: all 0.3s ease-in-out;
+}
+.gridrow:hover {
+	cursor: pointer;
+}
+
+.gridrow:hover::before {
+	margin-left: -10px;
+}
+.gridrow:hover > * {
+	font-weight: 600;
+}
+.gridrow > div {
+	height: 50px;
+	padding: 5px;
+
+	display: flex;
+	align-items: center;
+}
+.gridrow > div:nth-of-type(1) {
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+.gridrow > div:last-of-type {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+.scroll {
+	height: calc(100vh - 320px) !important;
+}
+.tableHeadCell {
+	padding: 10px;
+	display: flex;
+	align-items: center;
+}
+.actualTable {
+	border-radius: 5px;
+	/* margin: 10px; */
+	overflow: hidden;
+	/* box-shadow: 0px 0px 24px 2px rgba(0, 0, 0, 0.2); */
+}

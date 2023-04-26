@@ -1,244 +1,238 @@
-.fullcell{
-    height:100%;
+.fullcell {
+	height: 100%;
 }
-.gesamtbox{
-    display:grid;
-    height:100%;
-    box-sizing: border-box;
-    padding:10px;
+.gesamtbox {
+	display: grid;
+	height: 100%;
+	box-sizing: border-box;
+	padding: 10px;
 }
-.outerbox{
-    display: flex;
-    border-radius: 10px;
-    gap:10px;
-    flex:1;
+.outerbox {
+	display: flex;
+	border-radius: 10px;
+	gap: 10px;
+	flex: 1;
 }
-.rauchmelderbox{
-    
-    width:clamp(300px,27%,600px);
-    height:100%
+.rauchmelderbox {
+	width: clamp(300px, 27%, 600px);
+	height: 100%;
 }
-.pruefungsbox{
-    flex:1;
-    position: relative;
-    height:100%;
+.pruefungsbox {
+	flex: 1;
+	position: relative;
+	height: 100%;
 }
-.rauchmelderboxInside{
-    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
-    height:100%;
-    max-height:100%;
-    width: 100%;
-    
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    padding:5px;
-    box-sizing: border-box;
-    background-color: white;
-}
-.pruefungboxInside{
-    
-    display: flex;
-    flex-direction: column;
-    box-shadow:0px 0px 24px 2px rgba(0,0,0,0.3);
-    flex:1;
-    height:100%;
-    max-height:100%;
+.rauchmelderboxInside {
+	box-shadow: 0px 0px 24px 2px rgba(0, 0, 0, 0.3);
+	height: 100%;
+	max-height: 100%;
+	width: 100%;
 
-    border-radius: 10px;
-    padding:5px;
-    padding-bottom: 0px;
-    box-sizing: border-box;
-    background-color: rgb(238, 238, 238);
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	padding: 5px;
+	box-sizing: border-box;
 }
-.rauchmeldercard{
-    height:clamp(60px,6vh,100px);
-    width:auto;
-    min-width:100px;
-    
-    padding:10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.pruefungboxInside {
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0px 0px 24px 2px rgba(0, 0, 0, 0.3);
+	flex: 1;
+	height: 100%;
+	max-height: 100%;
 
-    margin:5px;
-    box-sizing: border-box;
-    border-radius: 10px;
-    box-shadow:0px 0px 7px 2px rgba(167, 167, 167, 0.3);
-    background-color: rgb(255, 255, 255);
+	border-radius: 10px;
+	padding: 5px;
+	padding-bottom: 0px;
+	box-sizing: border-box;
+	/* background-color: rgb(238, 238, 238); */
 }
-.rauchmeldercardtext{
-    width: stretch;
-    height:stretch;
-    display:flex;
-    flex-direction: column;
-    overflow: hidden;
+.rauchmeldercard {
+	height: clamp(60px, 6vh, 100px);
+	width: auto;
+	min-width: 100px;
+
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	margin: 5px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	box-shadow: 0px 0px 7px 2px rgba(167, 167, 167, 0.3);
+	/* background-color: rgb(255, 255, 255); */
 }
-.actualPruefung{
-    height:100%;
-    
-    overflow-y:auto;
-    overflow-x:hidden;
+.rauchmeldercardtext {
+	width: stretch;
+	height: stretch;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
-.rauchmeldercardTitle{
-    font-size: large;
-    font-weight: 600;
+.actualPruefung {
+	height: 100%;
+
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.rauchmeldercardTitle {
+	font-size: large;
+	font-weight: 600;
 }
 .activeRauchmelder,
-.rauchmeldercard:hover{
-    cursor: pointer;
-    color:white;
-    background-color: #095674;
+.rauchmeldercard:hover {
+	cursor: pointer;
 }
-.addcard:hover{
-    cursor:default;
-    background-color: inherit;
-    box-shadow: none;
-    color:inherit;
-
+.rauchmeldercard:hover > .rauchmeldercardTitle {
+	font-weight: 600;
 }
-
-.divider{
-    margin-bottom:10px;
-}
-.addcard{
-    height:clamp(60px,6vh,100px);
-    margin:10px;
-    padding:0px;
-    gap:5px;
-    box-shadow: none !important;
-    background-color: inherit;    
-    flex-direction: row;
-}
-.addbutton{
-    align-self: center;
-    height:80%;
-    aspect-ratio: 1;
-}
-.saveinteractions{
-    width:100%;
-    display: flex;
-    z-index:3;
-    justify-content: center;
-    justify-self: flex-end;
-    padding:5px;
-    box-sizing: border-box;
+.addcard:hover {
+	cursor: default;
+	background-color: inherit;
+	box-shadow: none;
+	color: inherit;
 }
 
-.gesamtuebersicht{
-    flex:1;
-    display:flex;
-    flex-direction: column;
+.divider {
+	margin-bottom: 10px;
 }
-.rauchmelderliste{
-    flex:1
+.addcard {
+	height: clamp(60px, 6vh, 100px);
+	margin: 10px;
+	padding: 0px;
+	gap: 5px;
+	box-shadow: none !important;
+	background-color: inherit;
+	flex-direction: row;
 }
-.interactions{
-    display: flex;
-    gap:10px;
-    justify-content: center;
-    padding:10px;
-    position:sticky;
+.addbutton {
+	align-self: center;
+	height: 80%;
+	aspect-ratio: 1;
 }
-.pruefungsinhalt{
-    padding:15px;
-    box-sizing: border-box;
-    gap:10px;
-    display: flex;
-    flex-direction: column;
+.saveinteractions {
+	width: 100%;
+	display: flex;
+	z-index: 3;
+	justify-content: center;
+	justify-self: flex-end;
+	padding: 5px;
+	box-sizing: border-box;
 }
-.pruefungskriterien{
-    
-}
-.anmerkung{
-    background-color: white;
-}
-.input{
-    background-color: white;
-}
-.newSeriennr{
-    flex:1
-}
-.newProddatum{
-    flex:1
-}
-.newRauchmelderDiv{
-    display: flex;
-    flex-direction: row;
-    gap:30px;
-    box-sizing: border-box;
-}
-.pruefungstext{
-    display: flex;
-    flex-direction: column;
-    gap:20px
-}
-.infotable{
-    display:grid;
-    grid-template-columns: repeat(2,1fr);
-    grid-template-rows: repeat(2,1fr);
-    place-items: center;
-    padding-bottom:10px;
-}
-@media only screen and (max-width:800px){
-    .pruefungboxInside{
-        /* max-height:70vh; */
-    }
-    .saveinteractions{
-        justify-self: flex-start;
-    }
-    .rauchmelderliste{
-        flex:1;
-        width:auto;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
 
-        overflow-x:visible;
-        overflow-y:visible
-    }
-    
-    .outerbox{
-        flex-direction: column;
-    }
-    .rauchmelderboxInside{
-        overflow-x:scroll;
-        height:100px;
-        overflow-y:hidden;
-        flex-direction: row;
-        align-items: center;
-        max-width: calc(100vw - 60px);
-    }
-    .rauchmeldercard{
-        display: flex;
-        width: fit-content;
-        min-width: 150px;
-        height:80%;
+.gesamtuebersicht {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+.rauchmelderliste {
+	flex: 1;
+}
+.interactions {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	padding: 10px;
+	position: sticky;
+}
+.pruefungsinhalt {
+	padding: 15px;
+	box-sizing: border-box;
+	gap: 10px;
+	display: flex;
+	flex-direction: column;
+}
+.pruefungskriterien {
+}
+.anmerkung {
+	background-color: white;
+}
+.input {
+	background-color: white;
+}
+.newSeriennr {
+	flex: 1;
+}
+.newProddatum {
+	flex: 1;
+}
+.newRauchmelderDiv {
+	display: flex;
+	flex-direction: row;
+	gap: 30px;
+	box-sizing: border-box;
+}
+.pruefungstext {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+.infotable {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	place-items: center;
+	padding-bottom: 10px;
+}
+@media only screen and (max-width: 800px) {
+	.pruefungboxInside {
+		/* max-height:70vh; */
+	}
+	.saveinteractions {
+		justify-self: flex-start;
+	}
+	.rauchmelderliste {
+		flex: 1;
+		width: auto;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 
+		overflow-x: visible;
+		overflow-y: visible;
+	}
 
-    }
-    .addcard{
-        align-items: center;
-        min-width: 220px;
-    }
-    .rauchmeldercardTitle{
-        font-size: medium;
-        display: flex;
-        font-weight: 600;
-        width: max-content;
-    }
-    .rauchmelderselect{
-        width: 100% !important;
-        height:90% !important;
-    }
-    .rauchmeldercardtext{
-        height:100%;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-    }
-    .rauchmelderbox{
-        height:100px;
-        width:stretch;
-    }
+	.outerbox {
+		flex-direction: column;
+	}
+	.rauchmelderboxInside {
+		overflow-x: scroll;
+		height: 100px;
+		overflow-y: hidden;
+		flex-direction: row;
+		align-items: center;
+		max-width: calc(100vw - 60px);
+	}
+	.rauchmeldercard {
+		display: flex;
+		width: fit-content;
+		min-width: 150px;
+		height: 80%;
+	}
+	.addcard {
+		align-items: center;
+		min-width: 220px;
+	}
+	.rauchmeldercardTitle {
+		font-size: medium;
+		display: flex;
+		font-weight: 600;
+		width: max-content;
+	}
+	.rauchmelderselect {
+		width: 100% !important;
+		height: 90% !important;
+	}
+	.rauchmeldercardtext {
+		height: 100%;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+	.rauchmelderbox {
+		height: 100px;
+		width: stretch;
+	}
 }

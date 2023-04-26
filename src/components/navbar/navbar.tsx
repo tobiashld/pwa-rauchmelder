@@ -79,7 +79,7 @@ function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
 
   return (
     <div className={styles.widthcontroller+(props.isShown?` ${styles.fullwidth}`:"")}>
-        <div className={styles.container+(props.isShown?` ${styles.navactive}`:"")}>
+        <Box sx={{backgroundColor:'secondary'}}  className={styles.container+(props.isShown?` ${styles.navactive}`:"")}>
             <div className={styles.logo}>
               <img src={logo} alt="firmenlogo"></img>
             </div>
@@ -110,7 +110,7 @@ function NavBar(props:{isShown:boolean,changeComponent:(route:string)=>void}) {
               
                 
             </div>
-        </div>
+        </Box>
     </div>
   )
 }

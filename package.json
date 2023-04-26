@@ -1,5 +1,5 @@
 {
-  "homepage": "https://martinherhold.tk/frontend",
+  "homepage": "https://martinherhold.tk",
   "name": "pwa-rauchmelder",
   "version": "0.1.0",
   "private": true,
@@ -43,6 +43,7 @@
     "react-scripts": "5.0.1",
     "react-scrollbars-custom": "^4.1.1",
     "react-secure-storage": "^1.1.0",
+    "react-svg": "^16.1.8",
     "react-transition-group": "^4.4.5",
     "react-use-websocket": "^4.3.1",
     "recharts": "^2.3.2",
