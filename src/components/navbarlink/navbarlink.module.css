@@ -11,7 +11,6 @@
     transition:  cubic-bezier(0.075, 0.82, 0.165, 1) background 0.5s
 }
 .container:hover{
-    background-color: #124559;
     cursor: pointer;
     transition:  cubic-bezier(0.075, 0.82, 0.165, 1) background 0.5s
 }
@@ -24,6 +23,5 @@
     align-items: center;
 }
 .active{
-    background-color: #124559;
     transition:  cubic-bezier(0.075, 0.82, 0.165, 1) background 0.5s
 }

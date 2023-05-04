@@ -1,0 +1,55 @@
+@media only screen and(min-width: 800px){
+    .gridbox{
+        background-color: pink;
+        grid-template-columns: repeat(5,1fr) ;
+    }
+}
+@media only screen and (max-width:800px) {
+    .gridbox{
+        grid-template-columns: repeat(3,1fr);
+    }
+}
+.singleGridElement{
+    min-height:10em;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 15px;
+    position:relative;
+    display: flex;
+    flex-direction: column;
+}
+/* .singleGridElement>*:nth-child(2){
+    padding:15px;
+    padding-top:25px;
+} */
+.scroll{
+    
+    height:calc(100vh - 250px) !important
+}
+.gridbox{
+    display:grid;
+    grid-template-columns: repeat(4,1fr);
+    gap:2em;
+    padding:15px;
+    padding-top:20px;
+    
+}
+.interaction{
+    position:absolute;
+    top:-20px;
+    height:2em;
+    width:5em;
+    right:0;
+    display:flex;
+    align-items: center; 
+}
+#ElementOptions-actions{
+    padding-top:35px !important;
+
+}
+.interaction>button{
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.interaction>button:nth-child(2):hover{
+    color: red;
+}
+
