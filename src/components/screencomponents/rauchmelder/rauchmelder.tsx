@@ -15,26 +15,25 @@ import {
 	RauchmelderBeziehung,
 	Rauchmelder,
 } from "../../../types/rauchmelder";
-import {
-	Dialog,
-	ListItemIcon,
-	Menu,
-	MenuItem,
-	Typography,
-} from "@mui/material";
+import { ListItemIcon, Menu, MenuItem } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
 import { Delete, Edit } from "@mui/icons-material";
 import DeleteDialog from "../../dialogs/deleteDialog/deleteDialog";
+import ChangeRauchmelderDialog from "../../dialogs/changeRauchmelder/changeRauchmelderDialog";
 
 function RauchmelderComponent() {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [changedRauchmelder, setChangedRauchmelder] = useState<
 		RauchmelderBeziehung[]
 	>([]);
 	const [isSavable, setIsSavable] = useState(false);
 	const [showHistoryDialog, setShowHistoryDialog] = useState(false);
-	const [showEditMenu, setShowEditMenu] = useState(false);
+
+	// const [showEditMenu, setShowEditMenu] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [historyid, setHistoryid] = useState(1);
+	const [selectedRauchmelder, setSelectedRauchmelder] = useState<Rauchmelder>();
+	const [showChangeDialog, setShowChangeDialog] = useState(false);
 	const { enqueueSnackbar } = useSnackbar();
 	const rauchmelderQuery = useQuery("rauchmelder", () =>
 		dataFunctions[ClientStatus.online].rauchmelder.get()
@@ -65,6 +64,7 @@ function RauchmelderComponent() {
 				  null
 		);
 		setHistoryid(obj.id ? obj.id : -1);
+		setSelectedRauchmelder(obj);
 	};
 
 	const handleClose = () => {
@@ -78,10 +78,6 @@ function RauchmelderComponent() {
 			setIsSavable(false);
 		}
 	}, [changedRauchmelder]);
-
-	const onEditClick = () => {
-		setContextMenu(null);
-	};
 
 	if (rauchmelderQuery.isLoading || objekteQuery.isLoading) {
 		return (
@@ -214,6 +210,19 @@ function RauchmelderComponent() {
 						},
 					]}
 					handleContextMenu={handleContextMenu}
+				/>
+				<ChangeRauchmelderDialog
+					isShown={showChangeDialog}
+					handleClose={() => setShowChangeDialog(false)}
+					triggerNewEntity={() => {}}
+					currentRauchmelder={selectedRauchmelder}
+				/>
+				<DeleteDialog
+					title="Löschen?"
+					message="Möchten Sie wirklich den Rauchmelder löschen"
+					isShown={false}
+					handleClose={() => {}}
+					handleDelete={() => {}}
 				/>
 				<Menu
 					open={contextMenu !== null}

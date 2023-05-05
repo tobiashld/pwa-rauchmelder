@@ -7,7 +7,6 @@ import { login } from "../../store/slice";
 import dataFunctions from "../../services/datafunctions";
 import { ClientStatus } from "../../types/statusenum";
 import { useSnackbar } from "notistack";
-import { ReactSVG } from "react-svg";
 import {
 	Checkbox,
 	FormControlLabel,
@@ -15,7 +14,6 @@ import {
 	TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import secureLocalStorage from "react-secure-storage";
 
 function SignInScreen() {
 	const usernameRef = React.createRef<HTMLInputElement>();
@@ -74,7 +72,7 @@ function SignInScreen() {
 	return (
 		<div className={styles.container}>
 			<div className={styles.design}>
-				<img src="/ressources/png/signup.png" />
+				<img src="/ressources/png/signup.png" alt="bild" />
 			</div>
 			<div className={styles.loginboxcontainer}>
 				<div className={styles.headertext}>

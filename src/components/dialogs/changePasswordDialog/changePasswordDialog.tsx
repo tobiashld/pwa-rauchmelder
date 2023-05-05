@@ -2,38 +2,16 @@ import {
 	Alert,
 	Box,
 	Button,
-	Chip,
-	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogTitle,
 	Divider,
-	IconButton,
 	InputAdornment,
 	Paper,
-	styled,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
 	TextField,
 	Typography,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import { useQuery } from "react-query";
-import dataFunctions from "../../../services/datafunctions";
-import Loadingspinner from "../../loadingspinner/loadingspinner";
-import { Rauchmelder } from "../../../types/rauchmelder";
-import {
-	dateOptions,
-	emailRegex,
-	passwordRequirements,
-} from "../../../services/globals";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { RiLockPasswordLine } from "react-icons/ri";
+import { useEffect, useRef, useState } from "react";
+import { passwordRequirements } from "../../../services/globals";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styles from "./changePasswordDialog.module.css";
 import { StyledDialog } from "../StyledDialog/StyledDialog";

@@ -1,9 +1,6 @@
 import { JwtPayload } from "jwt-decode";
 import {
-	RauchmelderHistorie,
 	RauchmelderOld,
-	toRauchmelderBzConverter,
-	toRauchmelderHistorienConverter,
 	toRauchmelderConverter as toNewRauchmelderConverter,
 	Rauchmelder,
 } from "./rauchmelder";
@@ -26,9 +23,9 @@ export class Auftraggeber {
 	prepForSave() {
 		return {
 			...this.adresse,
-			email: this.email,
-			name: this.name,
-			telefon: this.telefon,
+			email: this.email ?? undefined,
+			name: this.name ?? undefined,
+			telefon: this.telefon ?? undefined,
 		};
 	}
 	dump() {

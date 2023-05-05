@@ -1,10 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import Scrollbars from "react-custom-scrollbars-2";
-import {
-	DatatableDisplayProps,
-	DatatableProps,
-} from "../../../types/datatable";
+import { DatatableDisplayProps } from "../../../types/datatable";
 import styles from "./datatableList.module.css";
 function DatatableList<T>(props: DatatableDisplayProps<T>) {
 	return (

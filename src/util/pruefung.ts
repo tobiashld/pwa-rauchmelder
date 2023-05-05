@@ -1,4 +1,4 @@
-import { GeprRauchmelder, Pruefung } from "../types/allgemein";
+import { Pruefung } from "../types/allgemein";
 
 // db timestamp zu nem vom date konstruktor akzeptierten Format bringen
 const feedTimestamp = (props: {
