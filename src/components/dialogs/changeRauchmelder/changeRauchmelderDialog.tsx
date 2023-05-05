@@ -6,44 +6,49 @@ import {
 	Button,
 	DialogActions,
 	DialogContent,
-	Divider,
 	TextField,
 } from "@mui/material";
 import { useQuery } from "react-query";
 import dataFunctions from "../../../services/datafunctions";
 import { ClientStatus } from "../../../types/statusenum";
 import { Auftraggeber, Objekt } from "../../../types/allgemein";
+import { Rauchmelder } from "../../../types/rauchmelder";
 
-const ChangeObjektDialog = (props: {
+const ChangeRauchmelderDialog = (props: {
 	isShown: boolean;
 	handleClose: (toCreateObjekt?: Objekt) => void;
 	triggerNewEntity: (toCreateObjekt: Objekt) => void;
-	currentObjekt?: Objekt;
+	currentRauchmelder?: Rauchmelder;
 }) => {
 	const auftraggeber = useQuery(
 		"auftraggeber",
 		() => dataFunctions[ClientStatus.online].auftraggeber.get(),
 		{}
 	);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const strasse = useRef<HTMLInputElement>(null);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const hausnummer = useRef<HTMLInputElement>(null);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const plz = useRef<HTMLInputElement>(null);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const ort = useRef<HTMLInputElement>(null);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const beschreibung = useRef<HTMLInputElement>(null);
 
 	const [currSelectedAuftraggeber, setCurrSelectedAuftraggeber] =
 		useState<Auftraggeber | null>();
 
-	useEffect(() => {
-		if (props.isShown) {
-			if (props.currentObjekt && props.currentObjekt.auftraggeber) {
-				setCurrSelectedAuftraggeber(
-					(prev) => props.currentObjekt?.auftraggeber ?? null
-				);
-			}
-		}
-		console.log(props, "props");
-	}, [props, props.isShown, props.currentObjekt]);
+	// useEffect(() => {
+	// 	// if (props.isShown) {
+	// 	// 	if (props.currentObjekt && props.currentObjekt.auftraggeber) {
+	// 	// 		setCurrSelectedAuftraggeber(
+	// 	// 			(prev) => props.currentObjekt?.auftraggeber ?? null
+	// 	// 		);
+	// 	// 	}
+	// 	// }
+	// 	// console.log(props, "props");
+	// }, [props, props.isShown, props.currentObjekt]);
 	useEffect(() => {
 		console.log(currSelectedAuftraggeber);
 	}, [currSelectedAuftraggeber]);
@@ -54,7 +59,10 @@ const ChangeObjektDialog = (props: {
 				title: {
 					id: "change-Objekt-dialog",
 					onClose: () => props.handleClose(),
-					children: props.currentObjekt?.name ?? "Objekt hinzufügen",
+					children:
+						props.currentRauchmelder?.seriennr +
+							" " +
+							props.currentRauchmelder?.raum ?? "Objekt hinzufügen",
 				},
 				general: {
 					open: props.isShown,
@@ -105,7 +113,7 @@ const ChangeObjektDialog = (props: {
 							<TextField {...params} label="Auftraggeber" />
 						)}
 					/>
-					<TextField
+					{/* <TextField
 						label="Beschreibung"
 						placeholder="Zusätzliche Informationen zum Objekt"
 						sx={{ gridArea: "beschreibung" }}
@@ -139,11 +147,11 @@ const ChangeObjektDialog = (props: {
 						sx={{ gridArea: "ort" }}
 						defaultValue={props.currentObjekt?.adresse.ort ?? ""}
 						inputRef={ort}
-					></TextField>
+					></TextField> */}
 				</Box>
 			</DialogContent>
 			<DialogActions>
-				{props.currentObjekt ? (
+				{props.currentRauchmelder ? (
 					<></>
 				) : (
 					<Button
@@ -197,4 +205,4 @@ const ChangeObjektDialog = (props: {
 	);
 };
 
-export default ChangeObjektDialog;
+export default ChangeRauchmelderDialog;

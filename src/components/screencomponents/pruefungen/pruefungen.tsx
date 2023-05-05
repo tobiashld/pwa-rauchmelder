@@ -9,11 +9,10 @@ import {
 	OutlinedInput,
 	Select,
 	SelectChangeEvent,
-	TextField,
 	Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
 	useMutation,
 	useQuery,
@@ -29,11 +28,8 @@ import { ClientStatus } from "../../../types/statusenum";
 import AddButton from "../../addbutton/addbutton";
 import Button from "../../button/button";
 import DataTable from "../../datatable/datatable";
-import Loadingspinner from "../../loadingspinner/loadingspinner";
 import styles from "./pruefungen.module.css";
-import HistoryIcon from "@mui/icons-material/History";
 import DeleteDialog from "../../dialogs/deleteDialog/deleteDialog";
-import { DatePicker } from "@mui/x-date-pickers";
 
 function PruefungenComponent() {
 	const clientStatus = useSelector((state: RootState) => state.isOffline);
@@ -74,17 +70,6 @@ function PruefungenComponent() {
 			},
 		},
 	};
-	useEffect(() => {
-		// if(clientStatus){
-		//   dataFunctions[ClientStatus.online].pruefungen.get(undefined,(pruefungen:any[])=>{
-		//     setAllePruefungen(pruefungen.map(item=>toPruefungConverter(item)))
-		//   })
-		// }
-		// console.log(clientStatus)
-		// dataFunctions[clientStatus].objekte.get(undefined,(objekte:any)=>{
-		//   setAlleObjekte(objekte.data)
-		// })
-	});
 
 	const handleContextMenu = (event: React.MouseEvent, pruefung: Pruefung) => {
 		event.preventDefault();

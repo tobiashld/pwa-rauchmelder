@@ -3,6 +3,7 @@ import {
 	DBResponse,
 	toAuftraggeberConverter,
 } from "../../types/allgemein";
+import auftraggeberUtil from "../../util/auftraggeber";
 import { dynamicurl } from "../globals";
 
 async function get(
@@ -51,7 +52,7 @@ async function add(auftraggeber: Auftraggeber, cb?: (data: any) => void) {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(auftraggeber.prepForSave()),
+		body: JSON.stringify(auftraggeberUtil.prepAuftraggeber(auftraggeber)),
 	})
 		.then((response) => {
 			return response.json();
@@ -67,24 +68,28 @@ async function change(
 	auftraggeber: Partial<Auftraggeber>,
 	cb?: (data: any) => void
 ) {
-	const url = dynamicurl + "/auftraggeber/" + auftraggeber.id;
-	return fetch(url, {
-		credentials: "include",
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(auftraggeber),
-	})
-		.then((response) => {
-			return response.json();
+	if (auftraggeber) {
+		const url = dynamicurl + "/auftraggeber/" + auftraggeber.id;
+		return fetch(url, {
+			credentials: "include",
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(auftraggeberUtil.prepAuftraggeber(auftraggeber)),
 		})
-		.then((obj) => {
-			if (obj && obj.data) {
-				if (cb) cb(obj.data);
-			}
-			return obj;
-		});
+			.then((response) => {
+				return response.json();
+			})
+			.then((obj) => {
+				if (obj && obj.data) {
+					if (cb) cb(obj.data);
+				}
+				return obj;
+			});
+	} else {
+		return new Promise((resolve) => resolve);
+	}
 }
 async function deleteA(id: number, cb?: (data: any) => void) {
 	const url = dynamicurl + "/auftraggeber/" + id;

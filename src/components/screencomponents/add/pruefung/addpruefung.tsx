@@ -12,8 +12,6 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
-	Tab,
-	Tabs,
 	TextField,
 	Tooltip,
 } from "@mui/material";
@@ -24,30 +22,18 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import dataFunctions from "../../../../services/datafunctions";
 import { RootState } from "../../../../store/store";
-import {
-	GeprRauchmelder,
-	Pruefung,
-	toPruefungConverter,
-} from "../../../../types/allgemein";
+import { GeprRauchmelder, Pruefung } from "../../../../types/allgemein";
 import { ClientStatus } from "../../../../types/statusenum";
-import HolidayVillageIcon from "@mui/icons-material/HolidayVillage";
-import PersonIcon from "@mui/icons-material/Person";
 import styles from "./addpruefung.module.css";
 import {
 	Rauchmelder,
 	RauchmelderBeziehung,
-	RauchmelderHistorie,
 } from "../../../../types/rauchmelder";
 import { useQuery } from "react-query";
 import Loadingspinner from "../../../loadingspinner/loadingspinner";
 import { DatePicker } from "@mui/x-date-pickers";
 import Scrollbars from "react-custom-scrollbars-2";
-import {
-	Preview,
-	Warning,
-	WarningAmber,
-	WarningOutlined,
-} from "@mui/icons-material";
+import { WarningAmber } from "@mui/icons-material";
 import moment, { Moment } from "moment";
 import pruefungUtil from "../../../../util/pruefung";
 
@@ -108,6 +94,7 @@ function AddPruefung() {
 		RauchmelderBeziehung[]
 	>([]);
 	const newSeriennrRef = useRef(null);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [newSeriennr, setNewSeriennr] = useState("");
 	const [newProdDatum, setNewProdDatum] = useState<Moment>();
 	const [currMieterName, setCurrMieterName] = useState("");
@@ -140,7 +127,12 @@ function AddPruefung() {
 		} else {
 			setCurrMieterName("");
 		}
-	}, [currGeprRauchmelderId]);
+	}, [
+		currGeprRauchmelderId,
+		rauchmelderQuery.data?.data,
+		changedMieter,
+		newRauchmelderHistorie,
+	]);
 
 	React.useEffect(() => {
 		if (
@@ -152,7 +144,11 @@ function AddPruefung() {
 			clone.objekt = currPruefObjektQuery.data.data.at(0);
 			setCurrPruefung(clone);
 		}
-	}, [currPruefObjektQuery.isSuccess]);
+	}, [
+		currPruefObjektQuery.isSuccess,
+		currPruefObjektQuery.data?.data,
+		currPruefung,
+	]);
 
 	// if(pruefungQuery.isSuccess){
 	//     setCurrPruefung(toPruefungConverter(pruefungQuery.data?.data?[0]?pruefungQuery.data.data[0]:new Pruefung(-1,"",)))
@@ -170,7 +166,7 @@ function AddPruefung() {
 			clone.rauchmelder = clone.rauchmelder.map(
 				(rauchmelder: GeprRauchmelder) => {
 					if (rauchmelder.rauchmelderID === currGeprRauchmelderId) {
-						Object.keys(newGeprRauchmelder).map((key) => {
+						Object.keys(newGeprRauchmelder).forEach((key) => {
 							// @ts-ignore
 							rauchmelder[key] = newGeprRauchmelder[key];
 							// @ts-ignore
@@ -250,7 +246,9 @@ function AddPruefung() {
 													: true
 											) ?? []
 										}
-										groupBy={(option) => `${option.wohnung?.nachname}`}
+										groupBy={(option) =>
+											`${option.wohnung?.nachname.split(" ")[0]}`
+										}
 										getOptionLabel={(option) =>
 											option.aktuellerRauchmelder?.seriennr +
 											" " +
@@ -533,58 +531,81 @@ function AddPruefung() {
 																<div>
 																	<strong>Seriennr</strong>
 																</div>
-																<div>
-																	<strong>
-																		{!isTreppenhaus ? "Mieter Nachname" : ""}
-																	</strong>
-																</div>
+																{!isTreppenhaus ? (
+																	<div>
+																		<strong>{"Mieter Nachname"}</strong>
+																	</div>
+																) : (
+																	<div></div>
+																)}
 
 																<div>
 																	{rauchmelder.aktuellerRauchmelder!.seriennr}
 																</div>
-																<div>
-																	{!isTreppenhaus ? (
-																		<TextField
-																			value={currMieterName}
-																			size="small"
-																			id="add-pruefung-mieter"
-																			placeholder={
-																				isChangedMieter
-																					? isChangedMieter
-																					: rauchmelder.wohnung?.nachname
-																			}
-																			onChange={(event) => {
-																				setCurrMieterName(
-																					event.target.value
-																						? event.target.value
-																						: ""
-																				);
-																				if (
-																					event.currentTarget.value &&
-																					event.currentTarget.value !== ""
-																				) {
-																					setChangedMieter((prev) => {
-																						let copy = { ...prev };
-																						prev[rauchmelder.wohnungsID] =
-																							event.target.value;
-																						return copy;
-																					});
-																				} else if (event.target.value === "") {
-																					setChangedMieter((prev) => {
-																						let copy = { ...prev };
-																						delete copy[rauchmelder.wohnungsID];
-																						return copy;
-																					});
+																{!isTreppenhaus ? (
+																	<div>
+																		{
+																			<TextField
+																				value={currMieterName}
+																				size="small"
+																				id="add-pruefung-mieter"
+																				placeholder={
+																					isChangedMieter
+																						? isChangedMieter
+																						: rauchmelder.wohnung?.nachname
 																				}
-																			}}
-																		></TextField>
-																	) : (
-																		rauchmelder.wohnung!.nachname
-																	)}
-																</div>
+																				onChange={(event) => {
+																					setCurrMieterName(
+																						event.target.value
+																							? event.target.value
+																							: ""
+																					);
+																					if (
+																						event.currentTarget.value &&
+																						event.currentTarget.value !== ""
+																					) {
+																						setChangedMieter((prev) => {
+																							let copy = { ...prev };
+																							prev[rauchmelder.wohnungsID] =
+																								event.target.value;
+																							return copy;
+																						});
+																					} else if (
+																						event.target.value === ""
+																					) {
+																						setChangedMieter((prev) => {
+																							let copy = { ...prev };
+																							delete copy[
+																								rauchmelder.wohnungsID
+																							];
+																							return copy;
+																						});
+																					}
+																				}}
+																			></TextField>
+																		}
+																	</div>
+																) : (
+																	<div></div>
+																)}
 															</div>
 														);
-													})}
+													}) || (
+													<div className={styles.infotable}>
+														<div>
+															<strong>Seriennr</strong>
+														</div>
+
+														<div>
+															{
+																currPruefung?.rauchmelder.find(
+																	(item) =>
+																		item.rauchmelderID === currGeprRauchmelderId
+																)?.rauchmelderhistorie?.seriennr
+															}
+														</div>
+													</div>
+												)}
 											</div>
 											<div>
 												<TextField
@@ -843,7 +864,6 @@ function AddPruefung() {
 																		{ variant: "error" }
 																	);
 																}
-																console.log(newRauchmelderHistorie);
 															}}
 														>
 															<MenuItem value="0">Erstinbetriebnahme</MenuItem>
@@ -909,7 +929,6 @@ function AddPruefung() {
 															onChange={(newValue: Moment | null) => {
 																// @ts-ignore
 																setNewProdDatum(newValue ?? "");
-																console.log(newRauchmelderHistorie);
 																let currentRauchmelder =
 																	rauchmelderQuery?.data?.data?.find(
 																		(item) =>

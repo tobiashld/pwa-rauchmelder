@@ -12,7 +12,6 @@ import SaveButton from "../../savebutton/savebutton";
 import styles from "./wohnungen.module.css";
 import { Delete, Edit } from "@mui/icons-material";
 import DeleteDialog from "../../dialogs/deleteDialog/deleteDialog";
-import HistoryIcon from "@mui/icons-material/History";
 import ChangeWohnungenDialog from "../../dialogs/changeWohnungen/changeWohungenDialog";
 
 function WohnungenComponent() {

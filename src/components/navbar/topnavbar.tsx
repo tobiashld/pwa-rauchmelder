@@ -9,7 +9,6 @@ import {
 	Divider,
 	Link,
 	LinkProps,
-	Switch,
 	Typography,
 	Tooltip,
 	ListItemIcon,
@@ -17,17 +16,12 @@ import {
 	useTheme,
 } from "@mui/material";
 import { BsArrowLeft } from "react-icons/bs";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 import { useNavigate } from "react-router-dom";
 import styles from "./navbar.module.css";
-import { ClientStatus } from "../../types/statusenum";
-import { HiStatusOffline, HiStatusOnline } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../store/store";
-import { logout, setOfflineMode } from "../../store/slice";
-import dataFunctions from "../../services/datafunctions";
-import Loadingspinner from "../loadingspinner/loadingspinner";
+import { logout } from "../../store/slice";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { BiLogOut } from "react-icons/bi";
@@ -129,7 +123,6 @@ function TopNavBar(props: { isShown: boolean; onMenuChange: () => void }) {
 		(text: string, pchat: Chatclass | undefined) => {
 			setChats((prev) =>
 				prev?.map((chat) => {
-					console.log(chat, "chatiteration");
 					if (!pchat) return chat;
 					if (chat.id === pchat.id) {
 						if (chat.nachrichten) {
@@ -165,7 +158,7 @@ function TopNavBar(props: { isShown: boolean; onMenuChange: () => void }) {
 				JSON.stringify({ chat: pchat?.id, message: text, from: userUUID })
 			);
 		},
-		[sendMessage, userUUID, username]
+		[sendMessage, userUUID, username, chats]
 	);
 
 	React.useEffect(() => {
@@ -176,7 +169,6 @@ function TopNavBar(props: { isShown: boolean; onMenuChange: () => void }) {
 				setChats(chats);
 			} else {
 				setMessageCount((prev) => prev + 1);
-				console.log("times1");
 				setChats((prev) =>
 					prev?.map((chat) => {
 						if (chat.id === data.chat) {
@@ -209,7 +201,7 @@ function TopNavBar(props: { isShown: boolean; onMenuChange: () => void }) {
 				// setMessages((prev) => prev.concat(new Message(data,false,false)));
 			}
 		}
-	}, [lastMessage, setMessages]);
+	}, [lastMessage, setMessages, chats]);
 
 	React.useEffect(() => {
 		if (showChat) {
@@ -273,7 +265,6 @@ function TopNavBar(props: { isShown: boolean; onMenuChange: () => void }) {
 					{pathnames.map((value, index) => {
 						const last: any = index === pathnames.length - 1;
 						const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-						console.log(to);
 
 						return last ? (
 							<Typography

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { StyledDialog } from "../StyledDialog/StyledDialog";
 import {
 	Box,
@@ -7,7 +7,6 @@ import {
 	DialogContent,
 	Divider,
 	TextField,
-	Typography,
 } from "@mui/material";
 import { Adresse, Auftraggeber } from "../../../types/allgemein";
 
@@ -105,30 +104,35 @@ export const ChangeAuftraggeberDialog = (props: {
 					<></>
 				) : (
 					<Button
+						disabled
 						onClick={() => {
 							props.triggerNewEntity(
 								new Auftraggeber(
 									props.currentAuftraggeber?.id ?? -1,
 									new Adresse(
-										hausnummer.current?.valueAsNumber ??
-											props.currentAuftraggeber?.adresse.hausnummer ??
-											-1,
+										Number.parseInt(
+											hausnummer.current?.value ??
+												props.currentAuftraggeber?.adresse.hausnummer.toString() ??
+												"0"
+										) ?? 1,
 										ort.current?.value ??
-											props.currentAuftraggeber?.adresse.ort ??
+											props.currentAuftraggeber?.adresse.ort.toString() ??
 											"",
 										plz.current?.value ??
-											props.currentAuftraggeber?.adresse.plz ??
+											props.currentAuftraggeber?.adresse.plz.toString() ??
 											"",
 										strasse.current?.value ??
-											props.currentAuftraggeber?.adresse.straße ??
+											props.currentAuftraggeber?.adresse.straße.toString() ??
 											""
 									),
 									email.current?.value ??
-										props.currentAuftraggeber?.email ??
+										props.currentAuftraggeber?.email.toString() ??
 										"",
-									name.current?.value ?? props.currentAuftraggeber?.name ?? "",
+									name.current?.value ??
+										props.currentAuftraggeber?.name.toString() ??
+										"",
 									telefon.current?.value ??
-										props.currentAuftraggeber?.telefon ??
+										props.currentAuftraggeber?.telefon.toString() ??
 										""
 								)
 							);
@@ -140,24 +144,39 @@ export const ChangeAuftraggeberDialog = (props: {
 				<Button
 					color="success"
 					onClick={() => {
-						console.log(hausnummer);
 						props.handleClose(
 							new Auftraggeber(
 								props.currentAuftraggeber?.id ?? -1,
 								new Adresse(
-									hausnummer.current?.valueAsNumber ?? -1,
-									ort.current?.value ?? "",
-									plz.current?.value ?? "",
-									strasse.current?.value ?? ""
+									Number.parseInt(
+										hausnummer.current?.value ??
+											props.currentAuftraggeber?.adresse.hausnummer.toString() ??
+											"0"
+									) ?? 1,
+									ort.current?.value ??
+										props.currentAuftraggeber?.adresse.ort.toString() ??
+										"",
+									plz.current?.value ??
+										props.currentAuftraggeber?.adresse.plz.toString() ??
+										"",
+									strasse.current?.value ??
+										props.currentAuftraggeber?.adresse.straße.toString() ??
+										""
 								),
-								email.current?.value ?? "",
-								name.current?.value ?? "",
-								telefon.current?.value ?? ""
+								email.current?.value ??
+									props.currentAuftraggeber?.email.toString() ??
+									"",
+								name.current?.value ??
+									props.currentAuftraggeber?.name.toString() ??
+									"",
+								telefon.current?.value ??
+									props.currentAuftraggeber?.telefon.toString() ??
+									""
 							)
 						);
 					}}
 				>
-					Ändern
+					{props.currentAuftraggeber ? "Ändern" : "Hinzufügen"}
 				</Button>
 				<Button color="error" onClick={() => props.handleClose()}>
 					Abbrechen

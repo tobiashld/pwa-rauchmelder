@@ -1,48 +1,56 @@
 import { Delete, Edit } from "@mui/icons-material";
 import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import dataFunctions from "../../../services/datafunctions";
 import { Objekt } from "../../../types/allgemein";
 import { ClientStatus } from "../../../types/statusenum";
 import AddButton from "../../addbutton/addbutton";
 import DataTable from "../../datatable/datatable";
-import Loadingspinner from "../../loadingspinner/loadingspinner";
-import SaveButton from "../../savebutton/savebutton";
 import styles from "./objekte.module.css";
 import ChangeObjektDialog from "../../dialogs/changeObjekt/changeObjektDialog";
 import DeleteDialog from "../../dialogs/deleteDialog/deleteDialog";
 
-type ObjektChangeKeys = "name" | "beschreibung" | "adresse";
+// type ObjektChangeKeys = "name" | "beschreibung" | "adresse";
 
 function ObjekteComponent() {
 	const queryClient = useQueryClient();
-	const [changedObjekte, setChangedObjekte] = useState<Objekt[]>([]);
-	const [isSavable, setIsSavable] = useState(false);
 	const [showChangeDialog, setShowChangeDialog] = useState(false);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const { enqueueSnackbar } = useSnackbar();
+	const [currSelectedObjekt, setCurrSelectedObjekt] = useState<Objekt>();
 	const [contextMenu, setContextMenu] = React.useState<{
 		mouseX: number;
 		mouseY: number;
 	} | null>(null);
-	const { data, isError, isLoading } = useQuery(
+	const { data, isError } = useQuery(
 		"objekte",
 		() => dataFunctions[ClientStatus.online].objekte.get(),
 		{}
 	);
-	const mutate = useMutation({
+	const deleteMutation = useMutation({
 		mutationFn: (id: number) =>
 			dataFunctions[ClientStatus.online].objekte.delete(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries("objekte");
+		},
+	});
+	const createMutation = useMutation({
+		mutationFn: (objekt: Objekt) =>
+			dataFunctions[ClientStatus.online].objekte.create(objekt),
+		onSuccess: () => {
+			queryClient.invalidateQueries("objekte");
+		},
 	});
 
-	useEffect(() => {
-		if (changedObjekte.length > 0) {
-			setIsSavable(true);
-		} else {
-			setIsSavable(false);
-		}
-	}, [changedObjekte]);
+	// const changeMutation = useMutation({
+	// 	mutationFn: (objekt: Objekt) =>
+	// 		dataFunctions[ClientStatus.online].objekte.change(objekt),
+	// 	onSuccess: () => {
+	// 		queryClient.invalidateQueries("objekte");
+	// 	},
+	// });
 
 	if (isError || (data && data.error)) {
 		enqueueSnackbar("Laden der Objekte Fehlgeschlagen!", { variant: "error" });
@@ -61,18 +69,21 @@ function ObjekteComponent() {
 				  // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
 				  null
 		);
+		setCurrSelectedObjekt(obj);
 	};
 
-	const handleSave = () => {};
+	// const handleSave = () => {};
 
 	const handleClose = () => {
 		setContextMenu(null);
+		setShowDeleteDialog(true);
 	};
 
 	const handleDialogExit = (triggerNew: boolean, objekt?: Objekt) => {
 		setShowChangeDialog(false);
 		if (objekt) {
 			if (objekt.id === -1) {
+				createMutation.mutateAsync(objekt);
 				// createAuftraggeber.mutateAsync(auftraggeber);
 				// console.log("create auftraggeber", auftraggeber);
 			} else {
@@ -108,9 +119,9 @@ function ObjekteComponent() {
 					]}
 					headline="Objekte"
 					handleRowClick={(item) => {
+						setCurrSelectedObjekt(item);
 						setShowChangeDialog(true);
 					}}
-					editedElementIds={changedObjekte.map((objekt) => objekt.id)}
 					// handleEdit={(id,key,value)=>{
 					//   if(id === -1){
 
@@ -172,11 +183,19 @@ function ObjekteComponent() {
 				isShown={showChangeDialog}
 				handleClose={(item) => handleDialogExit(false, item)}
 				triggerNewEntity={(item) => handleDialogExit(true, item)}
+				currentObjekt={currSelectedObjekt}
 			/>
 			<DeleteDialog
-				isShown={false}
-				handleClose={() => {}}
-				handleDelete={() => {}}
+				isShown={showDeleteDialog}
+				handleClose={() => {
+					setShowDeleteDialog(false);
+				}}
+				handleDelete={() => {
+					if (currSelectedObjekt) {
+						deleteMutation.mutateAsync(currSelectedObjekt.id);
+					}
+					setShowDeleteDialog(false);
+				}}
 				title="Löschen?"
 				message="Möchten Sie Wirklich das Objekt löschen"
 			/>
@@ -210,8 +229,13 @@ function ObjekteComponent() {
 				</MenuItem>
 			</Menu>
 			<div className={styles.interactions}>
-				<AddButton routeParam="auftraggeber" />
-				<SaveButton onClick={handleSave} isShown={isSavable} />
+				<AddButton
+					routeParam="auftraggeber"
+					onClick={() => {
+						setCurrSelectedObjekt(undefined);
+						setShowChangeDialog(true);
+					}}
+				/>
 			</div>
 		</>
 	);

@@ -9,28 +9,19 @@ import SaveButton from "../../savebutton/savebutton";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import {
-	Autocomplete,
-	Box,
-	Grid,
-	ListItemIcon,
-	Menu,
-	MenuItem,
-	TextField,
-	Typography,
-} from "@mui/material";
-import { GeoDaten } from "../../../types/geodaten";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
+// import { GeoDaten } from "../../../types/geodaten";
 import { Delete, Edit } from "@mui/icons-material";
 import { ChangeAuftraggeberDialog } from "../../dialogs/changeAuftraggeber/changeAuftraggeber";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import DeleteDialog from "../../dialogs/deleteDialog/deleteDialog";
 
-type AuftraggeberChangeKeys = "adresse" | "email" | "name" | "telefon";
+// type AuftraggeberChangeKeys = "adresse" | "email" | "name" | "telefon";
 
 function AuftraggeberComponent() {
 	const queryClient = useQueryClient();
 	const clientStatus = useSelector((state: RootState) => state.isOffline);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [alleAuftraggeber, setAlleAuftraggeber] = useState<Auftraggeber[]>([]);
 	const auftraggeber = useQuery("auftraggeber", () =>
 		dataFunctions[ClientStatus.online].auftraggeber.get()
@@ -50,11 +41,11 @@ function AuftraggeberComponent() {
 			dataFunctions[ClientStatus.online].auftraggeber.change(auftraggeber),
 		onSuccess: () => queryClient.invalidateQueries("auftraggeber"),
 	});
-	const [value, setValue] = React.useState<GeoDaten | null>(null);
+	// const [value, setValue] = React.useState<GeoDaten | null>(null);
 	const [showChangeDialog, setShowChangeDialog] = useState(false);
-	const [inputValue, setInputValue] = React.useState("");
-	const [options, setOptions] = React.useState<readonly GeoDaten[]>([]);
-	const loaded = React.useRef(false);
+	// const [inputValue, setInputValue] = React.useState("");
+	// const [options, setOptions] = React.useState<readonly GeoDaten[]>([]);
+	// const loaded = React.useRef(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [changedAuftraggeber, setChangedAuftraggeber] = useState<
 		Auftraggeber[]
