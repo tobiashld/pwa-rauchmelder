@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import dataFunctions from "../../../../services/datafunctions";
@@ -6,7 +6,6 @@ import { ClientStatus } from "../../../../types/statusenum";
 import {
 	Page,
 	Text,
-	Image,
 	Document,
 	StyleSheet,
 	View,
@@ -74,10 +73,9 @@ const PreviewPruefung = () => {
 		if (!id) {
 			navigate(-1);
 		}
-	}, []);
+	}, [id, navigate]);
 	useEffect(() => {
 		if (pruefungQuery.isSuccess && pruefungQuery.data.data) {
-			console.log("pruefungenDaten", pruefungQuery.data.data);
 		}
 	}, [pruefungQuery]);
 	return (

@@ -1,26 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-	BsArrowDown,
-	BsArrowLeft,
-	BsArrowRight,
-	BsArrowUp,
-} from "react-icons/bs";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import {
-	getFittingInputsForKey,
-	KeyType,
-} from "../../services/helperfunctions";
+import { BsArrowDown, BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Loadingspinner from "../loadingspinner/loadingspinner";
 import styles from "./datatable.module.css";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import {
-	Box,
-	Chip,
-	Divider,
-	IconButton,
-	Typography,
-	useTheme,
-} from "@mui/material";
+import { Box, Chip, IconButton, useTheme } from "@mui/material";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { AppsOutlined, SubjectOutlined } from "@mui/icons-material";
 import {
@@ -32,6 +14,7 @@ import DatatableGrid from "./datatableGrid/datatableGrid";
 import DatatableList from "./datatableList/datatableList";
 
 function DataTable<T>(props: DatatableProps<T>) {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [currFilter, setCurrFilter] = useState<
 		{
 			func: (obj: T) => T | undefined;
@@ -312,7 +295,7 @@ function DataTable<T>(props: DatatableProps<T>) {
 							{props.sort!.map((sort, index) => {
 								return (
 									<Chip
-										key={index}
+										key={"datatable " + props.headline + " " + index}
 										className={
 											index === activeSortIndex ? ` ${styles.activesort}` : ""
 										}

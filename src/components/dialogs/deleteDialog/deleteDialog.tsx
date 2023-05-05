@@ -6,8 +6,7 @@ import {
 	DialogContentText,
 	DialogTitle,
 } from "@mui/material";
-import React from "react";
-import Transition from "../../transition/slideup";
+import ZoomTransition from "../../transition/zoom";
 
 export default function DeleteDialog(props: {
 	title: string;
@@ -19,7 +18,7 @@ export default function DeleteDialog(props: {
 	return (
 		<Dialog
 			open={props.isShown}
-			TransitionComponent={Transition}
+			TransitionComponent={ZoomTransition}
 			onClose={props.handleClose}
 			aria-describedby="alert-dialog-slide-description"
 		>
