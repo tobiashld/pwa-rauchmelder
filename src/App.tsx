@@ -60,7 +60,7 @@ function App(props: { status: "online" | "offline" }) {
 					{readyToRender ? (
 						isSignedin ? (
 							<>
-								<BrowserRouter basename="/frontend">
+								<BrowserRouter>
 									{props.status === "online" ? (
 										<HomeScreen clientstatus={ClientStatus.online} />
 									) : (
